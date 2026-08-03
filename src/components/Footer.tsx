@@ -17,6 +17,7 @@ export default function Footer() {
             <a href="#menu" className="hover:text-brand-cream-50 transition-colors">Meniu</a>
             <a href="#reservations" className="hover:text-brand-cream-50 transition-colors">Rezervări</a>
             <a href="#community" className="hover:text-brand-cream-50 transition-colors">Comunitate</a>
+            <a href="#feedback" className="hover:text-brand-cream-50 transition-colors">Feedback</a>
           </div>
 
           {/* Socials */}
