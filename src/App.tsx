@@ -4,7 +4,6 @@ import Footer from '@/components/Footer'
 import Home from '@/pages/Home'
 import Menu from '@/pages/Menu'
 import Community from '@/pages/Community'
-import Reservations from '@/pages/Reservations'
 import Feedback from '@/pages/Feedback'
 
 export default function App() {
@@ -37,7 +36,6 @@ export default function App() {
       </div>
       <Menu />
       <Community />
-      <Reservations />
       <Footer />
     </div>
   )

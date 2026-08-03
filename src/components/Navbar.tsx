@@ -8,7 +8,6 @@ const navLinks = [
   { href: "#home", label: "Home" },
   { href: "#menu", label: "Menu" },
   { href: "#community", label: "Community" },
-  { href: "#reservations", label: "Reservations" },
 ]
 
 export default function Navbar() {
@@ -53,12 +52,6 @@ export default function Navbar() {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-4">
-            <a
-              href="#reservations"
-              className="hidden md:inline-flex px-5 py-2 bg-brand-green-700 hover:bg-brand-green-800 text-brand-cream-50 text-sm font-semibold rounded-full transition-all duration-200 shadow-md shadow-brand-green-700/10"
-            >
-              Rezervări
-            </a>
             <button
               onClick={() => setMobileOpen((v) => !v)}
               className="md:hidden text-brand-green-700 p-1"
@@ -90,13 +83,6 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="#reservations"
-              onClick={() => setMobileOpen(false)}
-              className="mt-4 px-8 py-3 bg-brand-green-700 hover:bg-brand-green-800 text-brand-cream-50 font-semibold rounded-full transition-colors shadow-lg"
-            >
-              Rezervă o Masă
-            </a>
           </motion.div>
         )}
       </AnimatePresence>

@@ -105,12 +105,6 @@ function ParallaxHero() {
           >
             Explorează Meniul
           </a>
-          <a
-            href="#reservations"
-            className="w-full sm:w-auto px-8 py-4 border border-brand-green-700/30 hover:bg-brand-green-700/5 text-brand-green-700 font-bold rounded-full transition-all duration-200 text-center"
-          >
-            Rezervă o masă
-          </a>
         </motion.div>
       </motion.div>
 
