@@ -23,13 +23,31 @@ const FEEDBACK_CATEGORIES = [
   { id: "food", label: "Mâncare / Preparate", icon: "🥗" },
   { id: "drinks", label: "Băuturi / Cafea", icon: "☕" },
   { id: "service", label: "Servire / Personal", icon: "⭐" },
-  { id: "atmosphere", label: "Atmosferă / Design", icon: "✨" },
+  { id: "atmosphere", label: "Atmosferă / Muzică", icon: "✨" },
+  { id: "value", label: "Preț", icon: "💰" },
+  { id: "wait", label: "Timp Așteptare", icon: "⏱️" },
 ]
 
 export default function Feedback() {
-  const [rating, setRating] = useState<number>(0)
-  const [hoverRating, setHoverRating] = useState<number>(0)
-  const [category, setCategory] = useState<string>("")
+  const [ratings, setRatings] = useState<Record<string, number>>({
+    food: 0,
+    drinks: 0,
+    service: 0,
+    atmosphere: 0,
+    value: 0,
+    wait: 0,
+  })
+  
+  const [hoverRatings, setHoverRatings] = useState<Record<string, number>>({
+    food: 0,
+    drinks: 0,
+    service: 0,
+    atmosphere: 0,
+    value: 0,
+    wait: 0,
+  })
+
+  const [submittedRating, setSubmittedRating] = useState<number>(0)
   const [name, setName] = useState("")
   const [contact, setContact] = useState("")
   const [comment, setComment] = useState("")
@@ -52,20 +70,35 @@ export default function Feedback() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (rating === 0) {
-      setErrorMess("Te rugăm să acorzi un rating apăsând pe stele.")
+
+    const ratedCategories = Object.entries(ratings).filter(([_, r]) => r > 0)
+    if (ratedCategories.length === 0) {
+      setErrorMess("Te rugăm să acorzi cel puțin un rating în secțiunile de mai jos.")
       return
     }
 
     setLoading(true)
     setErrorMess("")
 
+    const totalScore = ratedCategories.reduce((acc, [_, r]) => acc + r, 0)
+    const averageRating = Math.round((totalScore / ratedCategories.length) * 10) / 10
+    setSubmittedRating(averageRating)
+
+    // Build category stars text so it displays nicely in the Sheet without changing Google Apps Script
+    const ratingStrings = ratedCategories.map(([key, val]) => {
+      const catInfo = FEEDBACK_CATEGORIES.find(c => c.id === key)
+      const stars = Array.from({ length: val }).map(() => "★").join("")
+      return `- ${catInfo?.label || key}: ${stars} (${val}/5)`
+    }).join("\n")
+
+    const fullComment = `Evaluări pe categorii:\n${ratingStrings}\n\n${comment.trim() ? `Mesaj client:\n"${comment.trim()}"` : "[Fără mesaj text]"}`
+
     const payload = {
       timestamp: new Date().toISOString(),
       name: name.trim() || "Anonim",
-      rating,
-      category: category ? FEEDBACK_CATEGORIES.find(c => c.id === category)?.label : "Nespecificat",
-      comment: comment.trim(),
+      rating: averageRating,
+      category: ratedCategories.map(([key]) => FEEDBACK_CATEGORIES.find(c => c.id === key)?.label).join(", "),
+      comment: fullComment,
       contact: contact.trim() || "Nespecificat"
     }
 
@@ -94,9 +127,23 @@ export default function Feedback() {
   }
 
   const handleResetForm = () => {
-    setRating(0)
-    setHoverRating(0)
-    setCategory("")
+    setRatings({
+      food: 0,
+      drinks: 0,
+      service: 0,
+      atmosphere: 0,
+      value: 0,
+      wait: 0,
+    })
+    setHoverRatings({
+      food: 0,
+      drinks: 0,
+      service: 0,
+      atmosphere: 0,
+      value: 0,
+      wait: 0,
+    })
+    setSubmittedRating(0)
     setName("")
     setContact("")
     setComment("")
@@ -148,71 +195,57 @@ export default function Feedback() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* 1. Star Rating */}
-                <div className="text-center bg-brand-cream-100 p-4 rounded-2xl border border-brand-green-200/30">
-                  <span className="text-xs font-semibold tracking-wider text-brand-green-700 uppercase block mb-2">
-                    Cum a fost experiența ta?
-                  </span>
-                  <div className="flex justify-center gap-2">
-                    {[1, 2, 3, 4, 5].map((star) => {
-                      const isActive = (hoverRating || rating) >= star
-                      return (
-                        <button
-                          key={star}
-                          type="button"
-                          onMouseEnter={() => setHoverRating(star)}
-                          onMouseLeave={() => setHoverRating(0)}
-                          onClick={() => setRating(star)}
-                          className="p-1 focus:outline-none transition-transform active:scale-95 duration-100 cursor-pointer"
-                        >
-                          <Star
-                            className={`w-9 h-9 transition-colors ${
-                              isActive 
-                                ? "fill-amber-400 text-amber-400" 
-                                : "text-brand-green-300 fill-transparent"
-                            }`}
-                          />
-                        </button>
-                      )
-                    })}
-                  </div>
-                  {rating > 0 && (
-                    <motion.p
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="text-xs font-semibold text-brand-green-700 mt-2.5"
-                    >
-                      {rating === 5 && "Extrem de mulțumit! 😍"}
-                      {rating === 4 && "Foarte mulțumit! 😊"}
-                      {rating === 3 && "Satisfeclător 😐"}
-                      {rating === 2 && "Nesatisfăcător 🙁"}
-                      {rating === 1 && "Extrem de nemulțumit 😡"}
-                    </motion.p>
-                  )}
-                </div>
-
-                {/* 2. Specific Category */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-brand-green-700 block mb-2">
-                    Ce dorești să evaluezi în mod special?
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-green-700 block mb-3 text-center">
+                    Cum a fost experiența ta? (acordă stele):
+                  </span>
+                  
+                  <div className="space-y-3">
                     {FEEDBACK_CATEGORIES.map((cat) => {
-                      const isSelected = category === cat.id
+                      const currentRating = ratings[cat.id] || 0
+                      const currentHover = hoverRatings[cat.id] || 0
+                      
                       return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => setCategory(isSelected ? "" : cat.id)}
-                          className={`flex items-center gap-2 p-2.5 rounded-xl border text-left text-xs transition-all ${
-                            isSelected
-                              ? "bg-brand-green-700 border-brand-green-700 text-brand-cream-50 font-semibold shadow-md"
-                              : "bg-brand-cream-50 border-brand-green-200/50 text-brand-dark/80 hover:border-brand-green-300"
-                          }`}
+                        <div 
+                          key={cat.id} 
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3.5 bg-brand-cream-100/60 rounded-2xl border border-brand-green-200/30 gap-2.5 transition-all hover:bg-brand-cream-100/90"
                         >
-                          <span className="text-base">{cat.icon}</span>
-                          <span className="truncate">{cat.label}</span>
-                        </button>
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-xl">{cat.icon}</span>
+                            <span className="text-xs font-bold text-brand-green-800 uppercase tracking-widest">
+                              {cat.label}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                            {[1, 2, 3, 4, 5].map((star) => {
+                              const isActive = (currentHover || currentRating) >= star
+                              return (
+                                <button
+                                  key={star}
+                                  type="button"
+                                  onMouseEnter={() => setHoverRatings(prev => ({ ...prev, [cat.id]: star }))}
+                                  onMouseLeave={() => setHoverRatings(prev => ({ ...prev, [cat.id]: 0 }))}
+                                  onClick={() => setRatings(prev => ({ ...prev, [cat.id]: star }))}
+                                  className="p-1 focus:outline-none transition-transform active:scale-95 duration-100 cursor-pointer"
+                                >
+                                  <Star
+                                    className={`w-6 h-6 transition-colors ${
+                                      isActive 
+                                        ? "fill-amber-400 text-amber-400" 
+                                        : "text-brand-green-300/80 fill-transparent"
+                                    }`}
+                                  />
+                                </button>
+                              )
+                            })}
+                            {currentRating > 0 && (
+                              <span className="text-xs font-bold text-brand-green-700 w-5 text-center">
+                                {currentRating}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       )
                     })}
                   </div>
@@ -229,13 +262,7 @@ export default function Feedback() {
                   <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder={
-                      rating >= 4
-                        ? "Spune-ne ce preparat sau de ce servicii te-ai bucurat cel mai mult..."
-                        : rating > 0
-                        ? "Cum am putea îmbunătăți experiența ta pe viitor? Apreciem onestitatea..."
-                        : "Mesajul tău..."
-                    }
+                    placeholder="Spune-ne ce preparat sau ce aspect te-a încântat, ori ce am putea îmbunătăți pe viitor..."
                     rows={4}
                     className="w-full p-3 rounded-2xl bg-brand-cream-50 border border-brand-green-200/60 focus:border-brand-green-500 focus:ring-1 focus:ring-brand-green-500 focus:outline-none text-sm text-brand-dark placeholder-brand-dark/40 resize-none transition-all"
                   />
@@ -320,7 +347,7 @@ export default function Feedback() {
               </div>
 
               {/* Conditional Google review encouragement if rating >= 4 */}
-              {rating >= 4 && (
+              {submittedRating >= 4 && (
                 <div className="bg-brand-green-700/5 border border-brand-green-700/20 p-5 rounded-2xl space-y-3">
                   <div className="flex justify-center text-amber-500 gap-0.5">
                     <Star className="w-4 h-4 fill-amber-500" />
@@ -330,7 +357,7 @@ export default function Feedback() {
                     <Star className="w-4 h-4 fill-amber-500" />
                   </div>
                   <h4 className="text-sm font-bold text-brand-green-700">
-                    Ne-ai acordat {rating} stele!
+                    Ne-ai acordat o medie de {submittedRating} stele!
                   </h4>
                   <p className="text-xs text-brand-dark/70 leading-relaxed max-w-xs mx-auto">
                     Ne bucurăm nespus de mult că ai avut o experiență faină! Ne-ar ajuta enorm pe plan local dacă ai scrie câteva cuvinte și direct pe Google Maps. Durează doar 30 de secunde.
