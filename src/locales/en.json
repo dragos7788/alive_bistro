@@ -1,0 +1,142 @@
+{
+  "navbar": {
+    "home": "Home",
+    "menu": "Menu",
+    "community": "Community",
+    "feedback": "Feedback",
+    "toggleMenu": "Toggle menu"
+  },
+  "footer": {
+    "address": "Str. Mureş nr. 116A, Timişoara",
+    "menu": "Menu",
+    "community": "Community",
+    "feedback": "Feedback",
+    "rights": "© {{year}} ALIVE Bistro. All rights reserved."
+  },
+  "home": {
+    "hero": {
+      "tagline": "A New Bistro Concept",
+      "subtitle": "The perfect balance between <span1>nutritious food</span1>, <span2>specialty coffee</span2>, and <span3>community</span3>.",
+      "button": "Explore the Menu",
+      "scrollDown": "Scroll down"
+    },
+    "story": {
+      "concept": "Our Concept / About Alive",
+      "title": "food with purpose, well-being and daily energy<1>.</1>",
+      "p1": "<1>Alive</1> is a modern Bistro concept built around the idea of balance between good food, specialty coffee, functional drinks, energy, healthy lifestyle, and community.",
+      "p2": "We do not want to build another rigid or elitist 'healthy' venue, but a warm, accessible, and authentic space where people can naturally integrate better habits into their daily lives.",
+      "p3": "Alive will function as both a bistro and coffee spot, as well as a space for socializing, working, relaxing, and education around wellness and mindful nutrition.",
+      "coffee_title": "Specialty Coffee",
+      "coffee_desc": "Single origin and passionately prepared",
+      "nutrition_title": "Clean Nutrition",
+      "nutrition_desc": "Fresh ingredients, balanced recipes"
+    },
+    "pillars": {
+      "subtitle": "What You'll Discover at Alive",
+      "title": "more than a bistro: a lifestyle<1>.</1>",
+      "p1_title": "Bistro & Specialty Coffee",
+      "p1_desc": "A premium selection of specialty coffee, hot breakfast dishes, nourishing soups, and delicious main courses.",
+      "p2_title": "Functional Drinks & Energy",
+      "p2_desc": "Fresh smoothies, protein shakes, and functional drinks with natural supplements dedicated to performance and well-being.",
+      "p3_title": "Social & Study Workspace",
+      "p3_desc": "A warm and bright place where you can work on your laptop, read, or reconnect with friends in a calm atmosphere."
+    },
+    "values": {
+      "subtitle": "Mission & Values",
+      "title": "what do we believe in?<1>.</1>",
+      "description": "The mission of <1>Alive</1> is to make a healthy lifestyle feel more natural, balanced, and sustainable. We believe in real food, nutritional supplements, quality ingredients, and experiences that make people feel good and in harmony with themselves.",
+      "v1_title": "Balance",
+      "v1_text": "Real, tasty, and balanced food. A fine balance between exceptional taste, long-lasting energy, and real nutritional value, without dogmas or rigid restrictions.",
+      "v2_title": "Education & Lifestyle",
+      "v2_text": "Through themed brunches, wellness educational events, and open discussions about nutrition, we support you in building better daily habits.",
+      "v3_title": "Community & Connection",
+      "v3_text": "More than a restaurant. We offer a welcoming space for socializing, productive work, relaxation, or a simple refreshing break from the daily hustle.",
+      "v4_title": "Transparency & Authenticity",
+      "v4_text": "We use premium, seasonal ingredients and clean recipes. We tell you exactly what your food and drink contains: from specialty coffee to active supplements."
+    }
+  },
+  "community": {
+    "tagline": "The Energy That Unites Us",
+    "title": "the ALIVE community<1>.</1>",
+    "desc": "We aim to be more than just a place to eat excellently. We are a vibrant hub for people passionate about well-being, sports, mindful nutrition, and authentic connection.",
+    "pillars": {
+      "p1_title": "Themed Brunches",
+      "p1_desc": "We prepare unique culinary experiences on weekends, with special menus focused on super-nutritive ingredients and delicious pairings with specialty coffee.",
+      "p2_title": "Educational Events",
+      "p2_desc": "We host discussions on nutrition, workshops on a balanced lifestyle, and interactive sessions with specialists dedicated to your well-being.",
+      "p3_title": "Co-working & Socializing Space",
+      "p3_desc": "The warm atmosphere transmits calm and good energy. It is the perfect space where you can work relaxed on your laptop, read, or have a great conversation with a friend."
+    },
+    "collab_title": "want to collaborate?",
+    "collab_desc": "If you are a trainer, nutritionist, sports enthusiast, or simply want to organize an event in harmony with our healthy values, we are open to proposals and partnerships!",
+    "follow_us": "Follow us online",
+    "stay_connected": "let's stay connected",
+    "social": {
+      "instagram": "Daily updates, behind-the-scenes moments from our kitchen, wellness recipes, and stories full of energy.",
+      "facebook": "Event announcements, themed brunches, and news from the well-being community.",
+      "tiktok": "Videos of preparing our functional drinks, nutrition tips, and pure energy."
+    },
+    "stats": {
+      "members": "Community Members",
+      "events": "Hosted Events",
+      "workshops": "Nutrition Workshops",
+      "reviews": "5-star Reviews"
+    }
+  },
+  "feedback": {
+    "backHome": "Home",
+    "opinion": "⭐ Your Opinion Matters ⭐",
+    "subtitle": "Help us become better or tell us what you liked most about your visit to ALIVE Bistro!",
+    "ratingPrompt": "How was your experience? (leave a rating):",
+    "commentLabel": "Your message / Details (Optional)",
+    "commentPlaceholder": "Tell us what dish or aspect delighted you, or what we could improve in the future...",
+    "nameLabel": "Customer Name (Optional)",
+    "namePlaceholder": "E.g., John Doe",
+    "contactLabel": "Contact - Tel / Email (Optional)",
+    "contactPlaceholder": "E.g., +40722...",
+    "errorMessage": "Please provide at least one rating in the sections below.",
+    "submitButton": "Submit Feedback",
+    "loading": "Submitting...",
+    "submittedTitle": "Thank you for your feedback!",
+    "submittedDesc": "Your feedback helps us tremendously to improve our services every day.",
+    "googlePrompt": "If you had a 5-star experience and want to support us, please leave us a review on Google Maps as well:",
+    "googleButton": "Write a Google Review",
+    "resetButton": "Submit another feedback",
+    "categories": {
+      "food": "Food / Dishes",
+      "drinks": "Drinks / Coffee",
+      "service": "Service / Staff",
+      "atmosphere": "Atmosphere / Music",
+      "value": "Price",
+      "wait": "Wait Time"
+    }
+  },
+  "menu": {
+    "tagline": "BUILT FOR BALANCE & ENERGY",
+    "title": "Our Menu<1>.</1>",
+    "desc": "Nutritious, delicious, and fully functional dishes infused with superfoods and beneficial adaptogens.",
+    "teaserTitle": "all our coffees are specialty coffees",
+    "teaserDesc": "We offer single-origin espresso every day, free choice of organic plant-based milk, and a superb selection of raw-vegan desserts made daily.",
+    "details": "Details",
+    "clickHint": "Click for full description",
+    "close": "Close",
+    "macros": {
+      "calories": "kcal",
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fats"
+    },
+    "categories": {
+      "food": "Food",
+      "breakfast-soups": "Breakfast & Soups",
+      "mains-salads": "Meals & Salads",
+      "desserts": "Sugar-Free Desserts",
+      "drinks": "Drinks",
+      "coffee-functional": "Coffee & Functionals",
+      "teas": "Teas & Infusions",
+      "soft-drinks": "Soft Drinks",
+      "non-alcoholic": "Mocktails & Juices",
+      "alcoholic": "Wines & Beers"
+    }
+  }
+}

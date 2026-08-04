@@ -1,12 +1,13 @@
 import { motion } from "framer-motion"
 import { InstagramLogo, FacebookLogo, TiktokLogo } from "@phosphor-icons/react"
 import { Calendar, Users, BookOpen, Coffee } from "lucide-react"
+import { useTranslation, Trans } from "react-i18next"
 
-const socialLinks = [
+const socialLinksKeys = [
   {
     name: "Instagram",
     handle: "@alive_bistro",
-    description: "Noutăți zilnice, momente din culisele bucătăriei noastre, rețete wellness și story-uri pline de energie.",
+    descKey: "community.social.instagram",
     icon: <InstagramLogo size={28} />,
     href: "https://www.instagram.com/alive_bistro/",
     color: "hover:border-brand-green-700/30 hover:bg-brand-green-700/5",
@@ -15,7 +16,7 @@ const socialLinks = [
   {
     name: "Facebook",
     handle: "ALIVE Bistro",
-    description: "Anunțuri de evenimente, brunch-uri tematice și noutăți din comunitatea de wellbeing.",
+    descKey: "community.social.facebook",
     icon: <FacebookLogo size={28} />,
     href: "https://facebook.com",
     color: "hover:border-brand-green-700/30 hover:bg-brand-green-700/5",
@@ -24,7 +25,7 @@ const socialLinks = [
   {
     name: "TikTok",
     handle: "@alive.bistro",
-    description: "Videoclipuri cu prepararea băuturilor noastre funcționale, sfaturi de nutriție și energie pură.",
+    descKey: "community.social.tiktok",
     icon: <TiktokLogo size={28} />,
     href: "https://tiktok.com",
     color: "hover:border-brand-green-700/30 hover:bg-brand-green-700/5",
@@ -32,32 +33,34 @@ const socialLinks = [
   },
 ]
 
-const eventPillars = [
+const eventPillarsKeys = [
   {
     icon: <Calendar className="w-6 h-6 text-brand-green-700" />,
-    title: "Brunch-uri Tematice",
-    desc: "Pregătim experiențe culinare inedite în weekend-uri, cu meniuri speciale axate pe ingrediente super-nutritive și asocieri delicioase cu cafea de specialitate.",
+    titleKey: "community.pillars.p1_title",
+    descKey: "community.pillars.p1_desc",
   },
   {
     icon: <BookOpen className="w-6 h-6 text-brand-green-700" />,
-    title: "Evenimente Educaționale",
-    desc: "Găzduim discuții despre nutriție, workshop-uri despre un stil de viață echilibrat și sesiuni interactive alături de specialiști dedicați stării tale de bine.",
+    titleKey: "community.pillars.p2_title",
+    descKey: "community.pillars.p2_desc",
   },
   {
     icon: <Users className="w-6 h-6 text-brand-green-700" />,
-    title: "Spațiu de Co-working & Socializare",
-    desc: "Atmosefera caldă transmite calm și energie bună. Este spațiul perfect unde poți lucra relaxat la laptop, poți citi sau poți purta o discuție faină cu un prieten.",
+    titleKey: "community.pillars.p3_title",
+    descKey: "community.pillars.p3_desc",
   },
 ]
 
-const highlights = [
-  { label: "Membri în Comunitate", value: "2,500+" },
-  { label: "Evenimente Găzduite", value: "120+" },
-  { label: "Workshop-uri de Nutriție", value: "45+" },
-  { label: "Recenzii de 5 stele", value: "98%" },
+const highlightsKeys = [
+  { labelKey: "community.stats.members", value: "2,500+" },
+  { labelKey: "community.stats.events", value: "120+" },
+  { labelKey: "community.stats.workshops", value: "45+" },
+  { labelKey: "community.stats.reviews", value: "98%" },
 ]
 
 export default function Community() {
+  const { t } = useTranslation()
+
   return (
     <section id="community" className="min-h-screen py-24 px-6 bg-brand-cream-100">
       <div className="max-w-4xl mx-auto">
@@ -69,18 +72,27 @@ export default function Community() {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <p className="text-brand-green-700 uppercase tracking-[0.3em] text-xs font-bold mb-3 font-sans">Energia Care Ne Unește</p>
-          <h2 className="text-4xl md:text-6xl font-extrabold text-brand-green-700 mb-4 tracking-tight font-serif lowercase">Comunitatea ALIVE<span className="text-brand-green-500 font-sans">.</span></h2>
+          <p className="text-brand-green-700 uppercase tracking-[0.3em] text-xs font-bold mb-3 font-sans">
+            {t("community.tagline")}
+          </p>
+          <h2 className="text-4xl md:text-6xl font-extrabold text-brand-green-700 mb-4 tracking-tight font-serif lowercase">
+            <Trans
+              i18nKey="community.title"
+              components={{ 1: <span className="text-brand-green-500 font-sans" /> }}
+            >
+              Comunitatea ALIVE<span className="text-brand-green-500 font-sans">.</span>
+            </Trans>
+          </h2>
           <p className="text-brand-dark/80 max-w-xl mx-auto leading-relaxed font-light text-sm md:text-base font-sans">
-            Ne propunem să fim mai mult decât un loc unde mănânci excelent. Suntem un hub vibrant pentru oameni pasionați de wellbeing, sport, alimentație conștientă și conexiune autentică.
+            {t("community.desc")}
           </p>
         </motion.div>
 
         {/* Community Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-          {eventPillars.map((pillar, idx) => (
+          {eventPillarsKeys.map((pillar, idx) => (
             <motion.div
-              key={pillar.title}
+              key={pillar.titleKey}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -90,8 +102,8 @@ export default function Community() {
               <div className="w-12 h-12 rounded-xl bg-brand-green-700/10 flex items-center justify-center mb-5 text-brand-green-700">
                 {pillar.icon}
               </div>
-              <h3 className="text-brand-green-700 font-bold text-lg mb-2 font-serif lowercase">{pillar.title}</h3>
-              <p className="text-brand-dark/70 text-sm leading-relaxed font-light font-sans">{pillar.desc}</p>
+              <h3 className="text-brand-green-700 font-bold text-lg mb-2 font-serif lowercase">{t(pillar.titleKey)}</h3>
+              <p className="text-brand-dark/70 text-sm leading-relaxed font-light font-sans">{t(pillar.descKey)}</p>
             </motion.div>
           ))}
         </div>
@@ -107,22 +119,26 @@ export default function Community() {
             <Coffee className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-brand-green-700 font-bold text-lg font-serif lowercase">Vrei să colaborăm?</h4>
+            <h4 className="text-brand-green-700 font-bold text-lg font-serif lowercase">{t("community.collab_title")}</h4>
             <p className="text-brand-dark/70 text-sm font-sans font-light mt-1 leading-relaxed">
-              Dacă ești trainer, nutriționist, entuziast al sportului sau pur și simplu vrei să organizezi un eveniment în armonie cu valorile noastre sănătoase, suntem deschiși la propuneri și parteneriate!
+              {t("community.collab_desc")}
             </p>
           </div>
         </motion.div>
 
         {/* Social Header */}
         <div className="text-center mb-10">
-          <span className="text-brand-green-700 text-xs uppercase tracking-widest font-bold font-sans">Urmărește-ne online</span>
-          <h3 className="text-3xl md:text-4xl font-bold text-brand-green-700 mt-1 font-serif lowercase">Să Rămânem Conectați</h3>
+          <span className="text-brand-green-700 text-xs uppercase tracking-widest font-bold font-sans">
+            {t("community.follow_us")}
+          </span>
+          <h3 className="text-3xl md:text-4xl font-bold text-brand-green-700 mt-1 font-serif lowercase">
+            {t("community.stay_connected")}
+          </h3>
         </div>
 
         {/* Social Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-20">
-          {socialLinks.map((social, i) => (
+          {socialLinksKeys.map((social, i) => (
             <motion.a
               key={social.name}
               href={social.href}
@@ -138,7 +154,7 @@ export default function Community() {
               <div className={`mb-4 ${social.iconColor}`}>{social.icon}</div>
               <h3 className="text-brand-dark font-bold text-lg font-serif">{social.name}</h3>
               <p className="text-brand-green-700 text-xs font-semibold tracking-wider uppercase mt-1 mb-3">{social.handle}</p>
-              <p className="text-brand-dark/65 text-xs md:text-sm leading-relaxed font-light font-sans">{social.description}</p>
+              <p className="text-brand-dark/65 text-xs md:text-sm leading-relaxed font-light font-sans">{t(social.descKey)}</p>
             </motion.a>
           ))}
         </div>
@@ -151,10 +167,10 @@ export default function Community() {
           transition={{ duration: 0.6 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl border border-brand-green-700/10 bg-brand-cream-200/60"
         >
-          {highlights.map((h) => (
-            <div key={h.label} className="text-center">
+          {highlightsKeys.map((h) => (
+            <div key={h.labelKey} className="text-center">
               <div className="text-3xl font-extrabold text-brand-green-700 mb-1 tracking-tight font-serif">{h.value}</div>
-              <div className="text-brand-dark/60 text-xs font-semibold font-sans">{h.label}</div>
+              <div className="text-brand-dark/60 text-xs font-semibold font-sans">{t(h.labelKey)}</div>
             </div>
           ))}
         </motion.div>

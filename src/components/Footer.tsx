@@ -1,7 +1,10 @@
 import { InstagramLogo, FacebookLogo, TiktokLogo } from "@phosphor-icons/react"
+import { useTranslation } from "react-i18next"
 import Logo from "./Logo"
 
 export default function Footer() {
+  const { t } = useTranslation()
+
   return (
     <footer className="bg-brand-green-800 border-t border-brand-green-700/60 py-12 px-6">
       <div className="max-w-4xl mx-auto">
@@ -9,14 +12,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex flex-col items-center md:items-start gap-2">
             <Logo variant="transparent" size="md" className="text-brand-cream-50" />
-            <p className="text-brand-cream-300/80 text-sm">Str. Mureș nr. 116A, Timișoara</p>
+            <p className="text-brand-cream-300/80 text-sm">{t("footer.address")}</p>
           </div>
 
           {/* Links */}
           <div className="flex gap-6 text-sm text-brand-cream-200">
-            <a href="#menu" className="hover:text-brand-cream-50 transition-colors">Meniu</a>
-            <a href="#community" className="hover:text-brand-cream-50 transition-colors">Comunitate</a>
-            <a href="#feedback" className="hover:text-brand-cream-50 transition-colors">Feedback</a>
+            <a href="#menu" className="hover:text-brand-cream-50 transition-colors">{t("footer.menu")}</a>
+            <a href="#community" className="hover:text-brand-cream-50 transition-colors">{t("footer.community")}</a>
+            <a href="#feedback" className="hover:text-brand-cream-50 transition-colors">{t("footer.feedback")}</a>
           </div>
 
           {/* Socials */}
@@ -33,7 +36,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-6 border-t border-brand-green-700/60 text-center text-brand-cream-300/40 text-xs">
-          © {new Date().getFullYear()} ALIVE Bistro. All rights reserved.
+          {t("footer.rights", { year: new Date().getFullYear() })}
         </div>
       </div>
     </footer>

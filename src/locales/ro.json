@@ -1,0 +1,145 @@
+{
+  "navbar": {
+    "home": "Acasă",
+    "menu": "Meniu",
+    "community": "Comunitate",
+    "feedback": "Feedback",
+    "toggleMenu": "Comută meniul"
+  },
+  "footer": {
+    "address": "Str. Mureş nr. 116A, Timişoara",
+    "menu": "Meniu",
+    "community": "Comunitate",
+    "feedback": "Feedback",
+    "rights": "© {{year}} ALIVE Bistro. Toate drepturile rezervate."
+  },
+  "home": {
+    "hero": {
+      "tagline": "Un Concept Nou de Bistro",
+      "subtitle": "Echilibrul perfect între <span1>mâncare nutritivă</span1>, <span2>cafea de specialitate</span2> și <span3>comunitate</span3>.",
+      "button": "Explorează Meniul",
+      "scrollDown": "Scroll down"
+    },
+    "story": {
+      "concept": "Conceptul Nostru / Despre Alive",
+      "title": "Mâncare cu sens, stare de bine și energie zilnică<1>.</1>",
+      "p1": "<1>Alive</1> este un concept de Bistro modern construit în jurul ideii de echilibru între mâncare bună, cafea de specialitate, băuturi funcționale, energie, stil de viață sănătos și comunitate.",
+      "p2": "Nu ne dorim să construim încă un local „healthy” rigid sau elitist, ci un spațiu cald, accesibil și autentic, în care oamenii să poată integra mai natural obiceiuri mai bune în viața lor de zi cu zi.",
+      "p3": "Alive va funcționa atât ca bistro și coffee spot, cât și ca spațiu de socializare, lucru, relaxare și educație în jurul wellness-ului și al alimentației conștiente.",
+      "coffee_title": "Specialty Coffee",
+      "coffee_desc": "Origine unică și preparare cu pasiune",
+      "nutrition_title": "Nutriție Curată",
+      "nutrition_desc": "Ingrediente proaspete, rețete echilibrate"
+    },
+    "pillars": {
+      "subtitle": "Ce Vei Descoperi la Alive",
+      "title": "Mai mult decât un bistro: un stil de viață<1>.</1>",
+      "p1_title": "Bistro & Specialty Coffee",
+      "p1_desc": "O selecție premium de cafea de specialitate, preparate calde de breakfast, supe hrănitoare și preparate principale delicioase.",
+      "p2_title": "Functional Drinks & Energy",
+      "p2_desc": "Smoothie-uri proaspete, protein shakes și băuturi funcționale cu suplimente naturale dedicate performanței și stării de bine.",
+      "p3_title": "Social & Study Workspace",
+      "p3_desc": "Un loc cald și luminos unde poți lucra la laptop, poți citi sau te poți reconecta cu prietenii tăi într-o atmosferă calmă."
+    },
+    "text": {
+      "placeholder": "Dummy text"
+    },
+    "values": {
+      "subtitle": "Misiune și Valori",
+      "title": "În ce credem noi?<1>.</1>",
+      "description": "Misiunea <1>Alive</1> este să facă stilul de viață sănătos să pară mai firesc, mai echilibrat și mai sustenabil. Credem în mâncare reală, suplimente nutritive, ingrediente de calitate și experiențe care îi fac pe oameni să se simtă bine și în armonie cu ei înșiși.",
+      "v1_title": "Echilibru",
+      "v1_text": "Mâncare reală, gustoasă și echilibrată. Un echilibru fin între gust excepțional, energie de durată și valoare nutritivă reală, fără dogme sau restricții rigide.",
+      "v2_title": "Educație & Lifestyle",
+      "v2_text": "Prin brunch-uri tematice, evenimente educaționale de wellness și discuții deschise despre nutriție, te susținem să îți construiești obiceiuri zilnice mai bune.",
+      "v3_title": "Comunitate & Conexiune",
+      "v3_text": "Mai mult decât un restaurant. Oferim un spațiu primitor pentru socializare, lucru productiv, relaxare sau o simplă pauză revigorantă de la agitația cotidiană.",
+      "v4_title": "Transparență & Autenticitate",
+      "v4_text": "Folosim ingrediente premium, de sezon, și rețete curate. Îți spunem exact ce conține mâncarea și băutura ta: de la cafea de specialitate la suplimente active."
+    }
+  },
+  "community": {
+    "tagline": "Energia Care Ne Unește",
+    "title": "Comunitatea ALIVE<1>.</1>",
+    "desc": "Ne propunem să fim mai mult decât un loc unde mănânci excelent. Suntem un hub vibrant pentru oameni pasionați de wellbeing, sport, alimentație conștientă și conexiune autentică.",
+    "pillars": {
+      "p1_title": "Brunch-uri Tematice",
+      "p1_desc": "Pregătim experiențe culinare inedite în weekend-uri, cu meniuri speciale axate pe ingrediente super-nutritive și asocieri delicioase cu cafea de specialitate.",
+      "p2_title": "Evenimente Educaționale",
+      "p2_desc": "Găzduim discuții despre nutriție, workshop-uri despre un stil de viață echilibrat și sesiuni interactive alături de specialiști dedicați stării tale de bine.",
+      "p3_title": "Spațiu de Co-working & Socializare",
+      "p3_desc": "Atmosefera caldă transmite calm și energie bună. Este spațiul perfect unde poți lucra relaxat la laptop, poți citi sau poți purta o discuție faină cu un prieten."
+    },
+    "collab_title": "Vrei să colaborăm?",
+    "collab_desc": "Dacă ești trainer, nutriționist, entuziast al sportului sau pur și simplu vrei să organizezi un eveniment în armonie cu valorile noastre sănătoase, suntem deschiși la propuneri și parteneriate!",
+    "follow_us": "Urmărește-ne online",
+    "stay_connected": "Să Rămânem Conectați",
+    "social": {
+      "instagram": "Noutăți zilnice, momente din culisele bucătăriei noastre, rețete wellness și story-uri pline de energie.",
+      "facebook": "Anunțuri de evenimente, brunch-uri tematice și noutăți din comunitatea de wellbeing.",
+      "tiktok": "Videoclipuri cu prepararea băuturilor noastre funcționale, sfaturi de nutriție și energie pură."
+    },
+    "stats": {
+      "members": "Membri în Comunitate",
+      "events": "Evenimente Găzduite",
+      "workshops": "Workshop-uri de Nutriție",
+      "reviews": "Recenzii de 5 stele"
+    }
+  },
+  "feedback": {
+    "backHome": "Acasă",
+    "opinion": "⭐ Opinia Ta Contează ⭐",
+    "subtitle": "Ajută-ne să devenim mai buni sau spune-ne ce ți-a plăcut cel mai mult din vizita ta la ALIVE Bistro!",
+    "ratingPrompt": "Cum a fost experiența ta? (acordă stele):",
+    "commentLabel": "Mesajul tău / Detalii (Opțional)",
+    "commentPlaceholder": "Spune-ne ce preparat sau ce aspect te-a încântat, ori ce am putea îmbunătăți pe viitor...",
+    "nameLabel": "Nume clienți (Opțional)",
+    "namePlaceholder": "Ex: Marius Popescu",
+    "contactLabel": "Contact - Tel / Email (Opțional)",
+    "contactPlaceholder": "Ex: 0722...",
+    "errorMessage": "Te rugăm să acorzi cel puțin un rating în secțiunile de mai jos.",
+    "submitButton": "Trimite Feedback",
+    "loading": "Se trimite...",
+    "submittedTitle": "Mulțumim pentru feedback!",
+    "submittedDesc": "Opinia ta ne ajută extraordinar de mult să ne îmbunătățim serviciile în fiecare zi.",
+    "googlePrompt": "Dacă ai avut o experiență de 5 stele și vrei să ne susții, lasă-ne o recenzie și pe Google Maps:",
+    "googleButton": "Scrie Recenzie pe Google",
+    "resetButton": "Trimite alt feedback",
+    "categories": {
+      "food": "Mâncare / Preparate",
+      "drinks": "Băuturi / Cafea",
+      "service": "Servire / Personal",
+      "atmosphere": "Atmosferă / Muzică",
+      "value": "Preț",
+      "wait": "Timp Așteptare"
+    }
+  },
+  "menu": {
+    "tagline": "CONSTRUIT PENTRU ECHILIBRU & ENERGIE",
+    "title": "Meniul Nostru<1>.</1>",
+    "desc": "Preparate nutritive, delicioase și complet funcționale, infuzate cu super-alimente și adaptogeni benefici.",
+    "teaserTitle": "Toate cafelele noastre sunt de specialitate",
+    "teaserDesc": "Oferim espresso single-origin în fiecare zi, lapte bio vegetal la alegere gratuit și o selecție superbă de deserturi raw-vegane gătite zilnic.",
+    "details": "Detalii",
+    "clickHint": "Click pentru descriere completă",
+    "close": "Închide",
+    "macros": {
+      "calories": "kcal",
+      "protein": "Proteine",
+      "carbs": "Carbohidrați",
+      "fat": "Grăsimi"
+    },
+    "categories": {
+      "food": "Mâncare",
+      "breakfast-soups": "Mic Dejun & Supe",
+      "mains-salads": "Mâncăruri & Salate",
+      "desserts": "Deserturi fără Zahăr",
+      "drinks": "Băuturi",
+      "coffee-functional": "Cafea & Funcționale",
+      "teas": "Ceaiuri & Infuzii",
+      "soft-drinks": "Răcoritoare",
+      "non-alcoholic": "Mocktails & Sucuri",
+      "alcoholic": "Vinuri & Bere"
+    }
+  }
+}

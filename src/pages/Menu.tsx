@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { ForkKnife, Cookie, Coffee, Egg, Wine, TeaBag, Drop, Carrot } from "@phosphor-icons/react"
 import { Coffee as LucideCoffee, Leaf, Flame, Beef, Wheat, Nut, X, Plus, Info, ChevronLeft, ChevronRight } from "lucide-react"
+import { useTranslation, Trans } from "react-i18next"
 
 type MenuItem = {
   name: string
@@ -47,7 +48,7 @@ const menuData: MenuGroup[] = [
             name: "Omletă Franțuzească",
             description: "2 ouă bio gătite clasic franțuzesc, moi și cremoase, servite cu pâine artizanală de secară cu semințe.",
             price: "33 lei",
-            image: "https://images.pexels.com/photos/7780036/pexels-photo-7780036.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+            image: "https://images.pexels.com/photos/23996321/pexels-photo-23996321.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
             macros: { calories: 325, protein: "18g", carbs: "27g", fat: "16g" }
           },
           {
@@ -615,6 +616,7 @@ function CategoryBar({
   onSelect: (id: string) => void
   compact: boolean
 }) {
+  const { t } = useTranslation()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canLeft, setCanLeft] = useState(false)
   const [canRight, setCanRight] = useState(false)
@@ -657,7 +659,7 @@ function CategoryBar({
             }`}
           >
             {cat.icon}
-            {cat.label}
+            {t(`menu.categories.${cat.id}`)}
           </button>
         ))}
       </div>
@@ -704,6 +706,7 @@ function CategoryBar({
 }
 
 export default function Menu() {
+  const { t } = useTranslation()
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(menuData[0].categories[0].id)
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
@@ -778,10 +781,17 @@ export default function Menu() {
           transition={{ duration: 0.7 }}
           className="text-center mb-16"
         >
-          <p className="text-brand-green-700 uppercase tracking-[0.3em] text-xs font-bold mb-3 font-sans">CONSTRUIT PENTRU ECHILIBRU & ENERGIE</p>
-          <h2 className="text-4xl md:text-6xl font-extrabold text-brand-green-700 tracking-tight font-serif lowercase">Meniul Nostru<span className="text-brand-green-500 font-sans">.</span></h2>
+          <p className="text-brand-green-700 uppercase tracking-[0.3em] text-xs font-bold mb-3 font-sans">{t("menu.tagline")}</p>
+          <h2 className="text-4xl md:text-6xl font-extrabold text-brand-green-700 tracking-tight font-serif lowercase">
+            <Trans
+              i18nKey="menu.title"
+              components={{ 1: <span className="text-brand-green-500 font-sans" /> }}
+            >
+              Meniul Nostru<span className="text-brand-green-500 font-sans">.</span>
+            </Trans>
+          </h2>
           <p className="text-brand-dark/80 text-sm mt-3 max-w-xl mx-auto font-light leading-relaxed font-sans">
-            Preparate nutritive, delicioase și complet funcționale, infuzate cu super-alimente și adaptogeni benefici.
+            {t("menu.desc")}
           </p>
         </motion.div>
 
@@ -817,7 +827,7 @@ export default function Menu() {
                   }`}
                 >
                   {group.icon}
-                  {group.label}
+                  {t(`menu.categories.${group.id}`)}
                 </button>
               ))}
             </div>
@@ -870,6 +880,7 @@ export default function Menu() {
                     <img
                       src={item.image}
                       alt={item.name}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     {item.tag && (
@@ -879,7 +890,7 @@ export default function Menu() {
                     )}
                     {/* Click-for-details hint, revealed on hover */}
                     <span className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-cream-50/90 backdrop-blur text-brand-green-700 text-[11px] font-bold shadow-sm opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                      <Plus className="w-3.5 h-3.5" /> Detalii
+                      <Plus className="w-3.5 h-3.5" /> {t("menu.details")}
                     </span>
                   </div>
                 )}
@@ -894,23 +905,23 @@ export default function Menu() {
                   {item.macros && (
                     <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
                       <span className="px-2.5 py-1 rounded bg-brand-green-700/10 text-brand-green-700 font-bold flex items-center gap-1.5 border border-brand-green-700/10">
-                        <Flame className="w-3.5 h-3.5" /> {item.macros.calories} kcal
+                        <Flame className="w-3.5 h-3.5" /> {item.macros.calories} {t("menu.macros.calories")}
                       </span>
-                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title="Proteine">
-                        <Beef className="w-3.5 h-3.5 text-red-700/80" /> {item.macros.protein} Proteine
+                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.protein")}>
+                        <Beef className="w-3.5 h-3.5 text-red-700/80" /> {item.macros.protein} {t("menu.macros.protein")}
                       </span>
-                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title="Carbohidrați">
-                        <Wheat className="w-3.5 h-3.5 text-amber-700/80" /> {item.macros.carbs} Carbohidrați
+                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.carbs")}>
+                        <Wheat className="w-3.5 h-3.5 text-amber-700/80" /> {item.macros.carbs} {t("menu.macros.carbs")}
                       </span>
-                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title="Grăsimi Sănătoase">
-                        <Nut className="w-3.5 h-3.5 text-amber-700" /> {item.macros.fat} Grăsimi
+                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.fat")}>
+                        <Nut className="w-3.5 h-3.5 text-amber-700" /> {item.macros.fat} {t("menu.macros.fat")}
                       </span>
                     </div>
                   )}
 
                   {/* Suggestion that a click opens the full description */}
                   <p className="mt-auto pt-3 flex items-center gap-1.5 text-brand-green-700/70 group-hover:text-brand-green-700 text-[11px] sm:text-xs font-semibold font-sans transition-colors">
-                    <Info className="w-3.5 h-3.5" /> Click pentru descriere completă
+                    <Info className="w-3.5 h-3.5" /> {t("menu.clickHint")}
                   </p>
                 </div>
               </motion.button>
@@ -930,8 +941,8 @@ export default function Menu() {
             <LucideCoffee size={24} />
           </div>
           <div>
-            <p className="text-brand-green-700 font-bold text-base font-serif lowercase">Toate cafelele noastre sunt de specialitate</p>
-            <p className="text-brand-dark/70 text-xs md:text-sm font-light mt-1 font-sans">Oferim espresso single-origin în fiecare zi, lapte bio vegetal la alegere gratuit și o selecție superbă de deserturi raw-vegane gătite zilnic.</p>
+            <p className="text-brand-green-700 font-bold text-base font-serif lowercase">{t("menu.teaserTitle")}</p>
+            <p className="text-brand-dark/70 text-xs md:text-sm font-light mt-1 font-sans">{t("menu.teaserDesc")}</p>
           </div>
         </motion.div>
       </div>
@@ -960,7 +971,7 @@ export default function Menu() {
                 <button
                   type="button"
                   onClick={() => setSelectedItem(null)}
-                  aria-label="Închide"
+                  aria-label={t("menu.close")}
                   className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-brand-cream-50/90 backdrop-blur text-brand-dark/70 hover:text-brand-green-700 border border-brand-green-700/10 flex items-center justify-center transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -968,7 +979,7 @@ export default function Menu() {
 
                 {selectedItem.image && (
                   <div className="w-full h-56 sm:h-64 overflow-hidden">
-                    <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-full object-cover" />
+                    <img src={selectedItem.image} alt={selectedItem.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                   </div>
                 )}
 
@@ -992,22 +1003,22 @@ export default function Menu() {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-green-700/10 border border-brand-green-700/10">
                         <Flame className="w-5 h-5 text-brand-green-700 mb-1" />
-                        <span className="text-brand-green-700 font-bold text-sm">{selectedItem.macros.calories} kcal</span>
+                        <span className="text-brand-green-700 font-bold text-sm">{selectedItem.macros.calories} {t("menu.macros.calories")}</span>
                       </div>
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
                         <Beef className="w-5 h-5 text-red-700/80 mb-1" />
                         <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.protein}</span>
-                        <span className="text-brand-dark/50 text-[11px] font-medium">Proteine</span>
+                        <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.protein")}</span>
                       </div>
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
                         <Wheat className="w-5 h-5 text-amber-700/80 mb-1" />
                         <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.carbs}</span>
-                        <span className="text-brand-dark/50 text-[11px] font-medium">Carbohidrați</span>
+                        <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.carbs")}</span>
                       </div>
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
                         <Nut className="w-5 h-5 text-amber-700 mb-1" />
                         <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.fat}</span>
-                        <span className="text-brand-dark/50 text-[11px] font-medium">Grăsimi</span>
+                        <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.fat")}</span>
                       </div>
                     </div>
                   )}
