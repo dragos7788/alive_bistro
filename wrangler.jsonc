@@ -7,7 +7,7 @@
       // Run: wrangler d1 create alive-bistro-menu  → then paste the database_id here
       "binding": "DB",
       "database_name": "alive-bistro-menu",
-      "database_id": "REPLACE_WITH_DATABASE_ID",
+      "database_id": "1272c004-748d-498e-bd71-5313b29e0941",
       "migrations_dir": "migrations"
     }
   ],
