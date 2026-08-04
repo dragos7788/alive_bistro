@@ -5,20 +5,26 @@ import Home from '@/pages/Home'
 import Menu from '@/pages/Menu'
 import Community from '@/pages/Community'
 import Feedback from '@/pages/Feedback'
+import AdminApp from '@/pages/admin/AdminApp'
 
 export default function App() {
   const [isFeedback, setIsFeedback] = useState(false)
+  const isAdmin = window.location.pathname.startsWith("/admin")
 
   useEffect(() => {
     const handleHashChange = () => {
       setIsFeedback(window.location.hash === "#feedback")
     }
 
-    handleHashChange() // check on load
+    handleHashChange()
 
     window.addEventListener("hashchange", handleHashChange)
     return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
+
+  if (isAdmin) {
+    return <AdminApp />
+  }
 
   if (isFeedback) {
     return (

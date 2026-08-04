@@ -1,0 +1,17 @@
+export const tagColors: Record<string, string> = {
+  "Wellness Boost": "bg-brand-green-100 text-brand-green-800 font-bold",
+  Signature:        "bg-brand-green-700 text-brand-cream-50 font-bold",
+  Echilibru:        "bg-brand-green-100 text-brand-green-800 font-bold",
+  Firesc:           "bg-brand-green-100 text-brand-green-800 font-bold",
+  "Must Try":       "bg-red-100 text-red-800 font-bold",
+  "Beauty Tonic":   "bg-pink-100 text-pink-800 font-bold",
+  Recovery:         "bg-blue-100 text-blue-800 font-bold",
+  Energy:           "bg-amber-100 text-amber-800 font-bold",
+  Detox:            "bg-brand-green-100 text-brand-green-800 font-bold",
+  Relaxare:         "bg-purple-100 text-purple-800 font-bold",
+  Probiotic:        "bg-teal-100 text-teal-800 font-bold",
+  Hidratare:        "bg-blue-100 text-blue-800 font-bold",
+  Craft:            "bg-amber-100 text-amber-800 font-bold",
+  Brunch:           "bg-orange-100 text-orange-800 font-bold",
+  "High Protein":   "bg-red-100 text-red-800 font-bold",
+}

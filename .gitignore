@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated seed SQL (produced by npm run db:seed)
+scripts/seed-data.sql

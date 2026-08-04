@@ -11,7 +11,13 @@
     "predeploy": "npm run build",
     "deploy": "npm run build && wrangler pages deploy dist --project-name alive-bistro",
     "images:fetch": "node scripts/fetch-menu-images.mjs",
-    "images:apply": "node scripts/apply-menu-images.mjs"
+    "images:apply": "node scripts/apply-menu-images.mjs",
+    "dev:cf": "npm run build && wrangler pages dev dist",
+    "db:migrate": "wrangler d1 migrations apply alive-bistro-menu --local",
+    "db:migrate:prod": "wrangler d1 migrations apply alive-bistro-menu",
+    "db:seed": "node scripts/seed-menu-db.mjs && wrangler d1 execute alive-bistro-menu --local --file=scripts/seed-data.sql",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",
@@ -35,6 +41,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/ui": "^4.1.10",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
@@ -42,6 +49,7 @@
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12",
+    "vitest": "^4.1.10",
     "wrangler": "^4.104.0"
   }
 }

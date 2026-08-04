@@ -1,0 +1,173 @@
+/**
+ * Generates seed SQL from the current menu data and writes it to scripts/seed-data.sql.
+ * Usage: node scripts/seed-menu-db.mjs
+ * Then: wrangler d1 execute alive-bistro-menu --local --file=scripts/seed-data.sql
+ */
+
+import { writeFileSync } from "fs"
+import { fileURLToPath } from "url"
+import { join, dirname } from "path"
+
+const menuData = [
+  {
+    id: "food", label: "Mâncare", iconKey: "fork-knife",
+    categories: [
+      {
+        id: "breakfast-soups", label: "Mic Dejun & Supe", iconKey: "egg",
+        items: [
+          { name: "Omletă Franțuzească", description: "2 ouă bio gătite clasic franțuzesc, moi și cremoase, servite cu pâine artizanală de secară cu semințe.", price: "33 lei", image_url: "https://images.pexels.com/photos/23996321/pexels-photo-23996321.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 325, protein: "18g", carbs: "27g", fat: "16g" },
+          { name: "Omletă cu Ciuperci", description: "Omletă din ouă bio cu ciuperci sauté, ierburi aromate și brânză topită.", price: "36 lei", image_url: "https://images.pexels.com/photos/26161037/pexels-photo-26161037.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 375, protein: "24g", carbs: "6g", fat: "28g" },
+          { name: "Omletă cu Avocado și Halloumi", description: "Omletă din ouă bio cu felii de avocado cremos și halloumi gratinat, garnisită cu ierburi proaspete.", price: "41 lei", image_url: "https://images.pexels.com/photos/5836624/pexels-photo-5836624.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 480, protein: "26g", carbs: "9g", fat: "38g" },
+          { name: "Avocado Toast cu Ou Poșat", description: "Pâine artizanală cu maia, avocado cremos, ou bio poșat, fulgi de chilli și semințe active.", price: "39 lei", image_url: "https://images.pexels.com/photos/4557722/pexels-photo-4557722.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Firesc", calories: 469, protein: "24.5g", carbs: "34.7g", fat: "25.9g" },
+          { name: "Supă Cremă de Dovleac cu Trufe", description: "Supă catifelată de dovleac copt, aromatizată cu un strop de ulei de trufe și semințe crocante.", price: "28 lei", image_url: "https://images.pexels.com/photos/9124024/pexels-photo-9124024.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 220, protein: "4g", carbs: "24g", fat: "12g" },
+        ],
+      },
+      {
+        id: "mains-salads", label: "Mâncăruri & Salate", iconKey: "leaf",
+        items: [
+          { name: "Piept de Pui cu Orzo și Sos Gochujang", description: "Piept de pui suculent gătit lent la cuptor cu paste orzo fine și sos coreean gochujang roșu.", price: "52 lei", image_url: "https://images.pexels.com/photos/27777833/pexels-photo-27777833.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 600, protein: "48g", carbs: "65g", fat: "16g" },
+          { name: "Somon cu Orez și Salată Caldă de Legume", description: "File de somon premium la cuptor, însoțit de orez brun sălbatic și mix de legume proaspete de sezon.", price: "65 lei", image_url: "https://images.pexels.com/photos/31146493/pexels-photo-31146493.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 600, protein: "42g", carbs: "62g", fat: "20g" },
+          { name: "Noodles cu Vită Alive", description: "200g noodles integrali din grâu de munte cu fâșii fine de vițel marinat, legume asiatice crocante și sos consistent umami.", price: "55 lei", image_url: "https://images.pexels.com/photos/10692546/pexels-photo-10692546.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 500, protein: "32g", carbs: "58g", fat: "16g" },
+          { name: "Noodles cu Pui Alive", description: "200g noodles integrali din grâu de munte cu piept de pui fin crescut la sol, legume crude rântălite și sosul tău preferat.", price: "48 lei", image_url: "https://images.pexels.com/photos/24243345/pexels-photo-24243345.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 460, protein: "34g", carbs: "58g", fat: "10g" },
+          { name: "Halloumi Garden", description: "380g salată verde mixtă cu felii de halloumi rumenit la grătar, semințe active și vinegretă mediteraneană.", price: "55 lei", image_url: "https://images.pexels.com/photos/5950480/pexels-photo-5950480.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 515, protein: "24g", carbs: "19g", fat: "38g" },
+          { name: "Salată Caesar", description: "Salată clasică Caesar pregătită cu parmezan maturat, crutoane cu semințe de secară și dressing de casă.", price: "41 / 49 lei", image_url: "https://images.pexels.com/photos/29935339/pexels-photo-29935339.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 335, protein: "14g", carbs: "20g", fat: "22g" },
+          { name: "Salată Alive cu Pui / Somon / Vită", description: "O explozie de prospețime cu mix de salate verzi, proteină proaspăt friptă la cuptor la alegere și sosul tău preferat.", price: "49 lei", image_url: "https://images.pexels.com/photos/5192431/pexels-photo-5192431.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 501, protein: "45.6g", carbs: "28.1g", fat: "22.8g" },
+        ],
+      },
+      {
+        id: "desserts", label: "Deserturi fără Zahăr", iconKey: "cookie",
+        items: [
+          { name: "Budincă de Chia", description: "Semințe ecologice de chia lăsate la hidratat în lapte cremos de migdale, servite sub un jeleu catifelat de mango și fructe roșii.", price: "28 lei", image_url: "https://images.pexels.com/photos/5947029/pexels-photo-5947029.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 260, protein: "8g", carbs: "26g", fat: "14g" },
+          { name: "Terci de Ovăz cu Fructe Roșii", description: "Fulgi integrali dospiți în lapte fierbinte de cocos, miere parfumată de tei și un decor generos cu fructe proaspete de pădure.", price: "28 lei", image_url: "https://images.pexels.com/photos/6082910/pexels-photo-6082910.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 290, protein: "8g", carbs: "42g", fat: "10g" },
+          { name: "Carrot Cake", description: "Prăjitură moale aromată cu morcov, nucă românească ruptă, fulgi de cocos și scorțișoară exotică mărunțită.", price: "24 lei", image_url: "https://images.pexels.com/photos/5594497/pexels-photo-5594497.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Must Try", calories: 360, protein: "5g", carbs: "45g", fat: "18g" },
+          { name: "Raspberry Cheesecake with Oat Crumble", description: "Desert echilibrat cu bază crocantă din biscuiți de ovăz, cremă spumată fină de brânză și dulceață artizanală de zmeură de munte.", price: "24 lei", image_url: "https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 320, protein: "6g", carbs: "30g", fat: "20g" },
+          { name: "Cranberries Walnut Banana Bread", description: "Pâine moale și densă din piure fin de banane bine coapte cu adaos delicios de merișoare acrișoare și miez crocant de nucă.", price: "21 lei", image_url: "https://images.pexels.com/photos/5419316/pexels-photo-5419316.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 350, protein: "6g", carbs: "50g", fat: "14g" },
+          { name: "Cocoa Peanut Butter Banana Bread", description: "Pâine moale din banane coapte energizantă cu inserții bogate de cacao organică pură și unt moale cald de arahide.", price: "16 lei", image_url: "https://images.pexels.com/photos/4384242/pexels-photo-4384242.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 350, protein: "7g", carbs: "45g", fat: "16g" },
+          { name: "Banana Bread", description: "Rețetă tradițională dospită delicios din piure cald natural de banane, unt bio topit și o textură pufoasă unică.", price: "15 lei", image_url: "https://images.pexels.com/photos/7167845/pexels-photo-7167845.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 290, protein: "5g", carbs: "44g", fat: "10g" },
+          { name: "Arahide Coapte Aromatizate", description: "Arahide simple în coajă coapte lent pe plită, presărate cu sare marină fină și un praf de mentă parfumată.", price: "12 lei", image_url: "https://images.pexels.com/photos/34142354/pexels-photo-34142354.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 315, protein: "13g", carbs: "9g", fat: "25g" },
+          { name: "Quiche Proteic cu Brânză, Pesto și Roșii", description: "Mini-turtă proteică dospită cu făină integrală, umplută consistent cu brânză proaspătă, pesto de busuioc, roșii cherry și smântână.", price: "24 lei", image_url: "https://images.pexels.com/photos/20182342/pexels-photo-20182342.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 221, protein: "10g", carbs: "12.2g", fat: "15.6g" },
+          { name: "Quiche Proteic cu Prosciutto și Roșii", description: "Mini-turtă proteică delicioasă dospită cu făină integrală, prosciutto crudo feliat subțire, roșii și smântână.", price: "27 lei", image_url: "https://images.pexels.com/photos/31882545/pexels-photo-31882545.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 245, protein: "12g", carbs: "14g", fat: "16g" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "drinks", label: "Băuturi", iconKey: "coffee",
+    categories: [
+      {
+        id: "coffee-functional", label: "Cafea & Funcționale", iconKey: "lucide-coffee",
+        items: [
+          { name: "Espresso", description: "Espresso robust intens scurt, extras dintr-un blend select de specialitate.", price: "12 lei", image_url: "https://images.pexels.com/photos/12039010/pexels-photo-12039010.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Espresso Doppio", description: "Shot dublu lung și energizant de espresso aromat de specialitate.", price: "14 lei", image_url: "https://images.pexels.com/photos/1047168/pexels-photo-1047168.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Americano", description: "O extracție clasică echilibrată de espresso alungită fin cu apă caldă.", price: "12 lei", image_url: "https://images.pexels.com/photos/11429424/pexels-photo-11429424.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Long Black", description: "Espresso dublu turnat direct peste apă caldă, menținând crema densă.", price: "15 lei", image_url: "https://images.pexels.com/photos/6027998/pexels-photo-6027998.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Flat White", description: "Espresso dublu de origine și o emulsie caldă de lapte organic de ovăz.", price: "18 lei", image_url: "https://images.pexels.com/photos/894696/pexels-photo-894696.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Cappuccino", description: "Espresso bio asortat cu spumă fină, caldă și catifelată de lapte cremos.", price: "18 lei", image_url: "https://images.pexels.com/photos/22221952/pexels-photo-22221952.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Latte", description: "Espresso cu mult lapte cremos și puțină spumă mătăsoasă.", price: "18 lei", image_url: "https://images.pexels.com/photos/459489/pexels-photo-459489.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Cold Brew", description: "Cafea aromată extrasă lent timp de 12 ore la rece, plină de prospețime.", price: "17 lei", image_url: "https://images.pexels.com/photos/37022847/pexels-photo-37022847.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Cold Brew Tonic", description: "Blend de Cold Brew și apă tonică cu cuburi de gheață.", price: "18 lei", image_url: "https://images.pexels.com/photos/3165336/pexels-photo-3165336.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Protein Shake Peanut Chocolate", description: "Mix de proteină vegetală vegană (31g) cu arahide crocante, cacao pură și banană.", price: "25 lei", image_url: "https://images.pexels.com/photos/4378601/pexels-photo-4378601.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "High Protein", calories: 290, protein: "31g", carbs: "22g", fat: "8g" },
+          { name: "Protein Shake Blue Vanilla", description: "Proteină vegană fină de vanilie combinate excelent cu spirulină albastră și lapte vegetal.", price: "25 lei", image_url: "https://images.pexels.com/photos/5337014/pexels-photo-5337014.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "High Protein", calories: 270, protein: "25g", carbs: "20g", fat: "6g" },
+          { name: "Matcha Protein", description: "Pudră de matcha de ceremonie bio preparată cu colagen, miere și lapte vegetal.", price: "25 lei", image_url: "https://images.pexels.com/photos/12389352/pexels-photo-12389352.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 240, protein: "20g", carbs: "18g", fat: "4g" },
+          { name: "Collagen Mango Lemonade", description: "Limonadă exotică revigorantă combinată savuros cu piure de mango și colagen marin premium.", price: "28 lei", image_url: "https://images.pexels.com/photos/4955264/pexels-photo-4955264.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Beauty Tonic", calories: 140, protein: "10g", carbs: "22g", fat: "0g" },
+          { name: "Electrolyte Orange Drink", description: "Băutură de recuperare cu portocale stors, lămâie, sâmburi, electroliți naturali și miere.", price: "28 lei", image_url: "https://images.pexels.com/photos/14510445/pexels-photo-14510445.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 95, protein: "1g", carbs: "24g", fat: "0g" },
+          { name: "Creatine Lemonade", description: "Limonadă sportivă revigorantă cu creatină monohidrat, mentă zdrobită și miere bio.", price: "23 lei", image_url: "https://images.pexels.com/photos/5668215/pexels-photo-5668215.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Energy", calories: 110, protein: "0g", carbs: "28g", fat: "0g" },
+          { name: "Bloody Roots", description: "Blend antioxidant complex obținut din sfeclă roșie de toamnă, morcovi și ghimbir proaspăt.", price: "23 lei", image_url: "https://images.pexels.com/photos/4443478/pexels-photo-4443478.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 120, protein: "2g", carbs: "26g", fat: "0g" },
+        ],
+      },
+      {
+        id: "teas", label: "Ceaiuri & Infuzii", iconKey: "tea-bag",
+        items: [
+          { name: "Matcha Latte", description: "Matcha ceremonială japoneză dospită mătăsos cu lapte bio cald de ovăz.", price: "25 lei", image_url: "https://images.pexels.com/photos/911810/pexels-photo-911810.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 140, protein: "3g", carbs: "15g", fat: "3g" },
+          { name: "Iced Matcha Latte", description: "Matcha de ceremonie turnată rece peste gheață zdrobită și emulsie de ovăz.", price: "25 lei", image_url: "https://images.pexels.com/photos/38345070/pexels-photo-38345070.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 130, protein: "3g", carbs: "14g", fat: "2.5g" },
+          { name: "Matcha Tonic", description: "Băutură aromată tonică revigorantă combinată savuros cu matcha ceremonială.", price: "20 lei", image_url: "https://images.pexels.com/photos/38345070/pexels-photo-38345070.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 85, protein: "1g", carbs: "20g", fat: "0g" },
+          { name: "Ceai Mango / Summer Love", description: "Infuzie pură aromatică din fructe tropicale dulci sau blend floral aromat dospit la rece.", price: "18 lei", image_url: "https://images.pexels.com/photos/723129/pexels-photo-723129.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", calories: 5, protein: "0g", carbs: "1g", fat: "0g" },
+        ],
+      },
+      {
+        id: "soft-drinks", label: "Răcoritoare", iconKey: "drop",
+        items: [
+          { name: "Apă Plată Aqua Carpatica", description: "Apă plată pură de izvor de munte Aqua Carpatica, îmbuteliată la sticlă mică (330ml).", price: "8.5 lei", image_url: "https://images.pexels.com/photos/1128207/pexels-photo-1128207.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Apă Plată Aqua Carpatica Mare", description: "Apă plată curată de izvor montan Aqua Carpatica, la sticlă mare pentru hidratare (750ml).", price: "12.5 lei", image_url: "https://images.pexels.com/photos/31107362/pexels-photo-31107362.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Apă Minerală Aqua Carpatica", description: "Apă minerală natural carbogazoasă de izvor Aqua Carpatica (330ml).", price: "8.5 lei", image_url: "https://images.pexels.com/photos/12987477/pexels-photo-12987477.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Apă Minerală Aqua Carpatica Mare", description: "Apă minerală carbogazoasă bogată în săruri minerale, la sticlă mare (750ml).", price: "15.5 lei", image_url: "https://images.pexels.com/photos/327090/pexels-photo-327090.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Apă de Cocos Coconat Sparkling", description: "Apă carbogazoasă naturală hidratantă extrasă direct din nucă ecologică de cocos (520ml).", price: "15.5 lei", image_url: "https://images.pexels.com/photos/32831497/pexels-photo-32831497.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Apă de Cocos Coconat Classic", description: "Apă de cocos naturală bogată în electroliți simpli activi (330ml).", price: "15.5 lei", image_url: "https://images.pexels.com/photos/32831497/pexels-photo-32831497.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+        ],
+      },
+      {
+        id: "non-alcoholic", label: "Mocktails & Sucuri", iconKey: "carrot",
+        items: [
+          { name: "Fresh Portocale / Grapefruit / Mix", description: "Suc 100% natural, preparat pe loc la storcător din citrice proaspete.", price: "23 lei", image_url: "https://images.pexels.com/photos/14510445/pexels-photo-14510445.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Feel Green", description: "Smoothie ecologic complex preparat din portocale proaspete, banane dulci și spanac fin baby.", price: "23 lei", image_url: "https://images.pexels.com/photos/11896097/pexels-photo-11896097.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Detox" },
+          { name: "Energy Boost", description: "Băutură naturală din portocale stors, ghimbir tăiat, mere și mango zemos.", price: "23 lei", image_url: "https://images.pexels.com/photos/4443460/pexels-photo-4443460.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Energy" },
+          { name: "Iced Mango Summer Love", description: "Smoothie cald decorat răcoritor cu piure de mango bio dospit și cuburi de gheață.", price: "25 lei", image_url: "https://images.pexels.com/photos/17612822/pexels-photo-17612822.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Limonadă", description: "Limonadă acrișoară scurtă realizată din lămâi proaspete și sirop curat de agave.", price: "19 lei", image_url: "https://images.pexels.com/photos/7360957/pexels-photo-7360957.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Limonadă cu Mentă", description: "Băutură clasică aromată cu suc ecologic de lămâie, frunze de mentă asortate și miere bio.", price: "23 lei", image_url: "https://images.pexels.com/photos/18142599/pexels-photo-18142599.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Limonadă Ghimbir și Mango", description: "Limonadă fină deosebită asortată savuros cu spumă de ghimbir iute de munte și suc de mango.", price: "25 lei", image_url: "https://images.pexels.com/photos/8173456/pexels-photo-8173456.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Iced Tea Mango", description: "Infuzie răcoritoare fină spumată cu ulei de mango tropical din belșug.", price: "23 lei", image_url: "https://images.pexels.com/photos/33573200/pexels-photo-33573200.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Iced Tea Summer Love", description: "Infuzie răcoritoare florală organică servită din cuburi mari cristalizate de gheață.", price: "23 lei", image_url: "https://images.pexels.com/photos/34567239/pexels-photo-34567239.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Socată", description: "Socată clasică românească fermentată excelent din flori aromate proaspete.", price: "23 lei", image_url: "https://images.pexels.com/photos/38345781/pexels-photo-38345781.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Socată Colorată", description: "Socată fină colorată natural prin infuzii secrete din flori sălbatice (520ml).", price: "18.5 lei", image_url: "https://images.pexels.com/photos/10279308/pexels-photo-10279308.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+        ],
+      },
+      {
+        id: "alcoholic", label: "Vinuri & Bere", iconKey: "wine",
+        items: [
+          { name: "OneTwо Bnszwei – German Lager 5% ABV", description: "400ml de bere artizanală blondă curată lager, dospită fin și proaspăt trasă la draft.", price: "20 lei", image_url: "https://images.pexels.com/photos/6570266/pexels-photo-6570266.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Craft" },
+          { name: "OneTwо Juicy – Hazy IPA 5.5% ABV", description: "400ml bere artizanală fructată nefiltrată Hazy IPA cu arome superbe din hamei exotic.", price: "22 lei", image_url: "https://images.pexels.com/photos/1267681/pexels-photo-1267681.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Craft" },
+          { name: "OneTwо Mango Habanero", description: "400ml de bere artizanală rară, infuzată aromat cu mango dulce și fructat cu ardei picant Habanero.", price: "23 lei", image_url: "https://images.pexels.com/photos/33315800/pexels-photo-33315800.jpeg?auto=compress&cs=tinysrgb&h=650&w=940", tag: "Craft" },
+          { name: "Prosecco Bends Rosé", description: "Prosecco rosé elegant, bio, plin de rotunjime și efervescență fină (sticlă sau pahar).", price: "100 / 28 lei", image_url: "https://images.pexels.com/photos/30206424/pexels-photo-30206424.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Petru Vaselo Alb", description: "Vin alb proaspăt aromatic adus direct de la renumita cramă locală bio.", price: "100 / 28 lei", image_url: "https://images.pexels.com/photos/5895443/pexels-photo-5895443.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Petru Vaselo Roze", description: "Vin roze sec și elegant cu arome mătăsoase de fructe roșii dospite la soare.", price: "100 / 28 lei", image_url: "https://images.pexels.com/photos/15186519/pexels-photo-15186519.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Petru Vaselo Roșu", description: "Vin roșu catifelat cu tanini fini adus direct de la crama locală.", price: "100 / 28 lei", image_url: "https://images.pexels.com/photos/31011781/pexels-photo-31011781.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Iliaș Fetească Albă", description: "Vin alb premium asortat corect din soiuri pur românești (sticlă de 75cl).", price: "110 lei", image_url: "https://images.pexels.com/photos/19284897/pexels-photo-19284897.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Petru Vaselo Malvine Alb", description: "Cupaj bio aromatic alb premium pur de la crama Petru Vaselo (75cl).", price: "110 lei", image_url: "https://images.pexels.com/photos/13037311/pexels-photo-13037311.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Aperol Spritz", description: "Aperol combinat clasic cu prosseco rece, apă minerală și portocale (180ml).", price: "35 / 26 lei", image_url: "https://images.pexels.com/photos/27668709/pexels-photo-27668709.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Hugo", description: "Prosecco cu sirop de soc aromat, mentă dulce și sâmburi striviți (180ml).", price: "30 lei", image_url: "https://images.pexels.com/photos/639146/pexels-photo-639146.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Iliaș Pinot Noir Roze", description: "Pahar elegant premium dintr-un selecționat Pinot Noir Rosé fin (150ml).", price: "30 lei", image_url: "https://images.pexels.com/photos/30206422/pexels-photo-30206422.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Vin Petru Vaselo Maltine Alb", description: "Pahar de vin alb curat de specialitate de top (150ml).", price: "30 lei", image_url: "https://images.pexels.com/photos/10403547/pexels-photo-10403547.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+          { name: "Wine Cooler", description: "Vin răcoritor bio cu fructe roșii și sifon clasic (200ml).", price: "30 lei", image_url: "https://images.pexels.com/photos/3619268/pexels-photo-3619268.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" },
+        ],
+      },
+    ],
+  },
+]
+
+function q(v) {
+  if (v == null) return "NULL"
+  return `'${String(v).replace(/'/g, "''")}'`
+}
+
+function slugify(name) {
+  return name
+    .toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 60)
+}
+
+const lines = ["-- Generated by scripts/seed-menu-db.mjs — do not edit manually", ""]
+
+for (const group of menuData) {
+  let catOrder = 0
+  for (const cat of group.categories) {
+    lines.push(
+      `INSERT OR REPLACE INTO categories (id, group_id, label, icon_key, sort_order) VALUES (${q(cat.id)}, ${q(group.id)}, ${q(cat.label)}, ${q(cat.iconKey)}, ${catOrder++});`
+    )
+    let itemOrder = 0
+    for (const item of cat.items) {
+      const id = `${cat.id}--${slugify(item.name)}`
+      lines.push(
+        `INSERT OR REPLACE INTO items (id, category_id, name, description, price, image_url, tag, calories, protein, carbs, fat, sort_order) VALUES (${q(id)}, ${q(cat.id)}, ${q(item.name)}, ${q(item.description)}, ${q(item.price)}, ${q(item.image_url)}, ${q(item.tag ?? null)}, ${q(item.calories ?? null)}, ${q(item.protein ?? null)}, ${q(item.carbs ?? null)}, ${q(item.fat ?? null)}, ${itemOrder++});`
+      )
+    }
+  }
+}
+
+const outPath = join(dirname(fileURLToPath(import.meta.url)), "seed-data.sql")
+writeFileSync(outPath, lines.join("\n") + "\n")
+console.log(`Wrote ${lines.length - 2} INSERT statements to scripts/seed-data.sql`)
+const totalItems = menuData.flatMap(g => g.categories).flatMap(c => c.items).length
+console.log(`Expected: SELECT count(*) FROM items = ${totalItems}`)
