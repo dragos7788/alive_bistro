@@ -1,0 +1,109 @@
+{
+  "routes": [
+    {
+      "routePath": "/api/admin/categories/reorder",
+      "mountPath": "/api/admin/categories",
+      "method": "POST",
+      "module": [
+        "api/admin/categories/reorder.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/items/reorder",
+      "mountPath": "/api/admin/items",
+      "method": "POST",
+      "module": [
+        "api/admin/items/reorder.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/categories/:id",
+      "mountPath": "/api/admin/categories",
+      "method": "DELETE",
+      "module": [
+        "api/admin/categories/[id].ts:onRequestDelete"
+      ]
+    },
+    {
+      "routePath": "/api/admin/categories/:id",
+      "mountPath": "/api/admin/categories",
+      "method": "PUT",
+      "module": [
+        "api/admin/categories/[id].ts:onRequestPut"
+      ]
+    },
+    {
+      "routePath": "/api/admin/items/:id",
+      "mountPath": "/api/admin/items",
+      "method": "DELETE",
+      "module": [
+        "api/admin/items/[id].ts:onRequestDelete"
+      ]
+    },
+    {
+      "routePath": "/api/admin/items/:id",
+      "mountPath": "/api/admin/items",
+      "method": "PUT",
+      "module": [
+        "api/admin/items/[id].ts:onRequestPut"
+      ]
+    },
+    {
+      "routePath": "/api/admin/categories",
+      "mountPath": "/api/admin/categories",
+      "method": "GET",
+      "module": [
+        "api/admin/categories/index.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/categories",
+      "mountPath": "/api/admin/categories",
+      "method": "POST",
+      "module": [
+        "api/admin/categories/index.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/items",
+      "mountPath": "/api/admin/items",
+      "method": "GET",
+      "module": [
+        "api/admin/items/index.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/items",
+      "mountPath": "/api/admin/items",
+      "method": "POST",
+      "module": [
+        "api/admin/items/index.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/upload",
+      "mountPath": "/api/admin",
+      "method": "POST",
+      "module": [
+        "api/admin/upload.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/images/:key",
+      "mountPath": "/api/images",
+      "method": "GET",
+      "module": [
+        "api/images/[key].ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/menu",
+      "mountPath": "/api",
+      "method": "GET",
+      "module": [
+        "api/menu.ts:onRequestGet"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}
