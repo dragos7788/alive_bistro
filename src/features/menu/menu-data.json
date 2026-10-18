@@ -23,7 +23,7 @@
         "label": "Soup of the Day",
         "iconKey": "drop",
         "items": [
-          { "name": "Supă de linte și ardei copt", "description": "350 g · Cremă de legume cu linte și ardei copt marinat, crutoane din pâine de secară cu semințe, chimen.\n\nAlergeni: gluten, țelină.", "price": "28 lei", "imageFile": null, "tag": "Produs vegan", "macros": { "calories": 387, "protein": "17,8 g", "carbs": "59,1 g", "fat": "7,1 g" } }
+          { "name": "Supă de linte și ardei copt", "description": "350 g · Cremă de legume cu linte și ardei copt marinat, crutoane din pâine de secară cu semințe, chimen.\n\nAlergeni: gluten, țelină.", "price": "28 lei", "imageFile": "SUPA LINTE.jpg", "tag": "Produs vegan", "macros": { "calories": 387, "protein": "17,8 g", "carbs": "59,1 g", "fat": "7,1 g" } }
         ]
       },
       {
@@ -50,7 +50,7 @@
           { "name": "Salmon Bowl", "description": "440 g · File de somon, orez sălbatic, edamame, zucchini la grătar, morcov, mix de salată, dressing vinegretă de citrice.\n\nAlergeni: pește, muștar.", "price": "58 lei", "imageFile": "SALMON BOWL.jpg", "macros": { "calories": 743, "protein": "39,3 g", "carbs": "65,0 g", "fat": "34,6 g" } },
           { "name": "Chicken Bowl", "description": "530 g · Piept de pui, quinoa, edamame, avocado, nectarină, mix de salată verde, ceapă verde, usturoi, dressing asiatic.\n\nAlergeni: soia, moluște, susan, pește.", "price": "48 lei", "imageFile": "CHICKEN BOWL.jpg", "macros": { "calories": 613, "protein": "47,9 g", "carbs": "56,4 g", "fat": "22,2 g" } },
           { "name": "Beef Bowl", "description": "480 g · Bulgur, spată de vită, edamame, morcov, mix de salată verde, sfeclă roșie, dressing asiatic.\n\nAlergeni: gluten, soia, moluște, pește, susan.", "price": "58 lei", "imageFile": "BEEF BOWL.jpg", "macros": { "calories": 657, "protein": "44,1 g", "carbs": "67,3 g", "fat": "24,0 g" } },
-          { "name": "Veggie Bowl", "description": "500 g · Orez sălbatic, tofu afumat, edamame, avocado, dovlecel zucchini, sfeclă roșie, semințe de susan, dressing vinegretă de citrice.\n\nAlergeni: soia, susan, muștar.", "price": "48 lei", "imageFile": null, "tag": "Produs vegan", "macros": { "calories": 660, "protein": "24,0 g", "carbs": "62,0 g", "fat": "36,0 g" } }
+          { "name": "Veggie Bowl", "description": "500 g · Orez sălbatic, tofu afumat, edamame, avocado, dovlecel zucchini, sfeclă roșie, semințe de susan, dressing vinegretă de citrice.\n\nAlergeni: soia, susan, muștar.", "price": "48 lei", "imageFile": "VEGGIE BOWL.jpg", "tag": "Produs vegan", "macros": { "calories": 660, "protein": "24,0 g", "carbs": "62,0 g", "fat": "36,0 g" } }
         ]
       },
       {
@@ -77,18 +77,18 @@
         "label": "Coffee Bar",
         "iconKey": "lucide-coffee",
         "items": [
-          { "name": "Espresso", "description": "20 ml · Cafea și apă. Extra shot de cafea: +3 lei.", "price": "10 lei", "imageFile": null },
-          { "name": "Espresso Dopio", "description": "36 ml · Cafea și apă.", "price": "13 lei", "imageFile": null },
-          { "name": "Americano", "description": "100 ml · Cafea espresso și apă.", "price": "10 lei", "imageFile": null },
-          { "name": "Long Black", "description": "120 ml · Dublu espresso și apă.", "price": "13 lei", "imageFile": null },
+          { "name": "Espresso", "description": "20 ml · Cafea și apă. Extra shot de cafea: +3 lei.", "price": "10 lei", "imageFile": "ESPRESSO.jpg" },
+          { "name": "Espresso Dopio", "description": "36 ml · Cafea și apă.", "price": "13 lei", "imageFile": "ESPRESSO DOPIO.jpg" },
+          { "name": "Americano", "description": "100 ml · Cafea espresso și apă.", "price": "10 lei", "imageFile": "AMERICANO.jpg" },
+          { "name": "Long Black", "description": "120 ml · Dublu espresso și apă.", "price": "13 lei", "imageFile": "LONG BLACK.jpg" },
           { "name": "Cappucino", "description": "200 ml · Espresso și cremă de lapte.", "price": "14 lei", "imageFile": "CAPPUCINO.jpg" },
-          { "name": "Flat White", "description": "200 ml · Dublu espresso și lapte.", "price": "18 lei", "imageFile": null },
+          { "name": "Flat White", "description": "200 ml · Dublu espresso și lapte.", "price": "18 lei", "imageFile": "FLAT WHITE.jpg" },
           { "name": "Latte", "description": "300 ml · Dublu espresso și lapte.", "price": "19 lei", "imageFile": "LATTE.jpg" },
-          { "name": "Iced Latte", "description": "360 ml · Dublu espresso, lapte și gheață.", "price": "19 lei", "imageFile": null },
-          { "name": "Cortado", "description": "100 ml · Dublu espresso și cremă de lapte.", "price": "12 lei", "imageFile": null },
-          { "name": "Noisette", "description": "100 ml · Dublu espresso și cremă de lapte.", "price": "14 lei", "imageFile": null },
-          { "name": "Espresso Tonic", "description": "360 ml · Dublu espresso și apă tonică fără zahăr.", "price": "19 lei", "imageFile": null },
-          { "name": "Espresso Macchiato", "description": "60 ml · Dublu espresso și cremă de lapte.", "price": "14 lei", "imageFile": null }
+          { "name": "Iced Latte", "description": "360 ml · Dublu espresso, lapte și gheață.", "price": "19 lei", "imageFile": "ICED LATTE.jpg" },
+          { "name": "Cortado", "description": "100 ml · Dublu espresso și cremă de lapte.", "price": "12 lei", "imageFile": "CORTADO.jpg" },
+          { "name": "Noisette", "description": "100 ml · Dublu espresso și cremă de lapte.", "price": "14 lei", "imageFile": "NOISETTE.jpg" },
+          { "name": "Espresso Tonic", "description": "360 ml · Dublu espresso și apă tonică fără zahăr.", "price": "19 lei", "imageFile": "ESPRESSO TONIC.jpg" },
+          { "name": "Espresso Macchiato", "description": "60 ml · Dublu espresso și cremă de lapte.", "price": "14 lei", "imageFile": "ESPRESSO MACHIATO.jpg" }
         ]
       },
       {
@@ -130,7 +130,8 @@
         "label": "Tea & Matcha",
         "iconKey": "tea-bag",
         "items": [
-          { "name": "Ceai Mango / Summer Love", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": null },
+          { "name": "Ceai Mango", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": "CEAI MANGO.jpg" },
+          { "name": "Ceai Summer Love", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": "CEAI SUMMER LOVE.jpg" },
           { "name": "Iced Matcha Latte", "description": "300 ml · Lapte, pudră de matcha și gheață.", "price": "25 lei", "imageFile": null },
           { "name": "Matcha", "description": "200 ml · Apă și pudră de matcha.", "price": "20 lei", "imageFile": null },
           { "name": "Matcha Latte", "description": "200 ml · Cremă de lapte și pudră de matcha.", "price": "25 lei", "imageFile": "MATCHA LATTE.jpg" }

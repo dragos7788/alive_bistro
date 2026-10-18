@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest"
 import source from "./menu-data.json"
 import type { MenuItem } from "./types"
 
+type MenuSourceItem = MenuItem & { imageFile: string | null }
+
 const food = source[0].categories.flatMap<MenuItem>(category => category.items)
 const drinks = source[1].categories.flatMap<MenuItem>(category => category.items)
 
@@ -53,5 +55,29 @@ describe("PDF menu details", () => {
 
   it("Drinks_WithoutPdfNutrition_DoNotInventMacros", () => {
     expect(drinks.filter(item => item.macros).map(item => item.name)).toEqual(["Post Workout Shake"])
+  })
+
+  it("NewMenuPhotos_AreMappedToMatchingItems", () => {
+    const items = source.flatMap(group => group.categories.flatMap<MenuSourceItem>(category => category.items))
+    const mappings = [
+      ["Supă de linte și ardei copt", "SUPA LINTE.jpg"],
+      ["Veggie Bowl", "VEGGIE BOWL.jpg"],
+      ["Espresso", "ESPRESSO.jpg"],
+      ["Espresso Dopio", "ESPRESSO DOPIO.jpg"],
+      ["Americano", "AMERICANO.jpg"],
+      ["Long Black", "LONG BLACK.jpg"],
+      ["Flat White", "FLAT WHITE.jpg"],
+      ["Iced Latte", "ICED LATTE.jpg"],
+      ["Cortado", "CORTADO.jpg"],
+      ["Noisette", "NOISETTE.jpg"],
+      ["Espresso Tonic", "ESPRESSO TONIC.jpg"],
+      ["Espresso Macchiato", "ESPRESSO MACHIATO.jpg"],
+      ["Ceai Mango", "CEAI MANGO.jpg"],
+      ["Ceai Summer Love", "CEAI SUMMER LOVE.jpg"],
+    ]
+
+    for (const [name, imageFile] of mappings) {
+      expect(items.find(item => item.name === name)?.imageFile).toBe(imageFile)
+    }
   })
 })
