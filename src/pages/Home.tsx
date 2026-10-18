@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { Coffee, Leaf, Users, Sparkles, Compass, Heart, Eye } from "lucide-react"
 import { useTranslation, Trans } from "react-i18next"
 import aliveLogo from "../assets/Group of 7 Objectslogo verde svg.svg"
+import interiorPhoto from "../assets/alive-bistro-interior.jpeg"
 
 const brandValuesKeys = [
   {
@@ -56,11 +57,11 @@ function ParallaxHero() {
     <section ref={ref} className="relative min-h-screen overflow-hidden flex items-start justify-center pt-28 pb-32 md:pt-36 bg-brand-cream-100">
       {/* Background with warm overlay */}
       <motion.div
-        style={{ y }}
-        className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center scale-110 opacity-30"
+        style={{ y, backgroundImage: `url(${interiorPhoto})` }}
+        className="absolute inset-0 bg-cover bg-center scale-110 opacity-60"
       />
       {/* Botanical/Natural Warm Overlay matching flyer layout */}
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-cream-100/40 via-brand-cream-100/75 to-brand-cream-100" />
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-cream-100/25 via-brand-cream-100/55 to-brand-cream-100" />
 
       {/* Hero content */}
       <motion.div style={{ opacity }} className="relative z-10 text-center px-6 max-w-4xl">
