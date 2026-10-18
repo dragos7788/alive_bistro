@@ -11,14 +11,23 @@ vi.mock("./seed", () => ({
       id: "breakfast-brunch",
       label: "Breakfast & Brunch",
       iconKey: "egg",
-      items: [{
-        name: "Avocado Toast",
-        description: "Ingredientele din PDF",
-        price: "36 lei",
-        image: "/local-avocado.jpg",
-        imageSrcSet: "/avocado-480.webp 480w, /avocado-800.webp 800w",
-        macros: { calories: 522, protein: "27,3 g", carbs: "51,6 g", fat: "25,3 g" },
-      }],
+      items: [
+        {
+          name: "Avocado Toast",
+          description: "Ingredientele din PDF",
+          price: "36 lei",
+          image: "/local-avocado.jpg",
+          imageSrcSet: "/avocado-480.webp 480w, /avocado-800.webp 800w",
+          macros: { calories: 522, protein: "27,3 g", carbs: "51,6 g", fat: "25,3 g" },
+        },
+        {
+          name: "Espresso",
+          description: "Cafea și apă",
+          price: "10 lei",
+          macros: { calories: 2, protein: "0,1 g", carbs: "0,3 g", fat: "0 g" },
+          nutritionEstimated: true,
+        },
+      ],
     }],
   }],
 }))
@@ -62,6 +71,24 @@ describe("getMenu", () => {
 
     expect(groups[0].categories[0].items[0]).toEqual(serverItem)
     expect(groups[0].categories[0].items[0].imageSrcSet).toBeUndefined()
+  })
+
+  it("ApiWithoutNutrition_PreservesEstimatedNutritionLabelFromLocalMenu", async () => {
+    const serverItem = { name: "Espresso", description: "Cafea și apă", price: "10 lei" }
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({
+      data: [{
+        ...menuData[0],
+        categories: [{ ...menuData[0].categories[0], items: [serverItem] }],
+      }],
+    })))
+
+    const groups = await getMenu()
+
+    expect(groups[0].categories[0].items[0]).toEqual({
+      ...serverItem,
+      macros: { calories: 2, protein: "0,1 g", carbs: "0,3 g", fat: "0 g" },
+      nutritionEstimated: true,
+    })
   })
 
   it("ApiUnavailable_ReturnsPdfMenu", async () => {

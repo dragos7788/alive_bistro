@@ -27,9 +27,10 @@ wrangler d1 execute alive-bistro-menu --local --command="SELECT count(*) FROM it
 Meniul din PDF-urile din 21 și 23 septembrie include ingredientele și alergenii
 declarați pentru cele 26 de preparate, plus calorii, proteine, carbohidrați și
 grăsimi per porție. Post Workout Shake este singura băutură cu valori nutriționale
-declarate în PDF. Pentru mousse, budinca de chia și panna cotta nu sunt precizați
-carbohidrații totali; zaharurile nu sunt folosite ca înlocuitor și nu estimăm valori.
-Detaliile produsului afișează explicit informațiile lipsă.
+declarate în PDF; valorile pentru celelalte băuturi sunt estimări orientative per
+porție și sunt marcate ca atare în meniu. Pentru mousse, budinca de chia și panna
+cotta nu sunt precizați carbohidrații totali; zaharurile nu sunt folosite ca
+înlocuitor și nu estimăm valori.
 
 După modificarea datelor, rulează din nou `npm run db:seed` pentru meniul servit de
 API-ul local. **Seed-ul înlocuiește meniul existent, inclusiv editările din admin.**

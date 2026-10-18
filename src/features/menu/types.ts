@@ -15,6 +15,7 @@ export type MenuItem = {
   imageSrcSet?: string
   tag?: string
   macros?: Macros
+  nutritionEstimated?: boolean
 }
 
 export type MenuCategory = {

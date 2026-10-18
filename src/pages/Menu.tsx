@@ -315,6 +315,11 @@ export default function Menu() {
                   {/* Macronutrients & Calories badges */}
                   {item.macros && (
                     <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+                      {item.nutritionEstimated && (
+                        <span className="px-2.5 py-1 rounded bg-amber-100 text-amber-900 font-semibold border border-amber-900/10">
+                          {t("menu.estimatedBadge")}
+                        </span>
+                      )}
                       <span className="px-2.5 py-1 rounded bg-brand-green-700/10 text-brand-green-700 font-bold flex items-center gap-1.5 border border-brand-green-700/10">
                         <Flame className="w-3.5 h-3.5" /> {item.macros.calories} {t("menu.macros.calories")}
                       </span>
@@ -421,34 +426,36 @@ export default function Menu() {
                   <h3 className="text-brand-green-700 font-bold text-base mb-2">{t("menu.ingredients")}</h3>
                   <p className="whitespace-pre-line text-brand-dark/80 text-sm sm:text-base leading-relaxed font-sans mb-6">{selectedItem.description}</p>
 
-                  <h3 className="text-brand-green-700 font-bold text-base mb-2">{t("menu.nutritionTitle")}</h3>
-                  {selectedItem.macros ? (
+                  {selectedItem.macros && (
                     <>
-                    <p className="text-brand-dark/80 text-xs leading-relaxed mb-3">{t("menu.nutritionSource")}</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                      <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-green-700/10 border border-brand-green-700/10">
-                        <Flame className="w-5 h-5 text-brand-green-700 mb-1" />
-                        <span className="text-brand-green-700 font-bold text-sm">{selectedItem.macros.calories} {t("menu.macros.calories")}</span>
+                      <h3 className="text-brand-green-700 font-bold text-base mb-2">{t("menu.nutritionTitle")}</h3>
+                      {selectedItem.nutritionEstimated && (
+                        <p className="text-brand-dark/80 text-xs leading-relaxed mb-3">{t("menu.nutritionEstimated")}</p>
+                      )}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-green-700/10 border border-brand-green-700/10">
+                          <Flame className="w-5 h-5 text-brand-green-700 mb-1" />
+                          <span className="text-brand-green-700 font-bold text-sm">{selectedItem.macros.calories} {t("menu.macros.calories")}</span>
+                        </div>
+                        <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
+                          <Beef className="w-5 h-5 text-red-700/80 mb-1" />
+                          <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.protein}</span>
+                          <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.protein")}</span>
+                        </div>
+                        {selectedItem.macros.carbs && (
+                          <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
+                            <Wheat className="w-5 h-5 text-amber-700/80 mb-1" />
+                            <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.carbs}</span>
+                            <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.carbs")}</span>
+                          </div>
+                        )}
+                        <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
+                          <Nut className="w-5 h-5 text-amber-700 mb-1" />
+                          <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.fat}</span>
+                          <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.fat")}</span>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
-                        <Beef className="w-5 h-5 text-red-700/80 mb-1" />
-                        <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.protein}</span>
-                        <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.protein")}</span>
-                      </div>
-                      <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
-                        <Wheat className="w-5 h-5 text-amber-700/80 mb-1" />
-                        <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.carbs ?? t("menu.valueUnavailable")}</span>
-                        <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.carbs")}</span>
-                      </div>
-                      <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
-                        <Nut className="w-5 h-5 text-amber-700 mb-1" />
-                        <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.fat}</span>
-                        <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.fat")}</span>
-                      </div>
-                    </div>
                     </>
-                  ) : (
-                    <p className="text-brand-dark/80 text-sm">{t("menu.nutritionUnavailable")}</p>
                   )}
                 </div>
               </motion.div>

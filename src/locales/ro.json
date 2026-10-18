@@ -125,9 +125,8 @@
     "close": "Închide",
     "ingredients": "Ingrediente și detalii",
     "nutritionTitle": "Valori nutriționale per preparat",
-    "nutritionSource": "Valorile sunt preluate din meniul PDF pentru întreaga porție, nu pentru 100 g.",
-    "nutritionUnavailable": "Valorile nutriționale nu sunt precizate în meniul PDF.",
-    "valueUnavailable": "Neprecizat în PDF",
+    "nutritionEstimated": "Valori estimate orientativ pentru porție; pot varia în funcție de rețetă și ingrediente.",
+    "estimatedBadge": "Estimare",
     "macros": {
       "calories": "kcal",
       "protein": "Proteine",

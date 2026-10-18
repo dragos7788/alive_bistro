@@ -122,9 +122,8 @@
     "close": "Close",
     "ingredients": "Ingredients and details",
     "nutritionTitle": "Nutrition per serving",
-    "nutritionSource": "Values are taken from the PDF menu for the whole serving, not per 100 g.",
-    "nutritionUnavailable": "Nutritional values are not specified in the PDF menu.",
-    "valueUnavailable": "Not specified in PDF",
+    "nutritionEstimated": "Approximate estimates per serving; values may vary with the recipe and ingredients.",
+    "estimatedBadge": "Estimated",
     "macros": {
       "calories": "kcal",
       "protein": "Protein",

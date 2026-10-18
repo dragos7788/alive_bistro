@@ -53,8 +53,20 @@ describe("PDF menu details", () => {
     expect(food.find(item => item.name === "Salmon Bowl")?.description).toContain("edamame")
   })
 
-  it("Drinks_WithoutPdfNutrition_DoNotInventMacros", () => {
-    expect(drinks.filter(item => item.macros).map(item => item.name)).toEqual(["Post Workout Shake"])
+  it("Drinks_WithoutPdfNutrition_HaveCompleteEstimatedMacros", () => {
+    const estimatedDrinks = drinks.filter(item => item.nutritionEstimated)
+
+    expect(drinks.every(item => item.macros)).toBe(true)
+    expect(estimatedDrinks).toHaveLength(drinks.length - 1)
+    expect(drinks.find(item => item.name === "Post Workout Shake")?.nutritionEstimated).toBeUndefined()
+    for (const item of estimatedDrinks) {
+      expect(item.macros).toMatchObject({
+        calories: expect.any(Number),
+        protein: expect.stringMatching(/^\d+(,\d+)? g$/),
+        carbs: expect.stringMatching(/^\d+(,\d+)? g$/),
+        fat: expect.stringMatching(/^\d+(,\d+)? g$/),
+      })
+    }
   })
 
   it("NewMenuPhotos_AreMappedToMatchingItems", () => {
