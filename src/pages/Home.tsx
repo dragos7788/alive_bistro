@@ -53,7 +53,7 @@ function ParallaxHero() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
   return (
-    <section ref={ref} className="relative h-screen overflow-hidden flex items-start justify-center pt-28 md:pt-36 bg-brand-cream-100">
+    <section ref={ref} className="relative min-h-screen overflow-hidden flex items-start justify-center pt-28 pb-32 md:pt-36 bg-brand-cream-100">
       {/* Background with warm overlay */}
       <motion.div
         style={{ y }}
@@ -107,9 +107,16 @@ function ParallaxHero() {
         >
           <a
             href="#menu"
-            className="w-full sm:w-auto px-8 py-4 bg-brand-green-700 hover:bg-brand-green-800 active:bg-brand-green-900 text-brand-cream-50 font-bold rounded-full transition-all duration-200 shadow-md shadow-brand-green-700/15 text-center"
+            className="w-full sm:w-auto px-8 py-4 bg-brand-green-700 hover:bg-brand-green-800 active:bg-brand-green-900 text-brand-cream-50 font-bold rounded-full transition-all duration-200 shadow-md shadow-brand-green-700/15 text-center focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand-green-700"
           >
             {t("home.hero.button")}
+          </a>
+          <a
+            href="#custom-menu"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 border border-brand-green-700/40 bg-brand-cream-50/80 hover:bg-brand-green-100 text-brand-green-700 font-bold rounded-full transition-colors duration-200 text-center focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand-green-700"
+          >
+            <Sparkles size={18} className="shrink-0" aria-hidden="true" />
+            {t("home.hero.performanceButton")}
           </a>
         </motion.div>
       </motion.div>

@@ -202,6 +202,10 @@ export default function Menu() {
           <p className="text-brand-dark/80 text-sm mt-3 max-w-xl mx-auto font-light leading-relaxed font-sans">
             {t("menu.desc")}
           </p>
+          <a href="#custom-menu" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-green-700/30 px-5 py-2.5 text-sm font-semibold text-brand-green-700 hover:bg-brand-green-100 focus-visible:outline-2 focus-visible:outline-offset-4">
+            <Plus size={17} aria-hidden="true" />
+            {t("builder.menuLink")}
+          </a>
         </motion.div>
 
         {/* Sentinel: marks where the nav becomes sticky so we can measure scroll progress */}

@@ -2,9 +2,72 @@
   "navbar": {
     "home": "Acasă",
     "menu": "Meniu",
+    "customMenu": "Meniu Performance",
     "community": "Comunitate",
     "feedback": "Feedback",
     "toggleMenu": "Comută meniul"
+  },
+  "builder": {
+    "title": "Meniul tău. În ritmul tău.",
+    "intro": "Alegi combinația, alegi gramajele. Construiește-ți farfuria din proteine, carbohidrați, legume și sosuri, în funcție de pofta și obiectivele tale. Vezi pe loc cât costă și ce valori nutriționale are.",
+    "menuLink": "Vrei altă combinație? Construiește-ți meniul",
+    "start": "Configurează meniul",
+    "imageNote": "Fotografie de prezentare. Combinația ta poate arăta diferit.",
+    "calculatorTitle": "Ce punem în farfurie?",
+    "instructions": "Alege câte o opțiune din fiecare categorie și apoi porția dorită. Poți sări peste orice categorie. Prețul și valorile se actualizează automat în rezumat.",
+    "progress": "{{selected}} / {{total}} categorii alese",
+    "portion": "Alege porția",
+    "from": "de la",
+    "live": "Calculator în timp real",
+    "yourPlate": "Farfuria ta",
+    "empty": "Începe cu ingredientul preferat. Aici vei vedea combinația ta, porțiile și costul total.",
+    "total": "Total meniu",
+    "quantity": "Cantitate",
+    "reset": "Resetează meniul",
+    "allergens": "Alergeni declarați",
+    "noDeclaredAllergens": "Niciunul declarat în meniu. Pentru alergii, discută cu echipa.",
+    "orderNote": "Acesta este un calculator, nu o comandă online. Arată combinația echipei ALIVE și confirmă disponibilitatea și prețul la bistro.",
+    "nutritionNote": "Totalurile însumează valorile declarate pentru fiecare porție din meniul furnizat, fără extrapolare la alte gramaje. Grăsimile nu sunt totalizate: pentru proteine sunt disponibile doar valori per 100 g, nu pentru fiecare porție. Pentru alergii sau nevoi alimentare speciale, cere detalii echipei.",
+    "nutrients": { "calories": "Energie", "protein": "Proteine", "carbs": "Carbohidrați" },
+    "groups": {
+      "protein": {
+        "title": "Alege-ți proteinele",
+        "description": "Baza farfuriei tale: pui, curcan, somon sau vită la plită, în porția potrivită pentru tine.",
+        "skip": "Fără proteină adăugată"
+      },
+      "carbs": {
+        "title": "Adaugă carbohidrații",
+        "description": "Completează cu orez, cartofi dulci sau quinoa. Tu alegi porția pentru energia de care ai nevoie.",
+        "skip": "Fără garnitură de carbohidrați"
+      },
+      "fibre": {
+        "title": "Completează cu fibre",
+        "description": "Un plus de culoare și legume: proaspete și crocante sau calde, la cuptor.",
+        "skip": "Fără porție de legume"
+      },
+      "sauce": {
+        "title": "Dă-i gust cu un sos",
+        "description": "Ultimul detaliu: accente asiatice sau prospețimea unei vinegrete cu citrice.",
+        "skip": "Fără sos"
+      }
+    },
+    "ingredients": {
+      "chicken": { "name": "Piept de pui la plită" },
+      "turkey": { "name": "Piept de curcan la plită" },
+      "salmon": { "name": "File de somon la plită" },
+      "beef": { "name": "Spată de vită la plită" },
+      "rice": { "name": "Orez" },
+      "sweet-potato": { "name": "Cartofi dulci la cuptor" },
+      "quinoa": { "name": "Quinoa sote cu ceapă verde și usturoi", "description": "Quinoa sote cu ceapă verde și usturoi." },
+      "fresh": { "name": "Legume fresh", "description": "Sfeclă roșie, morcov, țelină, varză." },
+      "warm": { "name": "Legume calde", "description": "Legume la cuptor: vânătă, dovlecel zucchini, morcov, sfeclă roșie." },
+      "asian": { "name": "Sos asiatic cu soia" },
+      "citrus": { "name": "Dressing vinegretă cu citrice" }
+    },
+    "allergenNames": {
+      "fish": "pește", "celery": "țelină", "soy": "soia", "molluscs": "moluște",
+      "sesame": "susan", "peanuts": "arahide", "mustard": "muștar"
+    }
   },
   "footer": {
     "address": "Str. Mureş nr. 116A, Timişoara",
@@ -18,6 +81,7 @@
       "tagline": "Un Concept Nou de Bistro",
       "subtitle": "Echilibrul perfect între <span1>mâncare nutritivă</span1>, <span2>cafea de specialitate</span2> și <span3>comunitate</span3>.",
       "button": "Explorează Meniul",
+      "performanceButton": "Construiește-ți farfuria",
       "scrollDown": "Scroll down"
     },
     "story": {

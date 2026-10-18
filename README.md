@@ -79,7 +79,35 @@ npm run deploy            # build + wrangler pages deploy
 
 ---
 
-## Scripturi
+## Meniu Performance / Build your performance
+
+Secțiunea `#custom-menu`, accesibilă din navigație, din introducerea meniului și
+din butonul „Construiește-ți farfuria” de lângă „Explorează Meniul” din prima secțiune,
+explică cei patru pași și include un calculator pentru o farfurie personalizată.
+Clientul poate alege o opțiune din fiecare categorie (proteine, carbohidrați,
+legume/fibre, sosuri), poate schimba porția sau poate omite orice categorie.
+Porțiile sunt afișate ca opțiuni radio vizibile cu gramaj și preț, fără dropdown,
+cu selecție evidențiată și navigare din tastatură.
+Rezumatul afișează ingredientele, costul total în RON, caloriile, proteinele,
+carbohidrații și alergenii declarați. Cantitățile în grame și mililitri sunt
+afișate separat. Butonul de resetare golește toate alegerile.
+
+Sursa pentru calculator este `src/features/menu-builder/calculator.ts`, transcrisă
+din imaginile meniului custom furnizate. Prețurile și valorile nutriționale sunt
+păstrate pentru fiecare porție declarată, nu calculate proporțional; de exemplu,
+somonul are doar porții de 100 și 150 g. Grăsimile nu sunt totalizate, deoarece
+pentru proteine sursa le declară doar per 100 g, iar tabelele per porție au valori
+care nu sunt întotdeauna proporționale. Actualizarea meniului obișnuit din admin
+nu modifică acest catalog separat; modificările se fac în sursa calculatorului,
+cu verificarea prețurilor, gramajelor și a testelor.
+
+Configuratorul nu trimite comenzi și nu salvează alegerile după reîncărcarea
+paginii. Disponibilitatea și prețul se confirmă cu echipa la bistro.
+Interfața este disponibilă în română și engleză prin traducerile existente.
+
+Validare calculator: `npx vitest run src/features/menu-builder/calculator.test.ts`.
+
+## Scripturi disponibile
 
 | Script | Descriere |
 |--------|-----------|

@@ -8,6 +8,7 @@ import Logo from "./Logo"
 const navLinks = [
   { href: "#home", labelKey: "navbar.home" },
   { href: "#menu", labelKey: "navbar.menu" },
+  { href: "#custom-menu", labelKey: "navbar.customMenu" },
   { href: "#community", labelKey: "navbar.community" },
 ]
 

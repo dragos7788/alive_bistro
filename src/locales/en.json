@@ -2,9 +2,72 @@
   "navbar": {
     "home": "Home",
     "menu": "Menu",
+    "customMenu": "Performance Menu",
     "community": "Community",
     "feedback": "Feedback",
     "toggleMenu": "Toggle menu"
+  },
+  "builder": {
+    "title": "Your menu. Your pace.",
+    "intro": "Your combination, your portions. Build your plate with protein, carbs, vegetables and sauces to suit your appetite and goals. See the cost and nutritional values as you choose.",
+    "menuLink": "Want a different combination? Build your menu",
+    "start": "Build your menu",
+    "imageNote": "Serving suggestion. Your combination may look different.",
+    "calculatorTitle": "What's on your plate?",
+    "instructions": "Choose one option from each category, then select your portion. You can skip any category. The price and nutritional totals update automatically in the summary.",
+    "progress": "{{selected}} / {{total}} categories selected",
+    "portion": "Choose your portion",
+    "from": "from",
+    "live": "Live calculator",
+    "yourPlate": "Your plate",
+    "empty": "Start with your favourite ingredient. Your combination, portions and total cost will appear here.",
+    "total": "Menu total",
+    "quantity": "Quantity",
+    "reset": "Reset menu",
+    "allergens": "Declared allergens",
+    "noDeclaredAllergens": "None declared on the menu. For allergies, please ask our team.",
+    "orderNote": "This is a calculator, not an online order. Show your combination to the ALIVE team and confirm availability and pricing at the bistro.",
+    "nutritionNote": "Totals add the declared values for each serving in the supplied menu, without extrapolating to other sizes. Fat is not totalled: protein options only list fat per 100 g, not per serving. For allergies or specific dietary needs, please ask our team.",
+    "nutrients": { "calories": "Energy", "protein": "Protein", "carbs": "Carbs" },
+    "groups": {
+      "protein": {
+        "title": "Choose your protein",
+        "description": "The base of your plate: griddled chicken, turkey, salmon or beef, in the portion that suits you.",
+        "skip": "No added protein"
+      },
+      "carbs": {
+        "title": "Add your carbs",
+        "description": "Add rice, sweet potatoes or quinoa. Choose the portion for the energy you need.",
+        "skip": "No carb side"
+      },
+      "fibre": {
+        "title": "Add some fibre",
+        "description": "More colour and vegetables: fresh and crunchy or warm from the oven.",
+        "skip": "No vegetable side"
+      },
+      "sauce": {
+        "title": "Finish with a sauce",
+        "description": "The finishing touch: Asian flavours or a fresh citrus vinaigrette.",
+        "skip": "No sauce"
+      }
+    },
+    "ingredients": {
+      "chicken": { "name": "Griddled chicken breast" },
+      "turkey": { "name": "Griddled turkey breast" },
+      "salmon": { "name": "Griddled salmon fillet" },
+      "beef": { "name": "Griddled beef shoulder" },
+      "rice": { "name": "Rice" },
+      "sweet-potato": { "name": "Baked sweet potatoes" },
+      "quinoa": { "name": "Sautéed quinoa with spring onion and garlic", "description": "Quinoa sautéed with spring onion and garlic." },
+      "fresh": { "name": "Fresh vegetables", "description": "Beetroot, carrot, celery and cabbage." },
+      "warm": { "name": "Warm vegetables", "description": "Oven-baked aubergine, zucchini, carrot and beetroot." },
+      "asian": { "name": "Asian soy sauce" },
+      "citrus": { "name": "Citrus vinaigrette dressing" }
+    },
+    "allergenNames": {
+      "fish": "fish", "celery": "celery", "soy": "soy", "molluscs": "molluscs",
+      "sesame": "sesame", "peanuts": "peanuts", "mustard": "mustard"
+    }
   },
   "footer": {
     "address": "Str. Mureş nr. 116A, Timişoara",
@@ -18,6 +81,7 @@
       "tagline": "A New Bistro Concept",
       "subtitle": "The perfect balance between <span1>nutritious food</span1>, <span2>specialty coffee</span2>, and <span3>community</span3>.",
       "button": "Explore the Menu",
+      "performanceButton": "Build your plate",
       "scrollDown": "Scroll down"
     },
     "story": {

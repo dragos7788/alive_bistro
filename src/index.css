@@ -55,3 +55,8 @@
     font-family: var(--font-serif);
   }
 }
+
+.menu-builder :where(a, button, input, select):focus-visible {
+  outline: 3px solid var(--color-brand-green-700);
+  outline-offset: 4px;
+}

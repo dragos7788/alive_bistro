@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Home from '@/pages/Home'
 import Menu from '@/pages/Menu'
+import { MenuBuilder } from '@/features/menu-builder/MenuBuilder'
 import Community from '@/pages/Community'
 import Feedback from '@/pages/Feedback'
 import AdminApp from '@/pages/admin/AdminApp'
@@ -41,6 +42,7 @@ export default function App() {
         <Home />
       </div>
       <Menu />
+      <MenuBuilder />
       <Community />
       <Footer />
     </div>
