@@ -8,6 +8,7 @@ import { resolveIcon } from "../features/menu/icons"
 import { menuData } from "../features/menu/seed"
 import { getMenu } from "../features/menu/api"
 import { tagColors } from "../features/menu/tags"
+import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
 
 
 function CategoryBar({
@@ -283,14 +284,13 @@ export default function Menu() {
                 transition={{ duration: 0.3, delay: i * 0.07 }}
                 className="text-left w-full cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 hover:bg-white hover:shadow-lg hover:border-brand-green-700/25 transition-all duration-300 group"
               >
-                {item.image && (
-                  <div className="relative w-full aspect-[4/3] overflow-hidden">
-                    <img
+                  <div className="relative w-full aspect-square overflow-hidden">
+                    {item.image ? <img
                       src={item.image}
                       alt={item.name}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                      className="w-full h-full object-cover object-bottom"
+                    /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
                     {item.tag && (
                       <span className={`absolute top-3 left-3 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm ${tagColors[item.tag] ?? "bg-brand-cream-200 text-brand-dark/60"}`}>
                         {item.tag}
@@ -301,7 +301,6 @@ export default function Menu() {
                       <Plus className="w-3.5 h-3.5" /> {t("menu.details")}
                     </span>
                   </div>
-                )}
 
                 <div className="flex flex-col flex-1 p-4 md:p-5">
                   <div className="flex items-start justify-between gap-2 mb-3">
@@ -318,9 +317,9 @@ export default function Menu() {
                       <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.protein")}>
                         <Beef className="w-3.5 h-3.5 text-red-700/80" /> {item.macros.protein} {t("menu.macros.protein")}
                       </span>
-                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.carbs")}>
+                      {item.macros.carbs && <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.carbs")}>
                         <Wheat className="w-3.5 h-3.5 text-amber-700/80" /> {item.macros.carbs} {t("menu.macros.carbs")}
-                      </span>
+                      </span>}
                       <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.fat")}>
                         <Nut className="w-3.5 h-3.5 text-amber-700" /> {item.macros.fat} {t("menu.macros.fat")}
                       </span>
@@ -385,10 +384,12 @@ export default function Menu() {
                   <X className="w-5 h-5" />
                 </button>
 
-                {selectedItem.image && (
-                  <div className="w-full h-56 sm:h-64 overflow-hidden">
-                    <img src={selectedItem.image} alt={selectedItem.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                {selectedItem.image ? (
+                  <div className="w-full aspect-square overflow-hidden">
+                    <img src={selectedItem.image} alt={selectedItem.name} referrerPolicy="no-referrer" className="w-full h-full object-cover object-bottom" />
                   </div>
+                ) : (
+                  <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />
                 )}
 
                 <div className="p-6 sm:p-8">
@@ -405,9 +406,13 @@ export default function Menu() {
                     </span>
                   )}
 
-                  <p className="text-brand-dark/70 text-sm sm:text-base leading-relaxed font-light font-sans mb-6">{selectedItem.description}</p>
+                  <h3 className="text-brand-green-700 font-bold text-base mb-2">{t("menu.ingredients")}</h3>
+                  <p className="whitespace-pre-line text-brand-dark/80 text-sm sm:text-base leading-relaxed font-sans mb-6">{selectedItem.description}</p>
 
-                  {selectedItem.macros && (
+                  <h3 className="text-brand-green-700 font-bold text-base mb-2">{t("menu.nutritionTitle")}</h3>
+                  {selectedItem.macros ? (
+                    <>
+                    <p className="text-brand-dark/80 text-xs leading-relaxed mb-3">{t("menu.nutritionSource")}</p>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-green-700/10 border border-brand-green-700/10">
                         <Flame className="w-5 h-5 text-brand-green-700 mb-1" />
@@ -420,7 +425,7 @@ export default function Menu() {
                       </div>
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
                         <Wheat className="w-5 h-5 text-amber-700/80 mb-1" />
-                        <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.carbs}</span>
+                        <span className="text-brand-dark/80 font-semibold text-sm">{selectedItem.macros.carbs ?? t("menu.valueUnavailable")}</span>
                         <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.carbs")}</span>
                       </div>
                       <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-brand-cream-200/50 border border-brand-green-700/5">
@@ -429,6 +434,9 @@ export default function Menu() {
                         <span className="text-brand-dark/50 text-[11px] font-medium">{t("menu.macros.fat")}</span>
                       </div>
                     </div>
+                    </>
+                  ) : (
+                    <p className="text-brand-dark/80 text-sm">{t("menu.nutritionUnavailable")}</p>
                   )}
                 </div>
               </motion.div>

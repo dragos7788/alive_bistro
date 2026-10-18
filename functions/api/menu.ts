@@ -34,7 +34,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
       image:          r.image_key ? `/api/images/${r.image_key}` : (r.image_url ?? undefined),
       tag:            r.tag ?? undefined,
       macros:         r.calories != null
-        ? { calories: r.calories, protein: r.protein!, carbs: r.carbs!, fat: r.fat! }
+        ? { calories: r.calories, protein: r.protein!, carbs: r.carbs ?? undefined, fat: r.fat! }
         : undefined,
     }))
     items.forEach((r, i) => {

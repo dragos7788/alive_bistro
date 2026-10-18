@@ -17,12 +17,29 @@ wrangler r2 bucket create alive-bistro-media
 
 ```sh
 npm run db:migrate   # creează tabelele categories + items
-npm run db:seed      # populează cu datele actuale (73 produse, 8 categorii)
+npm run db:seed      # înlocuiește meniul cu datele din src/features/menu/menu-data.json
 
 # verificare:
 wrangler d1 execute alive-bistro-menu --local --command="SELECT count(*) FROM items"
-# → { "count(*)": 73 }
+# → { "count(*)": 81 }
 ```
+
+Meniul din PDF-urile din 21 și 23 septembrie include ingredientele și alergenii
+declarați pentru cele 26 de preparate, plus calorii, proteine, carbohidrați și
+grăsimi per porție. Post Workout Shake este singura băutură cu valori nutriționale
+declarate în PDF. Pentru mousse, budinca de chia și panna cotta nu sunt precizați
+carbohidrații totali; zaharurile nu sunt folosite ca înlocuitor și nu estimăm valori.
+Detaliile produsului afișează explicit informațiile lipsă.
+
+După modificarea datelor, rulează din nou `npm run db:seed` pentru meniul servit de
+API-ul local. **Seed-ul înlocuiește meniul existent, inclusiv editările din admin.**
+Generatorul păstrează ingredientele, alergenii și macronutrienții în D1; fotografiile
+locale și macronutrienții lipsă din răspunsul API sunt completate din sursa comună.
+
+Fotografiile din carduri și din detalii folosesc un cadru pătrat, aliniat la baza
+imaginii, fără zoom la hover, pentru a păstra vizibile farfuriile și paharele.
+Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
+crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 
 ### 3. Configurează Cloudflare Access pentru /admin
 
@@ -73,6 +90,7 @@ npm run deploy            # build + wrangler pages deploy
 src/features/menu/
   types.ts      — tipuri serializabile (MenuItem, MenuCategory, MenuGroup)
   icons.tsx     — resolveIcon(key, size) — registry iconițe
+  menu-data.json — sursa meniului nou și asocierea fotografiilor
   seed.ts       — date fallback (folosite când API-ul nu e disponibil)
   api.ts        — getMenu() cu fallback pe seed
   tags.ts       — tagColors pentru badge-uri

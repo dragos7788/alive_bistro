@@ -14,4 +14,5 @@ export const tagColors: Record<string, string> = {
   Craft:            "bg-amber-100 text-amber-800 font-bold",
   Brunch:           "bg-orange-100 text-orange-800 font-bold",
   "High Protein":   "bg-red-100 text-red-800 font-bold",
+  "Produs vegan":   "bg-brand-green-100 text-brand-green-800 font-bold",
 }

@@ -120,6 +120,11 @@
     "details": "Details",
     "clickHint": "Click for full description",
     "close": "Close",
+    "ingredients": "Ingredients and details",
+    "nutritionTitle": "Nutrition per serving",
+    "nutritionSource": "Values are taken from the PDF menu for the whole serving, not per 100 g.",
+    "nutritionUnavailable": "Nutritional values are not specified in the PDF menu.",
+    "valueUnavailable": "Not specified in PDF",
     "macros": {
       "calories": "kcal",
       "protein": "Protein",
@@ -128,15 +133,21 @@
     },
     "categories": {
       "food": "Food",
-      "breakfast-soups": "Breakfast & Soups",
-      "mains-salads": "Meals & Salads",
-      "desserts": "Sugar-Free Desserts",
+      "breakfast-brunch": "Breakfast & Brunch",
+      "soup-of-the-day": "Soup of the Day",
+      "balanced-mains-salads": "Balanced Mains & Salads",
+      "nourishing-bowls": "Nourishing Bowls",
+      "sweet-no-regrets": "Sweet. No Regrets.",
       "drinks": "Drinks",
-      "coffee-functional": "Coffee & Functionals",
-      "teas": "Teas & Infusions",
+      "coffee-bar": "Coffee Bar",
+      "alive-boosts": "Alive Boosts",
+      "smoothies": "Smoothies",
+      "homemade-drinks": "Homemade Drinks",
+      "tea-matcha": "Tea & Matcha",
       "soft-drinks": "Soft Drinks",
-      "non-alcoholic": "Mocktails & Juices",
-      "alcoholic": "Wines & Beers"
+      "craft-beer": "Craft Beer",
+      "wine-prosecco": "Wine & Prosecco",
+      "cocktails": "Cocktails"
     }
   }
 }

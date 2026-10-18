@@ -1,0 +1,195 @@
+[
+  {
+    "id": "food",
+    "label": "Mâncare",
+    "iconKey": "fork-knife",
+    "categories": [
+      {
+        "id": "breakfast-brunch",
+        "label": "Breakfast & Brunch",
+        "iconKey": "egg",
+        "items": [
+          { "name": "Avocado Toast", "description": "340 g · 2 ouă poșate, pâine de secară cu semințe, avocado, cottage cheese light, salată de rădăcinoase (morcov, sfeclă, țelină) cu vinegretă de citrice, chives.\n\nAlergeni: ouă, lactate, gluten, țelină, muștar.", "price": "36 lei", "imageFile": "AVOCADO TOAST.jpg", "macros": { "calories": 522, "protein": "27,3 g", "carbs": "51,6 g", "fat": "25,3 g" } },
+          { "name": "Smoked Salmon & Avocado Toast", "description": "360 g · 2 ouă poșate, pâine de secară cu semințe, avocado, cottage cheese light, somon afumat, salată de rădăcinoase (morcov, sfeclă, țelină) cu vinegretă de citrice, chives.\n\nAlergeni: ouă, lactate, gluten, țelină, muștar, pește.", "price": "39 lei", "imageFile": "SMOKED SALMON AVOCADO TOAST.jpg", "macros": { "calories": 561, "protein": "30,8 g", "carbs": "52,4 g", "fat": "27,7 g" } },
+          { "name": "Protein Omelette", "description": "400 g · 2 ouă, albuș de ou, pâine de secară, ciuperci brune, salată de rădăcinoase (sfeclă roșie, morcov, țelină), baby spanac, vinegretă de citrice, chives.\n\nAlergeni: ouă, gluten, țelină, muștar.", "price": "36 lei", "imageFile": "PROTEIN OMELETTE.jpg", "macros": { "calories": 539, "protein": "32,6 g", "carbs": "50,4 g", "fat": "22,4 g" } },
+          { "name": "Alive Wrap", "description": "330 g · Lipie din făină integrală, piept de pui, ardei copt, avocado, baby spanac, sos de legume cu Gochujang, sos de iaurt cu mentă.\n\nAlergeni: lactate, soia, gluten.", "price": "29 lei", "imageFile": "ALIVE WRAP.jpg", "macros": { "calories": 441, "protein": "37,5 g", "carbs": "41,3 g", "fat": "14,2 g" } },
+          { "name": "Scrambled Tofu", "description": "350 g · Tofu afumat scramble, roșii cherry, edamame, pâine de secară cu semințe, ciuperci brune, baby spanac, vinegretă de citrice.\n\nAlergeni: soia, gluten, muștar.", "price": "37 lei", "imageFile": "SCRAMBLED TOFU.jpg", "tag": "Produs vegan", "macros": { "calories": 424, "protein": "23,3 g", "carbs": "47,7 g", "fat": "18,1 g" } },
+          { "name": "Protein Pancakes", "description": "320 g · Banană, ou, iaurt grecesc 10% grăsime, proteină din zer fără zahăr adăugat, sirop de agave BIO, afine.\n\nAlergeni: ouă, lactate.", "price": "38 lei", "imageFile": "PROTEIN PANCAKES.jpg", "macros": { "calories": 488, "protein": "40,6 g", "carbs": "36,8 g", "fat": "20,5 g" } },
+          { "name": "Granola Bowl", "description": "300 g · Iaurt grecesc 10% grăsime, banană, fulgi de ovăz, nectarină, afine, albuș de ou, chia, sirop de agave BIO, nucă, merișoare fără zahăr, semințe de floarea-soarelui, semințe de susan, scorțișoară, sare.\n\nAlergeni: ouă, lactate, fructe cu coajă lemnoasă.", "price": "29 lei", "imageFile": "GRANOLA BOWL.jpg", "macros": { "calories": 460, "protein": "11,8 g", "carbs": "60,6 g", "fat": "20,5 g" } }
+        ]
+      },
+      {
+        "id": "soup-of-the-day",
+        "label": "Soup of the Day",
+        "iconKey": "drop",
+        "items": [
+          { "name": "Supă de linte și ardei copt", "description": "350 g · Cremă de legume cu linte și ardei copt marinat, crutoane din pâine de secară cu semințe, chimen.\n\nAlergeni: gluten, țelină.", "price": "28 lei", "imageFile": null, "tag": "Produs vegan", "macros": { "calories": 387, "protein": "17,8 g", "carbs": "59,1 g", "fat": "7,1 g" } }
+        ]
+      },
+      {
+        "id": "balanced-mains-salads",
+        "label": "Balanced Mains & Salads",
+        "iconKey": "leaf",
+        "items": [
+          { "name": "Piept de pui cu orez și sos gochujang", "description": "480 g · Piept de pui, orez, vânătă la cuptor, salată de rădăcinoase (morcov, sfeclă, țelină) cu vinegretă de citrice, sos de legume cu Gochujang.\n\nAlergeni: gluten, soia.", "price": "48 lei", "imageFile": "PIEPT DE PUI CU OREZ SI SOS.jpg", "macros": { "calories": 645, "protein": "51,0 g", "carbs": "53,0 g", "fat": "27,1 g" } },
+          { "name": "Somon cu orez, pesto și legume", "description": "420 g · File de somon, orez, pesto de busuioc, morcov, sfeclă roșie, broccoli, germeni.\n\nAlergeni: pește, muștar.", "price": "65 lei", "imageFile": "SOMON CU OREZ SI PESTO.jpg", "macros": { "calories": 737, "protein": "46,7 g", "carbs": "50,9 g", "fat": "37,5 g" } },
+          { "name": "Noodles cu vită Alive", "description": "410 g · Spată de vită, noodles Soba cu făină de hrișcă, morcov, ardei kapia, ceapă verde, arahide, sos asiatic cu soia.\n\nAlergeni: gluten, arahide, soia, moluște, pește, susan.", "price": "55 lei", "imageFile": "NOODLES CU VITA.jpg", "macros": { "calories": 629, "protein": "38,7 g", "carbs": "68,7 g", "fat": "24,4 g" } },
+          { "name": "Noodles cu pui Alive", "description": "410 g · Piept de pui, noodles Soba cu făină de hrișcă, morcov, ardei kapia, ceapă verde, arahide, sos asiatic cu soia.\n\nAlergeni: gluten, arahide, soia, moluște, pește, susan.", "price": "48 lei", "imageFile": "NOODLES CU PUI.jpg", "macros": { "calories": 590, "protein": "40,3 g", "carbs": "68,7 g", "fat": "19,0 g" } },
+          { "name": "Veggie Noodles", "description": "400 g · Noodles Soba cu făină de hrișcă, broccoli, dovlecel zucchini, morcov, ardei kapia, ceapă verde, arahide, sos asiatic cu soia, drojdie inactivă.\n\nAlergeni: gluten, arahide, soia, moluște, pește, susan.", "price": "43 lei", "imageFile": "VEGGIE NOODLES.jpg", "tag": "Produs vegan", "macros": { "calories": 632, "protein": "20,1 g", "carbs": "67,5 g", "fat": "34,1 g" } },
+          { "name": "Vită cu cartofi dulci și ardei copți", "description": "400 g · Antricot de vită, cartofi dulci, ardei copți, sos reducție de vin roșu cu prune.\n\nAlergeni: sulfiți.", "price": "89 lei", "imageFile": "VITA CU CARTOFI DULCI.jpg", "macros": { "calories": 777, "protein": "44,5 g", "carbs": "55,0 g", "fat": "42,0 g" } },
+          { "name": "Salată asiatică cu vită", "description": "360 g · Spată de vită, mix de salată, morcovi, ardei, castraveți, arahide, dressing asiatic cu soia, semințe de susan.\n\nAlergeni: arahide, soia, moluște, pește, susan.", "price": "55 lei", "imageFile": "SALATA ASIATICA CU VITA.jpg", "macros": { "calories": 423, "protein": "31,5 g", "carbs": "27,0 g", "fat": "23,0 g" } },
+          { "name": "Salată cu tofu", "description": "400 g · Tofu afumat, roșii cherry, quinoa, mix de salată, nectarine, sfeclă roșie, dressing vinegretă de citrice.\n\nAlergeni: soia, muștar, susan.", "price": "41 lei", "imageFile": "SALATA CU TOFU.jpg", "tag": "Produs vegan", "macros": { "calories": 398, "protein": "21,6 g", "carbs": "36,7 g", "fat": "21,5 g" } },
+          { "name": "Salată cu pui", "description": "400 g · Piept de pui, roșii cherry, quinoa, mix de salată, nectarine, sfeclă roșie, dressing vinegretă de citrice.\n\nAlergeni: muștar, susan.", "price": "39 lei", "imageFile": "SALATA CU PUI.jpg", "macros": { "calories": 419, "protein": "35,9 g", "carbs": "39,8 g", "fat": "15,0 g" } }
+        ]
+      },
+      {
+        "id": "nourishing-bowls",
+        "label": "Nourishing Bowls",
+        "iconKey": "fork-knife",
+        "items": [
+          { "name": "Salmon Bowl", "description": "440 g · File de somon, orez sălbatic, edamame, zucchini la grătar, morcov, mix de salată, dressing vinegretă de citrice.\n\nAlergeni: pește, muștar.", "price": "58 lei", "imageFile": "SALMON BOWL.jpg", "macros": { "calories": 743, "protein": "39,3 g", "carbs": "65,0 g", "fat": "34,6 g" } },
+          { "name": "Chicken Bowl", "description": "530 g · Piept de pui, quinoa, edamame, avocado, nectarină, mix de salată verde, ceapă verde, usturoi, dressing asiatic.\n\nAlergeni: soia, moluște, susan, pește.", "price": "48 lei", "imageFile": "CHICKEN BOWL.jpg", "macros": { "calories": 613, "protein": "47,9 g", "carbs": "56,4 g", "fat": "22,2 g" } },
+          { "name": "Beef Bowl", "description": "480 g · Bulgur, spată de vită, edamame, morcov, mix de salată verde, sfeclă roșie, dressing asiatic.\n\nAlergeni: gluten, soia, moluște, pește, susan.", "price": "58 lei", "imageFile": "BEEF BOWL.jpg", "macros": { "calories": 657, "protein": "44,1 g", "carbs": "67,3 g", "fat": "24,0 g" } },
+          { "name": "Veggie Bowl", "description": "500 g · Orez sălbatic, tofu afumat, edamame, avocado, dovlecel zucchini, sfeclă roșie, semințe de susan, dressing vinegretă de citrice.\n\nAlergeni: soia, susan, muștar.", "price": "48 lei", "imageFile": null, "tag": "Produs vegan", "macros": { "calories": 660, "protein": "24,0 g", "carbs": "62,0 g", "fat": "36,0 g" } }
+        ]
+      },
+      {
+        "id": "sweet-no-regrets",
+        "label": "Sweet. No Regrets.",
+        "iconKey": "cookie",
+        "items": [
+          { "name": "Mousse de ciocolată", "description": "180 g · Fructe de pădure, ciocolată fără zahăr, cremă vegetală, biscuiți integrali fără zahăr, albuș de ou, cafea, sirop de agave BIO, sare.\n\nAlergeni: gluten, lactate, ou, soia.", "price": "33 lei", "imageFile": "MOUSSE CIOCOLATA.jpg", "macros": { "calories": 453, "protein": "6,2 g", "fat": "33,7 g" } },
+          { "name": "Budincă chia cu fulgi de migdale", "description": "250 g · Iaurt grecesc, banane, afine, fulgi de migdale, chia, sirop de agave BIO, sare.\n\nAlergeni: lactate, fructe cu coajă lemnoasă.", "price": "28 lei", "imageFile": "BUDINCA CHIA.jpg", "macros": { "calories": 386, "protein": "12,9 g", "fat": "21,9 g" } },
+          { "name": "Panna cotta cu fructe de pădure", "description": "250 g · Lapte de cocos, fructe de pădure, sirop de agave BIO, agar agar, păstaie de vanilie, sare.\n\nAlergeni: fără alergeni (conform PDF-ului).", "price": "29 lei", "imageFile": "PANA COTTA.jpg", "tag": "Produs vegan", "macros": { "calories": 389, "protein": "3,6 g", "fat": "32,0 g" } },
+          { "name": "Carrot Cake", "description": "130 g · Făină integrală de grâu, ouă, ulei, agave, morcovi, nuci, scorțișoară, sare, praf de copt, bicarbonat, coajă de portocală, unt, cremă de brânză, vanilie.\n\nAlergeni: lactate, gluten, ouă, nuci.", "price": "24 lei", "imageFile": null, "macros": { "calories": 373, "protein": "4,5 g", "carbs": "22,4 g", "fat": "29,3 g" } },
+          { "name": "Cocoa Peanut Butter Banana Bread", "description": "100 g · Făină integrală de spelta, agave, unt de arahide, banane, cacao, bicarbonat, praf de copt, scorțișoară, pastă de cafea, vanilie.\n\nAlergeni: gluten, arahide.", "price": "16 lei", "imageFile": null, "macros": { "calories": 315, "protein": "6,7 g", "carbs": "52,8 g", "fat": "9,8 g" } }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "drinks",
+    "label": "Băuturi",
+    "iconKey": "coffee",
+    "categories": [
+      {
+        "id": "coffee-bar",
+        "label": "Coffee Bar",
+        "iconKey": "lucide-coffee",
+        "items": [
+          { "name": "Espresso", "description": "20 ml · Cafea și apă. Extra shot de cafea: +3 lei.", "price": "10 lei", "imageFile": null },
+          { "name": "Espresso Dopio", "description": "36 ml · Cafea și apă.", "price": "13 lei", "imageFile": null },
+          { "name": "Americano", "description": "100 ml · Cafea espresso și apă.", "price": "10 lei", "imageFile": null },
+          { "name": "Long Black", "description": "120 ml · Dublu espresso și apă.", "price": "13 lei", "imageFile": null },
+          { "name": "Cappucino", "description": "200 ml · Espresso și cremă de lapte.", "price": "14 lei", "imageFile": "CAPPUCINO.jpg" },
+          { "name": "Flat White", "description": "200 ml · Dublu espresso și lapte.", "price": "18 lei", "imageFile": null },
+          { "name": "Latte", "description": "300 ml · Dublu espresso și lapte.", "price": "19 lei", "imageFile": "LATTE.jpg" },
+          { "name": "Iced Latte", "description": "360 ml · Dublu espresso, lapte și gheață.", "price": "19 lei", "imageFile": null },
+          { "name": "Cortado", "description": "100 ml · Dublu espresso și cremă de lapte.", "price": "12 lei", "imageFile": null },
+          { "name": "Noisette", "description": "100 ml · Dublu espresso și cremă de lapte.", "price": "14 lei", "imageFile": null },
+          { "name": "Espresso Tonic", "description": "360 ml · Dublu espresso și apă tonică fără zahăr.", "price": "19 lei", "imageFile": null },
+          { "name": "Espresso Macchiato", "description": "60 ml · Dublu espresso și cremă de lapte.", "price": "14 lei", "imageFile": null }
+        ]
+      },
+      {
+        "id": "alive-boosts",
+        "label": "Alive Boosts",
+        "iconKey": "carrot",
+        "items": [
+          { "name": "Protein Shake Peanut Chocolate", "description": "360 ml · Lapte, proteină din zer Vilgain, banană și unt de arahide.", "price": "26 lei", "imageFile": "PROTEIN SHAKE PEANUT.jpg" },
+          { "name": "Protein Shake Pink Vanilla", "description": "360 ml · Lapte, proteină din zer Vilgain, banană și fructe de pădure.", "price": "26 lei", "imageFile": "PROTEIN SHAKE PINK VANILLA.jpg" },
+          { "name": "Collagen Mango Lemonade", "description": "360 ml · Collagen Drink + Vitamina C Vilgain, lămâie, piure de mango și gheață.", "price": "29 lei", "imageFile": null },
+          { "name": "Electrolyte Lemonade", "description": "360 ml · Pudră de electroliți Vilgain, suc de lămâie, suc de portocale și miere.", "price": "25 lei", "imageFile": null },
+          { "name": "Post Workout Shake", "description": "380 ml · Pudră de proteine din zer Vilgain, banană, fructe de pădure, ovăz, unt de arahide.\n\nAlergeni: lapte, gluten, arahide.", "price": "28 lei", "imageFile": null, "macros": { "calories": 401, "protein": "24,7 g", "carbs": "48,7 g", "fat": "12,3 g" } }
+        ]
+      },
+      {
+        "id": "smoothies",
+        "label": "Smoothies",
+        "iconKey": "carrot",
+        "items": [
+          { "name": "Feel Green", "description": "360 ml · Portocală, banană și baby spanac.", "price": "23 lei", "imageFile": "FEEL GREEN SMOOTHIE.jpg" },
+          { "name": "Bloody Roots", "description": "360 ml · Morcov, măr și sfeclă roșie.", "price": "23 lei", "imageFile": null },
+          { "name": "Energy Boost", "description": "360 ml · Portocală, ghimbir, măr și mango.", "price": "25 lei", "imageFile": null }
+        ]
+      },
+      {
+        "id": "homemade-drinks",
+        "label": "Homemade Drinks",
+        "iconKey": "drop",
+        "items": [
+          { "name": "Limonadă", "description": "360 ml · Apă, suc de lămâie și miere.", "price": "19 lei", "imageFile": null },
+          { "name": "Limonadă cu mentă", "description": "360 ml · Apă, suc de lămâie, miere și mentă.", "price": "23 lei", "imageFile": null },
+          { "name": "Limonadă cu mango și chia", "description": "360 ml · Apă, suc de lămâie, piure de mango, semințe chia și miere.", "price": "25 lei", "imageFile": "LIMONADA CU MANGO SI CHIA.jpg" },
+          { "name": "Iced Tea Mango", "description": "360 ml · Infuzie de ceai, suc de lămâie, gheață și miere.", "price": "23 lei", "imageFile": null },
+          { "name": "Iced Tea Summer Love", "description": "360 ml · Infuzie de ceai, suc de lămâie, gheață și miere.", "price": "23 lei", "imageFile": null }
+        ]
+      },
+      {
+        "id": "tea-matcha",
+        "label": "Tea & Matcha",
+        "iconKey": "tea-bag",
+        "items": [
+          { "name": "Ceai Mango / Summer Love", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": null },
+          { "name": "Iced Matcha Latte", "description": "300 ml · Lapte, pudră de matcha și gheață.", "price": "25 lei", "imageFile": null },
+          { "name": "Matcha", "description": "200 ml · Apă și pudră de matcha.", "price": "20 lei", "imageFile": null },
+          { "name": "Matcha Latte", "description": "200 ml · Cremă de lapte și pudră de matcha.", "price": "25 lei", "imageFile": "MATCHA LATTE.jpg" }
+        ]
+      },
+      {
+        "id": "soft-drinks",
+        "label": "Soft Drinks",
+        "iconKey": "drop",
+        "items": [
+          { "name": "Apă plată Aqua Carpatica 330 ml", "description": "330 ml · Apă plată.", "price": "8 lei", "imageFile": null },
+          { "name": "Apă plată Aqua Carpatica 750 ml", "description": "750 ml · Apă plată.", "price": "12 lei", "imageFile": null },
+          { "name": "Apă minerală Aqua Carpatica 330 ml", "description": "330 ml · Apă minerală.", "price": "8 lei", "imageFile": null },
+          { "name": "Apă minerală Aqua Carpatica 750 ml", "description": "750 ml · Apă minerală.", "price": "12 lei", "imageFile": null },
+          { "name": "Apă de cocos Coconaki Classic", "description": "320 ml · Apă de cocos. Prețul include taxa SGR de 0,50 lei.", "price": "15 lei", "imageFile": null },
+          { "name": "Apă de cocos Coconaki Sparkling", "description": "320 ml · Apă de cocos carbogazoasă. Prețul include taxa SGR de 0,50 lei.", "price": "15 lei", "imageFile": null },
+          { "name": "Socată colorată Kofi Ti", "description": "300 ml · Socată. Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null },
+          { "name": "Kraft Kola Mandarin", "description": "200 ml · Prețul include taxa SGR de 0,50 lei.", "price": "16 lei", "imageFile": null },
+          { "name": "Cold Brew Coffee & Tonic", "description": "200 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null },
+          { "name": "Kombucha", "description": "500 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null },
+          { "name": "Apă de kefir", "description": "330 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null }
+        ]
+      },
+      {
+        "id": "craft-beer",
+        "label": "Bere Draft Artizanală",
+        "iconKey": "wine",
+        "items": [
+          { "name": "OneTwo - Eins Zwei (German Lager) 5% ABV", "description": "400 ml · Bere draft artizanală.", "price": "20 lei", "imageFile": null },
+          { "name": "OneTwo - Juicy (Hazy IPA) 5,5% ABV", "description": "400 ml · Bere draft artizanală.", "price": "23 lei", "imageFile": null },
+          { "name": "OneTwo - Mango Habanero (Spicy Sour) 5,5% ABV", "description": "330 ml · Bere draft artizanală.", "price": "22 lei", "imageFile": null }
+        ]
+      },
+      {
+        "id": "wine-prosecco",
+        "label": "Vin & Prosecco",
+        "iconKey": "wine",
+        "items": [
+          { "name": "Prosecco Bendis Alb", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": null },
+          { "name": "Prosecco Bendis Roze", "description": "750 ml.", "price": "100 lei", "imageFile": null },
+          { "name": "Vin Petro Vaselo Alb", "description": "750 ml / 125 ml.", "price": "100 / 26 lei", "imageFile": null },
+          { "name": "Vin Petro Vaselo Roze", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": null },
+          { "name": "Vin Petro Vaselo Roșu", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": null },
+          { "name": "Vin Petro Vaselo Maletine Alb", "description": "750 ml.", "price": "180 lei", "imageFile": null },
+          { "name": "Vin Petro Vaselo Ovaș Roșu", "description": "750 ml.", "price": "240 lei", "imageFile": null },
+          { "name": "Vin Liliac Fetească Albă", "description": "750 ml.", "price": "110 lei", "imageFile": null },
+          { "name": "Vin Liliac Pinot Noir Roze", "description": "750 ml.", "price": "110 lei", "imageFile": null }
+        ]
+      },
+      {
+        "id": "cocktails",
+        "label": "Cocktails",
+        "iconKey": "wine",
+        "items": [
+          { "name": "Aperol Spritz", "description": "180 ml · Prosecco, Aperol, apă minerală, portocale și gheață.", "price": "35 lei", "imageFile": null },
+          { "name": "Hugo", "description": "180 ml · Prosecco, apă minerală, sirop de soc fără zahăr, gheață, mentă și felii de lămâie.", "price": "30 lei", "imageFile": null },
+          { "name": "Wine Cooler", "description": "200 ml · Vin alb, apă minerală, suc și felii de portocale, gheață.", "price": "30 lei", "imageFile": null }
+        ]
+      }
+    ]
+  }
+]

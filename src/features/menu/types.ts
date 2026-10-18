@@ -1,7 +1,7 @@
 export type Macros = {
   calories: number
   protein: string
-  carbs: string
+  carbs?: string
   fat: string
 }
 

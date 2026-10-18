@@ -123,6 +123,11 @@
     "details": "Detalii",
     "clickHint": "Click pentru descriere completă",
     "close": "Închide",
+    "ingredients": "Ingrediente și detalii",
+    "nutritionTitle": "Valori nutriționale per preparat",
+    "nutritionSource": "Valorile sunt preluate din meniul PDF pentru întreaga porție, nu pentru 100 g.",
+    "nutritionUnavailable": "Valorile nutriționale nu sunt precizate în meniul PDF.",
+    "valueUnavailable": "Neprecizat în PDF",
     "macros": {
       "calories": "kcal",
       "protein": "Proteine",
@@ -131,15 +136,21 @@
     },
     "categories": {
       "food": "Mâncare",
-      "breakfast-soups": "Mic Dejun & Supe",
-      "mains-salads": "Mâncăruri & Salate",
-      "desserts": "Deserturi fără Zahăr",
+      "breakfast-brunch": "Mic Dejun & Brunch",
+      "soup-of-the-day": "Supa zilei",
+      "balanced-mains-salads": "Feluri principale & Salate",
+      "nourishing-bowls": "Boluri nutritive",
+      "sweet-no-regrets": "Dulce, fără regrete",
       "drinks": "Băuturi",
-      "coffee-functional": "Cafea & Funcționale",
-      "teas": "Ceaiuri & Infuzii",
-      "soft-drinks": "Răcoritoare",
-      "non-alcoholic": "Mocktails & Sucuri",
-      "alcoholic": "Vinuri & Bere"
+      "coffee-bar": "Cafea",
+      "alive-boosts": "Băuturi funcționale",
+      "smoothies": "Smoothie-uri",
+      "homemade-drinks": "Băuturi preparate în casă",
+      "tea-matcha": "Ceai & Matcha",
+      "soft-drinks": "Băuturi răcoritoare",
+      "craft-beer": "Bere draft artizanală",
+      "wine-prosecco": "Vin & Prosecco",
+      "cocktails": "Cocktailuri"
     }
   }
 }
