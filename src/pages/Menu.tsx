@@ -287,6 +287,10 @@ export default function Menu() {
                   <div className="relative w-full aspect-square overflow-hidden">
                     {item.image ? <img
                       src={item.image}
+                      srcSet={item.imageSrcSet}
+                      sizes="(min-width: 944px) 440px, (min-width: 768px) calc((100vw - 64px) / 2), calc(100vw - 48px)"
+                      loading={i < 2 ? "eager" : "lazy"}
+                      decoding="async"
                       alt={item.name}
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover object-bottom"
@@ -386,7 +390,15 @@ export default function Menu() {
 
                 {selectedItem.image ? (
                   <div className="w-full aspect-square overflow-hidden">
-                    <img src={selectedItem.image} alt={selectedItem.name} referrerPolicy="no-referrer" className="w-full h-full object-cover object-bottom" />
+                    <img
+                      src={selectedItem.image}
+                      srcSet={selectedItem.imageSrcSet}
+                      sizes="(min-width: 560px) 512px, calc(100vw - 32px)"
+                      decoding="async"
+                      alt={selectedItem.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover object-bottom"
+                    />
                   </div>
                 ) : (
                   <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />

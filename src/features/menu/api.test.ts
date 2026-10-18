@@ -16,6 +16,7 @@ vi.mock("./seed", () => ({
         description: "Ingredientele din PDF",
         price: "36 lei",
         image: "/local-avocado.jpg",
+        imageSrcSet: "/avocado-480.webp 480w, /avocado-800.webp 800w",
         macros: { calories: 522, protein: "27,3 g", carbs: "51,6 g", fat: "25,3 g" },
       }],
     }],
@@ -38,7 +39,7 @@ describe("getMenu", () => {
     const groups = await getMenu()
 
     expect(groups[0].categories[0].items[0]).toEqual({
-      ...serverItem, image: localItem.image, macros: localItem.macros,
+      ...serverItem, image: localItem.image, imageSrcSet: localItem.imageSrcSet, macros: localItem.macros,
     })
   })
 
@@ -60,6 +61,7 @@ describe("getMenu", () => {
     const groups = await getMenu()
 
     expect(groups[0].categories[0].items[0]).toEqual(serverItem)
+    expect(groups[0].categories[0].items[0].imageSrcSet).toBeUndefined()
   })
 
   it("ApiUnavailable_ReturnsPdfMenu", async () => {

@@ -41,6 +41,14 @@ imaginii, fără zoom la hover, pentru a păstra vizibile farfuriile și paharel
 Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
 crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 
+`npm run images:optimize` generează local variante WebP de 480, 800 și 1200 px
+cu Sharp, fără a modifica JPG-urile originale. Comanda rulează automat înainte de
+`npm run dev` și `npm run build`; directorul generat `src/assets/menu/optimized/`
+nu se versionează. După adăugarea sau înlocuirea unei fotografii, repornește dev
+sau rulează generatorul. Browserul alege varianta prin `srcSet` și `sizes`.
+Primele două carduri se încarcă normal; restul folosesc lazy loading, iar detaliile
+încarcă imaginea la deschidere. Fotografiile personalizate din API rămân prioritare.
+
 ### 3. Configurează Cloudflare Access pentru /admin
 
 În [Cloudflare Zero Trust](https://one.dash.cloudflare.com):

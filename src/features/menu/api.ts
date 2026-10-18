@@ -23,6 +23,7 @@ export async function getMenu(): Promise<MenuGroup[]> {
             items: category.items.map((item) => ({
               ...item,
               image: item.image ?? localItems.get(item.name)?.image,
+              imageSrcSet: item.image ? item.imageSrcSet : localItems.get(item.name)?.imageSrcSet,
               macros: item.macros ?? localItems.get(item.name)?.macros,
             })),
           })),

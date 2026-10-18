@@ -12,6 +12,7 @@ export type MenuItem = {
   description_en?: string
   price: string
   image?: string
+  imageSrcSet?: string
   tag?: string
   macros?: Macros
 }

@@ -25,3 +25,4 @@ dist-ssr
 
 # Generated seed SQL (produced by npm run db:seed)
 scripts/seed-data.sql
+src/assets/menu/optimized/

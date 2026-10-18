@@ -1,7 +1,7 @@
 import type { MenuGroup } from "./types"
 import menuSource from "./menu-data.json"
 
-const imageAssets = import.meta.glob<string>("../../assets/menu/*.jpg", {
+const imageAssets = import.meta.glob<string>("../../assets/menu/optimized/*.webp", {
   eager: true,
   import: "default",
   query: "?url",
@@ -19,15 +19,19 @@ export const menuData: MenuGroup[] = menuSource.map((group) => {
     categories: group.categories.map((category) => ({
       ...category,
       items: category.items.map(({ imageFile, ...item }) => {
-        const image = imageFile
-          ? imageAssets[`../../assets/menu/${imageFile}`]
-          : undefined
-
-        if (imageFile && !image) {
-          throw new Error(`Menu image "${imageFile}" was not found`)
+        if (!imageFile) return item
+        const variants = [480, 800, 1200].map(width => {
+          const image = imageAssets[`../../assets/menu/optimized/${imageFile.slice(0, -4)}-${width}.webp`]
+          if (!image) {
+            throw new Error(`Optimized menu image "${imageFile}" (${width}px) was not found. Run npm run images:optimize.`)
+          }
+          return { width, image }
+        })
+        return {
+          ...item,
+          image: variants[1].image,
+          imageSrcSet: variants.map(({ width, image }) => `${image} ${width}w`).join(", "),
         }
-
-        return { ...item, image }
       }),
     })),
   }
