@@ -4,6 +4,12 @@ import { Coffee, Leaf, Users, Sparkles, Compass, Heart, Eye } from "lucide-react
 import { useTranslation, Trans } from "react-i18next"
 import aliveLogo from "../assets/Group of 7 Objectslogo verde svg.svg"
 import interiorPhoto from "../assets/alive-bistro-interior.jpeg"
+import socialStudyPhoto from "../assets/social-study-workspace.png"
+import bistroPhoto from "../assets/bistro-specialty-coffee.png"
+import coffeeLattePhoto from "../assets/specialty-coffee-latte.png"
+import aliveTalksPhoto from "../assets/alive-talks.png"
+import socialSpacePhoto from "../assets/social-space.jpeg"
+import foodSpreadPhoto from "../assets/alive-food-spread.jpeg"
 
 const brandValuesKeys = [
   {
@@ -32,17 +38,20 @@ const conceptPillarsKeys = [
   {
     titleKey: "home.pillars.p1_title",
     descKey: "home.pillars.p1_desc",
-    img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80",
+    img: coffeeLattePhoto,
+    objectPosition: "center 20%",
   },
   {
     titleKey: "home.pillars.p2_title",
     descKey: "home.pillars.p2_desc",
     img: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    objectPosition: "center",
   },
   {
     titleKey: "home.pillars.p3_title",
     descKey: "home.pillars.p3_desc",
-    img: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=800&q=80",
+    img: socialStudyPhoto,
+    objectPosition: "center",
   },
 ]
 
@@ -202,43 +211,44 @@ function BrandStorySection() {
             </div>
           </motion.div>
 
-          {/* Right: Beautiful grid of cozy images illustrating the PDF concept */}
+          {/* Right: Balanced grid of images illustrating the Alive concept */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="grid grid-cols-12 gap-4 relative"
+            className="grid grid-cols-2 gap-3 md:gap-4 relative"
           >
             {/* Background glowing ambient light to represent warmth */}
             <div className="absolute -inset-10 bg-brand-green-700/5 filter blur-3xl rounded-full pointer-events-none" />
 
-            <div className="col-span-8 overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-2xl">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80"
-                alt="Alive Interior Cozy Space"
-                className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                src={socialSpacePhoto}
+                alt="Oaspeți socializând în spațiul Alive"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
-            <div className="col-span-4 overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-2xl mt-12">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=500&q=80"
-                alt="Specialty Coffee"
-                className="w-full h-44 object-cover hover:scale-105 transition-transform duration-500"
+                src={foodSpreadPhoto}
+                alt="Preparatele Alive servite la masă"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                style={{ objectPosition: "center 65%" }}
               />
             </div>
-            <div className="col-span-5 overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-2xl">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80"
-                alt="Healthy Balanced Bowl"
-                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
+                src={bistroPhoto}
+                alt="Interiorul Alive Bistro, cu zona de cafea și servire"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
-            <div className="col-span-7 overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-2xl -mt-6">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-brand-green-700/10 shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
-                alt="Socializing & Studying at Alive"
-                className="w-full h-56 object-cover hover:scale-105 transition-transform duration-500"
+                src={aliveTalksPhoto}
+                alt="Alive Talks: o conversație despre nutriție și echilibru"
+                className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
               />
             </div>
           </motion.div>
@@ -284,6 +294,7 @@ function PillarsSection() {
                   src={pillar.img}
                   alt={t(pillar.titleKey)}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                  style={{ objectPosition: pillar.objectPosition }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
               </div>
