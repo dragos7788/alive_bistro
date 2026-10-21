@@ -70,7 +70,7 @@ function ParallaxHero() {
         className="absolute inset-0 bg-cover bg-center scale-110 opacity-60"
       />
       {/* Botanical/Natural Warm Overlay matching flyer layout */}
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-cream-100/25 via-brand-cream-100/55 to-brand-cream-100" />
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-cream-100/25 via-brand-cream-100/25 to-brand-cream-100" />
 
       {/* Hero content */}
       <motion.div style={{ opacity }} className="relative z-10 text-center px-6 max-w-4xl">
