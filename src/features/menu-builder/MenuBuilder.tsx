@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { ArrowDown, Sparkles } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import bowlImage from "../../assets/menu/optimized/SALMON BOWL-480.webp"
 import { builderGroups, calculateMenu, type MenuSelection } from "./calculator"
 import { BuilderStep } from "./BuilderStep"
 import { BuilderSummary } from "./BuilderSummary"
@@ -17,7 +16,7 @@ export function MenuBuilder() {
       className="menu-builder scroll-mt-20 bg-brand-cream-200/50 px-6 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="relative mb-10 overflow-hidden rounded-[2rem] border border-brand-green-700/10 bg-[#ffddbd] p-7 sm:p-10">
-          <div className="relative z-10 grid items-center gap-8 md:grid-cols-[1fr_250px]">
+          <div className="relative z-10">
             <div>
               <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-700">
                 <Sparkles size={16} aria-hidden="true" /> Build your performance
@@ -29,11 +28,6 @@ export function MenuBuilder() {
               <a href="#menu-calculator" className="mt-6 inline-flex min-h-11 items-center gap-3 rounded-full bg-brand-green-700 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-green-800">
                 {t("builder.start")} <ArrowDown size={17} aria-hidden="true" />
               </a>
-            </div>
-            <div className="hidden md:block">
-              <img src={bowlImage} alt="" width={250} height={250} loading="lazy"
-                className="aspect-square w-full rounded-full border-8 border-white/50 object-cover shadow-xl" />
-              <p className="mt-3 text-center text-[10px] text-brand-green-900">{t("builder.imageNote")}</p>
             </div>
           </div>
         </div>

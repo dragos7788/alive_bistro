@@ -10,9 +10,7 @@
   "builder": {
     "title": "Your menu. Your pace.",
     "intro": "Your combination, your portions. Build your plate with protein, carbs, vegetables and sauces to suit your appetite and goals. See the cost and nutritional values as you choose.",
-    "menuLink": "Want a different combination? Build your menu",
     "start": "Build your menu",
-    "imageNote": "Serving suggestion. Your combination may look different.",
     "calculatorTitle": "What's on your plate?",
     "instructions": "Choose one option from each category, then select your portion. You can skip any category. The price and nutritional totals update automatically in the summary.",
     "progress": "{{selected}} / {{total}} categories selected",
@@ -183,6 +181,7 @@
     "teaserDesc": "We offer single-origin espresso every day, free choice of organic plant-based milk, and a superb selection of raw-vegan desserts made daily.",
     "details": "Details",
     "clickHint": "Click for full description",
+    "chooseCategory": "Choose category",
     "close": "Close",
     "ingredients": "Ingredients and details",
     "nutritionTitle": "Nutrition per serving",

@@ -42,6 +42,13 @@ imaginii, fără zoom la hover, pentru a păstra vizibile farfuriile și paharel
 Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
 crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 
+Pe mobil, categoriile meniului se aleg dintr-un buton care afișează categoria
+activă. Panoul deschis prezintă toate categoriile în două coloane, fără derulare
+orizontală, și se închide după alegere, la apăsarea Escape sau la apăsare în
+exterior. Pe desktop se păstrează bara de categorii cu derulare.
+Controalele mobile au spațiere constantă de 12 px între rânduri și nu se
+micșorează la derulare.
+
 `npm run images:optimize` generează local variante WebP de 480, 800 și 1200 px
 cu Sharp, fără a modifica JPG-urile originale. Comanda rulează automat înainte de
 `npm run dev` și `npm run build`; directorul generat `src/assets/menu/optimized/`
@@ -81,13 +88,22 @@ npm run deploy            # build + wrangler pages deploy
 
 ## Meniu Performance / Build your performance
 
-Secțiunea `#custom-menu`, accesibilă din navigație, din introducerea meniului și
+Secțiunea `#custom-menu`, accesibilă din navigație, din bara sticky a meniului și
 din butonul „Construiește-ți farfuria” de lângă „Explorează Meniul” din prima secțiune,
 explică cei patru pași și include un calculator pentru o farfurie personalizată.
+Introducerea configuratorului conține doar text și butonul de configurare, fără
+fotografie de prezentare.
+Linkurile „Construiește-ți farfuria” și „Meniu Performance” sunt evidențiate cu
+chenar și text portocaliu. Accesul la configurator este disponibil și în bara
+sticky a meniului, lângă selectorul de mâncare/băuturi.
 Clientul poate alege o opțiune din fiecare categorie (proteine, carbohidrați,
 legume/fibre, sosuri), poate schimba porția sau poate omite orice categorie.
 Porțiile sunt afișate ca opțiuni radio vizibile cu gramaj și preț, fără dropdown,
 cu selecție evidențiată și navigare din tastatură.
+În toate cele patru categorii, porțiile apar direct în cardul produsului selectat:
+lângă numele produsului pe desktop și imediat sub el pe mobil. Descrierea și
+alergenii rămân în același card, iar schimbarea produsului afișează doar porțiile
+acestuia. Pentru legume și sosuri se păstrează porțiile fixe din meniu.
 Rezumatul afișează ingredientele, costul total în RON, caloriile, proteinele,
 carbohidrații și alergenii declarați. Cantitățile în grame și mililitri sunt
 afișate separat. Butonul de resetare golește toate alegerile.

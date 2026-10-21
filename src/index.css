@@ -60,3 +60,18 @@
   outline: 3px solid var(--color-brand-green-700);
   outline-offset: 4px;
 }
+
+.performance-link {
+  border: 1px solid #c2410c;
+  background-color: #fff7ed;
+  color: #9a3412;
+}
+
+.performance-link:hover {
+  background-color: #ffedd5;
+}
+
+.performance-link:focus-visible {
+  outline: 3px solid #9a3412;
+  outline-offset: 4px;
+}

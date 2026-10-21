@@ -123,7 +123,7 @@ function ParallaxHero() {
           </a>
           <a
             href="#custom-menu"
-            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 border border-brand-green-700/40 bg-brand-cream-50/80 hover:bg-brand-green-100 text-brand-green-700 font-bold rounded-full transition-colors duration-200 text-center focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand-green-700"
+            className="performance-link inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 font-bold rounded-full transition-colors duration-200 text-center"
           >
             <Sparkles size={18} className="shrink-0" aria-hidden="true" />
             {t("home.hero.performanceButton")}

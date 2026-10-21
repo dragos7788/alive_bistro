@@ -64,7 +64,12 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-brand-green-700/80 hover:text-brand-green-900 text-sm font-semibold tracking-wider transition-colors duration-200"
+                className={cn(
+                  "text-sm font-semibold tracking-wider transition-colors duration-200",
+                  link.href === "#custom-menu"
+                    ? "performance-link inline-flex min-h-11 items-center rounded-full px-4 py-2"
+                    : "text-brand-green-700/80 hover:text-brand-green-900"
+                )}
               >
                 {t(link.labelKey)}
               </a>
@@ -162,7 +167,12 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-brand-green-700 text-2xl font-bold hover:text-brand-green-900 transition-colors"
+                className={cn(
+                  "text-2xl font-bold transition-colors",
+                  link.href === "#custom-menu"
+                    ? "performance-link rounded-full px-6 py-3"
+                    : "text-brand-green-700 hover:text-brand-green-900"
+                )}
               >
                 {t(link.labelKey)}
               </a>

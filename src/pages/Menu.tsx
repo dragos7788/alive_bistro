@@ -9,6 +9,7 @@ import { menuData } from "../features/menu/seed"
 import { getMenu } from "../features/menu/api"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
+import { MobileCategoryPicker } from "../features/menu/MobileCategoryPicker"
 
 
 function CategoryBar({
@@ -45,7 +46,9 @@ function CategoryBar({
   }
 
   return (
-    <div className="relative w-full mb-10 bg-brand-cream-200/60 border-y border-brand-green-700/10 shadow-inner shadow-brand-green-700/5">
+    <>
+      <MobileCategoryPicker categories={categories} activeCategory={activeCategory} onSelect={onSelect} />
+    <div className="relative hidden w-full mb-10 bg-brand-cream-200/60 border-y border-brand-green-700/10 shadow-inner shadow-brand-green-700/5 md:block">
       <div
         ref={scrollRef}
         onScroll={updateArrows}
@@ -108,6 +111,7 @@ function CategoryBar({
         )}
       </AnimatePresence>
     </div>
+    </>
   )
 }
 
@@ -202,10 +206,6 @@ export default function Menu() {
           <p className="text-brand-dark/80 text-sm mt-3 max-w-xl mx-auto font-light leading-relaxed font-sans">
             {t("menu.desc")}
           </p>
-          <a href="#custom-menu" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-green-700/30 px-5 py-2.5 text-sm font-semibold text-brand-green-700 hover:bg-brand-green-100 focus-visible:outline-2 focus-visible:outline-offset-4">
-            <Plus size={17} aria-hidden="true" />
-            {t("builder.menuLink")}
-          </a>
         </motion.div>
 
         {/* Sentinel: marks where the nav becomes sticky so we can measure scroll progress */}
@@ -219,15 +219,14 @@ export default function Menu() {
         <div ref={stickyNavRef} className="sticky top-16 z-30 w-screen ml-[calc(50%-50vw)] bg-brand-cream-100">
           {/* Group toggle (Food / Drinks) */}
           <div
-            className="max-w-4xl mx-auto px-6 flex justify-center transition-[padding,margin] duration-300 ease-out"
-            style={{
-              paddingTop: navCompact ? 16 : 22,
-              marginBottom: navCompact ? 2 : 28,
-            }}
+            className={`max-w-4xl mx-auto flex flex-col items-center justify-center gap-3 px-6 py-3 md:flex-row md:flex-wrap md:pb-0 md:transition-[padding,margin] md:duration-300 md:ease-out ${
+              navCompact ? "md:pt-4 md:mb-0.5" : "md:pt-[22px] md:mb-7"
+            }`}
           >
             <div
-              className="inline-flex p-1.5 rounded-full bg-brand-cream-200/60 border border-brand-green-700/10 origin-top transition-transform duration-300 ease-out"
-              style={{ transform: navCompact ? "scale(0.88)" : "scale(1)" }}
+              className={`inline-flex p-1.5 rounded-full bg-brand-cream-200/60 border border-brand-green-700/10 origin-top md:transition-transform md:duration-300 md:ease-out ${
+                navCompact ? "md:scale-[0.88]" : ""
+              }`}
             >
               {menuGroups.map((group) => (
                 <button
@@ -244,6 +243,10 @@ export default function Menu() {
                 </button>
               ))}
             </div>
+            <a href="#custom-menu" className="performance-link inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors sm:text-sm">
+              <Plus size={17} className="shrink-0" aria-hidden="true" />
+              {t("home.hero.performanceButton")}
+            </a>
           </div>
 
           {/* Category chips — full-width bar with dynamic scroll arrows */}

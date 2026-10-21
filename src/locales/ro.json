@@ -10,9 +10,7 @@
   "builder": {
     "title": "Meniul tău. În ritmul tău.",
     "intro": "Alegi combinația, alegi gramajele. Construiește-ți farfuria din proteine, carbohidrați, legume și sosuri, în funcție de pofta și obiectivele tale. Vezi pe loc cât costă și ce valori nutriționale are.",
-    "menuLink": "Vrei altă combinație? Construiește-ți meniul",
     "start": "Configurează meniul",
-    "imageNote": "Fotografie de prezentare. Combinația ta poate arăta diferit.",
     "calculatorTitle": "Ce punem în farfurie?",
     "instructions": "Alege câte o opțiune din fiecare categorie și apoi porția dorită. Poți sări peste orice categorie. Prețul și valorile se actualizează automat în rezumat.",
     "progress": "{{selected}} / {{total}} categorii alese",
@@ -186,6 +184,7 @@
     "teaserDesc": "Oferim espresso single-origin în fiecare zi, lapte bio vegetal la alegere gratuit și o selecție superbă de deserturi raw-vegane gătite zilnic.",
     "details": "Detalii",
     "clickHint": "Click pentru descriere completă",
+    "chooseCategory": "Alege categoria",
     "close": "Închide",
     "ingredients": "Ingrediente și detalii",
     "nutritionTitle": "Valori nutriționale per preparat",

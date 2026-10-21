@@ -15,7 +15,6 @@ interface BuilderStepProps {
 export function BuilderStep({ group, step, choice, onChange }: BuilderStepProps) {
   const { t, i18n } = useTranslation()
   const options = ingredients.filter(ingredient => ingredient.group === group)
-  const selected = options.find(ingredient => ingredient.id === choice?.ingredientId)
   const Icon = stepIcons[group]
   const money = (value: number) => new Intl.NumberFormat(i18n.language, {
     style: "currency", currency: "RON", maximumFractionDigits: 0,
@@ -31,30 +30,74 @@ export function BuilderStep({ group, step, choice, onChange }: BuilderStepProps)
         <Icon size={20} className="mt-0.5 shrink-0 text-brand-green-600" aria-hidden="true" />
         {t(`builder.groups.${group}.description`)}
       </p>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid items-start gap-3 sm:grid-cols-2">
         {options.map(ingredient => {
           const isSelected = choice?.ingredientId === ingredient.id
           return (
-            <label key={ingredient.id} className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors ${
-              isSelected ? "border-brand-green-700 bg-brand-green-100" : "border-brand-green-700/20 bg-white hover:border-brand-green-700/50"
+            <div key={ingredient.id} className={`overflow-hidden rounded-2xl border transition-colors ${
+              isSelected ? "border-brand-green-700 bg-brand-green-100 sm:col-span-2" : "border-brand-green-700/20 bg-white hover:border-brand-green-700/50"
             }`}>
-              <input
-                type="radio"
-                name={`builder-${group}`}
-                value={ingredient.id}
-                checked={isSelected}
-                onChange={() => onChange({ ingredientId: ingredient.id, amount: ingredient.portions[0].amount })}
-                className="mt-1 size-4 shrink-0 accent-brand-green-700"
-              />
-              <span>
-                <span className="block text-sm font-bold leading-relaxed">{t(`builder.ingredients.${ingredient.id}.name`)}</span>
-                <span className="mt-1 block text-xs text-brand-green-700">
-                  {ingredient.portions.length > 1 ? t("builder.from") + " " : ""}
-                  {money(ingredient.portions[0].price)}
-                  {ingredient.portions.length === 1 ? ` / ${ingredient.portions[0].amount} ${ingredient.unit}` : ""}
-                </span>
-              </span>
-            </label>
+              <div className={isSelected ? "sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]" : undefined}>
+                <label className="flex cursor-pointer items-start gap-3 p-4">
+                  <input
+                    type="radio"
+                    name={`builder-${group}`}
+                    value={ingredient.id}
+                    checked={isSelected}
+                    onChange={() => onChange({ ingredientId: ingredient.id, amount: ingredient.portions[0].amount })}
+                    className="mt-1 size-4 shrink-0 accent-brand-green-700"
+                  />
+                  <span>
+                    <span id={`builder-ingredient-${ingredient.id}`} className="block text-sm font-bold leading-relaxed">{t(`builder.ingredients.${ingredient.id}.name`)}</span>
+                    <span className="mt-1 block text-xs text-brand-green-700">
+                      {ingredient.portions.length > 1 ? t("builder.from") + " " : ""}
+                      {money(ingredient.portions[0].price)}
+                      {ingredient.portions.length === 1 ? ` / ${ingredient.portions[0].amount} ${ingredient.unit}` : ""}
+                    </span>
+                  </span>
+                </label>
+                {isSelected && choice && (
+                  <div className="min-w-0 border-t border-brand-green-700/15 p-4 sm:border-t-0 sm:border-l">
+                    <fieldset aria-describedby={`builder-ingredient-${ingredient.id}`}>
+                      <legend className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-green-700">
+                        {t("builder.portion")}
+                      </legend>
+                      <div className="grid grid-cols-3 gap-2">
+                        {ingredient.portions.map(portion => (
+                          <label key={portion.amount} className="relative cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`builder-portion-${group}`}
+                              value={portion.amount}
+                              checked={choice.amount === portion.amount}
+                              onChange={() => onChange({ ingredientId: ingredient.id, amount: portion.amount })}
+                              className="peer sr-only"
+                            />
+                            <span className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-brand-green-700/25 bg-white px-2 py-3 text-brand-green-700 transition-colors hover:border-brand-green-700 peer-checked:border-brand-green-700 peer-checked:bg-brand-green-700 peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-green-700">
+                              <span className="text-sm font-bold">{portion.amount} {ingredient.unit}</span>
+                              <span className="text-xs">{money(portion.price)}</span>
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                  </div>
+                )}
+              </div>
+              {isSelected && (
+                <div className="border-t border-brand-green-700/15 px-4 py-3 text-xs leading-relaxed">
+                  {["fresh", "warm", "quinoa"].includes(ingredient.id) && (
+                    <p className="mb-2">{t(`builder.ingredients.${ingredient.id}.description`)}</p>
+                  )}
+                  <p>
+                    <span className="font-bold">{t("builder.allergens")}: </span>
+                    {ingredient.allergens.length
+                      ? ingredient.allergens.map(allergen => t(`builder.allergenNames.${allergen}`)).join(", ")
+                      : t("builder.noDeclaredAllergens")}
+                  </p>
+                </div>
+              )}
+            </div>
           )
         })}
       </div>
@@ -63,42 +106,6 @@ export function BuilderStep({ group, step, choice, onChange }: BuilderStepProps)
           onChange={() => onChange(undefined)} className="size-4 accent-brand-green-700" />
         {t(`builder.groups.${group}.skip`)}
       </label>
-      {selected && choice && (
-        <div className="mt-4 border-t border-brand-green-700/15 pt-4">
-          <fieldset>
-            <legend className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-green-700">
-              {t("builder.portion")}
-            </legend>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {selected.portions.map(portion => (
-                <label key={portion.amount} className="relative cursor-pointer">
-                  <input
-                    type="radio"
-                    name={`builder-portion-${group}`}
-                    value={portion.amount}
-                    checked={choice.amount === portion.amount}
-                    onChange={() => onChange({ ingredientId: selected.id, amount: portion.amount })}
-                    className="peer sr-only"
-                  />
-                  <span className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-brand-green-700/25 bg-white px-3 py-3 text-brand-green-700 transition-colors hover:border-brand-green-700 peer-checked:border-brand-green-700 peer-checked:bg-brand-green-700 peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-brand-green-700">
-                    <span className="text-sm font-bold">{portion.amount} {selected.unit}</span>
-                    <span className="text-xs">{money(portion.price)}</span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          {["fresh", "warm", "quinoa"].includes(selected.id) && (
-            <p className="mt-3 text-xs leading-relaxed">{t(`builder.ingredients.${selected.id}.description`)}</p>
-          )}
-          <p className="mt-3 text-xs leading-relaxed">
-            <span className="font-bold">{t("builder.allergens")}: </span>
-            {selected.allergens.length
-              ? selected.allergens.map(allergen => t(`builder.allergenNames.${allergen}`)).join(", ")
-              : t("builder.noDeclaredAllergens")}
-          </p>
-        </div>
-      )}
     </fieldset>
   )
 }
