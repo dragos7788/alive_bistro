@@ -31,9 +31,9 @@ export const ingredients: Ingredient[] = [
   {
     id: "turkey", group: "protein", unit: "g", allergens: [],
     portions: [
-      { amount: 100, price: 13, calories: 141, protein: 30.8, carbs: 0 },
-      { amount: 150, price: 18, calories: 209, protein: 46, carbs: 0 },
-      { amount: 200, price: 23, calories: 277, protein: 61.2, carbs: 0 },
+      { amount: 100, price: 19, calories: 141, protein: 30.8, carbs: 0 },
+      { amount: 150, price: 26, calories: 209, protein: 46, carbs: 0 },
+      { amount: 200, price: 34, calories: 277, protein: 61.2, carbs: 0 },
     ],
   },
   {

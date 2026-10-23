@@ -31,9 +31,9 @@ describe("Custom menu calculator", () => {
     ["chicken", 100, 12, 170, 30.5],
     ["chicken", 150, 17, 245, 45],
     ["chicken", 200, 22, 322, 60],
-    ["turkey", 100, 13, 141, 30.8],
-    ["turkey", 150, 18, 209, 46],
-    ["turkey", 200, 23, 277, 61.2],
+    ["turkey", 100, 19, 141, 30.8],
+    ["turkey", 150, 26, 209, 46],
+    ["turkey", 200, 34, 277, 61.2],
     ["salmon", 100, 30, 281, 27.5],
     ["salmon", 150, 41, 335, 32.8],
     ["beef", 100, 30, 208, 30],
@@ -85,7 +85,7 @@ describe("Custom menu calculator", () => {
 
     expect(calculateMenu(selection).allergens).toEqual(["fish"])
     expect(calculateMenu({ ...selection, protein: { ingredientId: "turkey", amount: 100 } }))
-      .toMatchObject({ price: 13, calories: 141, allergens: [] })
+      .toMatchObject({ price: 19, calories: 141, allergens: [] })
     expect(selection).toEqual(original)
   })
 
