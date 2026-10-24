@@ -190,6 +190,8 @@
     "nutritionTitle": "Valori nutriționale per preparat",
     "nutritionEstimated": "Valori estimate orientativ pentru porție; pot varia în funcție de rețetă și ingrediente.",
     "estimatedBadge": "Estimare",
+    "matchaTitle": "Matcha, în trei variante",
+    "matchaDesc": "Alege matcha simplă, Matcha Latte sau varianta rece cu gheață.",
     "macros": {
       "calories": "kcal",
       "protein": "Proteine",

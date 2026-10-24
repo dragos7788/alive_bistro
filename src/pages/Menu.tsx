@@ -116,7 +116,7 @@ function CategoryBar({
 }
 
 export default function Menu() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(menuData[0].categories[0].id)
@@ -272,6 +272,16 @@ export default function Menu() {
         <div ref={listAnchorRef} aria-hidden className="h-0" />
 
         {/* Menu Items */}
+        {activeCategoryObj.id === "tea-matcha" && (
+          <div className="mb-5 rounded-2xl border border-brand-green-700/15 bg-brand-cream-200/50 px-5 py-4 text-center">
+            <h3 className="font-serif text-lg font-bold text-brand-green-700">
+              {t("menu.matchaTitle")}
+            </h3>
+            <p className="mt-1 text-sm leading-relaxed text-brand-dark/80">
+              {t("menu.matchaDesc")}
+            </p>
+          </div>
+        )}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}
@@ -300,7 +310,7 @@ export default function Menu() {
                       decoding="async"
                       alt={item.name}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover object-bottom"
+                      className={`w-full h-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover object-bottom"}`}
                     /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
                     {item.tag && (
                       <span className={`absolute top-3 left-3 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm ${tagColors[item.tag] ?? "bg-brand-cream-200 text-brand-dark/60"}`}>
@@ -318,6 +328,11 @@ export default function Menu() {
                     <h3 className="text-brand-dark font-bold group-hover:text-brand-green-700 transition-colors text-sm sm:text-base font-serif lowercase leading-tight">{item.name}</h3>
                     <span className="text-brand-green-700 font-bold text-xs sm:text-sm whitespace-nowrap">{item.price}</span>
                   </div>
+                  {activeCategoryObj.id === "tea-matcha" && (
+                    <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
+                      {(i18n.language.startsWith("en") ? item.description_en ?? item.description : item.description).split("\n\n", 1)[0]}
+                    </p>
+                  )}
 
                   {/* Macronutrients & Calories badges */}
                   {item.macros && (
@@ -409,7 +424,7 @@ export default function Menu() {
                       decoding="async"
                       alt={selectedItem.name}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover object-bottom"
+                      className={`w-full h-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover object-bottom"}`}
                     />
                   </div>
                 ) : (
@@ -431,7 +446,9 @@ export default function Menu() {
                   )}
 
                   <h3 className="text-brand-green-700 font-bold text-base mb-2">{t("menu.ingredients")}</h3>
-                  <p className="whitespace-pre-line text-brand-dark/80 text-sm sm:text-base leading-relaxed font-sans mb-6">{selectedItem.description}</p>
+                  <p className="whitespace-pre-line text-brand-dark/80 text-sm sm:text-base leading-relaxed font-sans mb-6">
+                    {i18n.language.startsWith("en") ? selectedItem.description_en ?? selectedItem.description : selectedItem.description}
+                  </p>
 
                   {selectedItem.macros && (
                     <>

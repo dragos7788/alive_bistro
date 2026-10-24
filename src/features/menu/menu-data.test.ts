@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import source from "./menu-data.json"
-import type { MenuItem } from "./types"
+import type { MenuCategory, MenuItem } from "./types"
 
 type MenuSourceItem = MenuItem & { imageFile: string | null }
 
@@ -74,6 +74,8 @@ describe("PDF menu details", () => {
     const mappings = [
       ["Supă de linte și ardei copt", "SUPA LINTE.jpg"],
       ["Veggie Bowl", "VEGGIE BOWL.jpg"],
+      ["Carrot Cake", "CARROT CAKE.jpg"],
+      ["Cocoa Peanut Butter Banana Bread", "PEANUT BUTTER BANANA BREAD.jpg"],
       ["Espresso", "ESPRESSO.jpg"],
       ["Espresso Dopio", "ESPRESSO DOPIO.jpg"],
       ["Americano", "AMERICANO.jpg"],
@@ -85,11 +87,63 @@ describe("PDF menu details", () => {
       ["Espresso Tonic", "ESPRESSO TONIC.jpg"],
       ["Espresso Macchiato", "ESPRESSO MACHIATO.jpg"],
       ["Ceai Mango", "CEAI MANGO.jpg"],
+      ["Iced Tea Mango", "ICED TEA MANGO.jpg"],
+      ["Iced Tea Summer Love", "ICED TEA SUMMER LOVE.jpg"],
       ["Ceai Summer Love", "CEAI SUMMER LOVE.jpg"],
+      ["Matcha", "MATCHA.jpg"],
+      ["Iced Matcha Latte", "ICED MATCHA.jpg"],
+      ["Apă de cocos Coconaki Classic", "APA DE COCOS WITH PULP.jpg"],
+      ["Apă de cocos Coconaki Sparkling", "APA DE COCOS SPARKLING.jpg"],
+      ["Socată colorată Kofi Ti", "SOCATA COLORATA KOFI TI.jpg"],
+      ["Kraft Kola Mandarin", "KRAFT KOLA KOFI TI.jpg"],
+      ["Cold Brew Coffee & Tonic", "COLD BREW KOFI TI.jpg"],
+      ["Kombucha", "KOMBUCHA ZMEURA.jpg"],
+      ["Apă plată Aqua Carpatica 330 ml", "APA PLATA AQUA CARPATICA 330 ML.jpg"],
+      ["Apă minerală Aqua Carpatica 750 ml", "APA MINERALA AQUA CARPATOCA 750 ML.jpg"],
+      ["Apă plată Aqua Carpatica 750 ml", "APA PLATA AQUA CARPATICA 750 ML.jpg"],
+      ["Apă minerală Aqua Carpatica 330 ml", "APA MINERALA AQUA CARPATICA 330 ML.jpg"],
+      ["Apă de kefir", "APA DE KEFIR.jpg"],
+      ["Vin Petro Vaselo Alb", "VIN PETRO VASELO ALB.jpg"],
+      ["Vin Petro Vaselo Roze", "VIN PETRO VASELO ROZE.jpg"],
+      ["Vin Petro Vaselo Roșu", "VIN PETRO VASELO ROSU.jpg"],
+      ["Vin Petro Vaselo Maletine Alb", "VIN PETRO VASELO MALETINE ALB.jpg"],
+      ["Vin Petro Vaselo Ovaș Roșu", "VIN PETRO VASELO ORAS\u0326 ROSU.jpg"],
+      ["Prosecco Bendis Alb", "PROSECCO BENDIS ALB.jpg"],
+      ["Prosecco Bendis Roze", "PROSCCO BENDIS ROZE.jpg"],
+      ["Vin Liliac Fetească Albă", "VIN LILIAC FETEASCA ALBA.jpg"],
+      ["Vin Liliac Pinot Noir Roze", "VIN LILIAC PINOT NOIR ROZE.jpg"],
+      ["Aperol Spritz", "APEROL.jpg"],
+      ["Hugo", "HUGO.jpg"],
+      ["Wine Cooler", "WINE COOLER.jpg"],
+      ["Post Workout Shake", "POST WORKOUT SHAKE.jpg"],
+      ["OneTwo - Eins Zwei (German Lager) 5% ABV", "BERE ONETWO EINS ZWEI.jpg"],
+      ["OneTwo - Juicy (Hazy IPA) 5,5% ABV", "BERE ONETWO JUICY.jpg"],
+      ["OneTwo - Mango Habanero (Spicy Sour) 5,5% ABV", "BERE ONETWO MANGO HABANERO.jpg"],
+      ["Collagen Mango Lemonade", "COLLAGEN MANGO LEOMNADE.jpg"],
+      ["Electrolyte Lemonade", "ELECTROLYTE LEMONADE.jpg"],
+      ["Limonadă", "LIMONADA.jpg"],
+      ["Limonadă cu mentă", "LIMONADA MENTA.jpg"],
+      ["Bloody Roots", "BLOODY ROOTS.jpg"],
+      ["Energy Boost", "ENERGY BOOST.jpg"],
     ]
 
     for (const [name, imageFile] of mappings) {
       expect(items.find(item => item.name === name)?.imageFile).toBe(imageFile)
     }
+  })
+
+  it("MatchaOptions_AppearFirstWithEnglishDescriptions", () => {
+    const category = source[1].categories.find(category => category.id === "tea-matcha") as MenuCategory | undefined
+
+    expect(category?.items.slice(0, 3).map(item => item.name)).toEqual([
+      "Matcha",
+      "Matcha Latte",
+      "Iced Matcha Latte",
+    ])
+    expect(category?.items.slice(0, 3).map(item => item.description_en)).toEqual([
+      "200 ml · Water and matcha powder.",
+      "200 ml · Milk and matcha powder.",
+      "300 ml · Milk, matcha powder and ice.",
+    ])
   })
 })

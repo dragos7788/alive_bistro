@@ -187,6 +187,8 @@
     "nutritionTitle": "Nutrition per serving",
     "nutritionEstimated": "Approximate estimates per serving; values may vary with the recipe and ingredients.",
     "estimatedBadge": "Estimated",
+    "matchaTitle": "Matcha, three ways",
+    "matchaDesc": "Choose classic matcha, a Matcha Latte, or the iced version.",
     "macros": {
       "calories": "kcal",
       "protein": "Protein",

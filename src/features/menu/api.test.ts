@@ -29,6 +29,22 @@ vi.mock("./seed", () => ({
         },
       ],
     }],
+  }, {
+    id: "drinks",
+    label: "Băuturi",
+    iconKey: "coffee",
+    categories: [{
+      id: "tea-matcha",
+      label: "Tea & Matcha",
+      iconKey: "tea-bag",
+      items: [
+        { name: "Matcha", description: "200 ml · Apă și pudră de matcha.", description_en: "200 ml · Water and matcha powder.", price: "20 lei" },
+        { name: "Matcha Latte", description: "200 ml · Cremă de lapte și pudră de matcha.", description_en: "200 ml · Milk and matcha powder.", price: "25 lei" },
+        { name: "Iced Matcha Latte", description: "300 ml · Lapte, pudră de matcha și gheață.", description_en: "300 ml · Milk, matcha powder and ice.", price: "25 lei" },
+        { name: "Ceai Mango", description: "400 ml · Ceai și apă.", price: "18 lei" },
+        { name: "Ceai Summer Love", description: "400 ml · Ceai și apă.", price: "18 lei" },
+      ],
+    }],
   }],
 }))
 
@@ -89,6 +105,29 @@ describe("getMenu", () => {
       macros: { calories: 2, protein: "0,1 g", carbs: "0,3 g", fat: "0 g" },
       nutritionEstimated: true,
     })
+  })
+
+  it("ApiWithOldMatchaOrdering_UsesLocalOrderAndEnglishDescriptions", async () => {
+    const category = menuData[1].categories[0]
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({
+      data: [{
+        ...menuData[1],
+        categories: [{
+          ...category,
+          items: [...category.items].reverse().map(({ name, description, price }) => ({ name, description, price })),
+        }],
+      }],
+    })))
+
+    const groups = await getMenu()
+    const items = groups[0].categories[0].items
+
+    expect(items.slice(0, 3).map(item => item.name)).toEqual([
+      "Matcha",
+      "Matcha Latte",
+      "Iced Matcha Latte",
+    ])
+    expect(items.find(item => item.name === "Matcha")?.description_en).toBe("200 ml · Water and matcha powder.")
   })
 
   it("ApiUnavailable_ReturnsPdfMenu", async () => {

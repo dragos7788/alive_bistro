@@ -61,8 +61,8 @@
           { "name": "Mousse de ciocolată", "description": "180 g · Fructe de pădure, ciocolată fără zahăr, cremă vegetală, biscuiți integrali fără zahăr, albuș de ou, cafea, sirop de agave BIO, sare.\n\nAlergeni: gluten, lactate, ou, soia.", "price": "33 lei", "imageFile": "MOUSSE CIOCOLATA.jpg", "macros": { "calories": 453, "protein": "6,2 g", "fat": "33,7 g" } },
           { "name": "Budincă chia cu fulgi de migdale", "description": "250 g · Iaurt grecesc, banane, afine, fulgi de migdale, chia, sirop de agave BIO, sare.\n\nAlergeni: lactate, fructe cu coajă lemnoasă.", "price": "28 lei", "imageFile": "BUDINCA CHIA.jpg", "macros": { "calories": 386, "protein": "12,9 g", "fat": "21,9 g" } },
           { "name": "Panna cotta cu fructe de pădure", "description": "250 g · Lapte de cocos, fructe de pădure, sirop de agave BIO, agar agar, păstaie de vanilie, sare.\n\nAlergeni: fără alergeni (conform PDF-ului).", "price": "29 lei", "imageFile": "PANA COTTA.jpg", "tag": "Produs vegan", "macros": { "calories": 389, "protein": "3,6 g", "fat": "32,0 g" } },
-          { "name": "Carrot Cake", "description": "130 g · Făină integrală de grâu, ouă, ulei, agave, morcovi, nuci, scorțișoară, sare, praf de copt, bicarbonat, coajă de portocală, unt, cremă de brânză, vanilie.\n\nAlergeni: lactate, gluten, ouă, nuci.", "price": "24 lei", "imageFile": null, "macros": { "calories": 373, "protein": "4,5 g", "carbs": "22,4 g", "fat": "29,3 g" } },
-          { "name": "Cocoa Peanut Butter Banana Bread", "description": "100 g · Făină integrală de spelta, agave, unt de arahide, banane, cacao, bicarbonat, praf de copt, scorțișoară, pastă de cafea, vanilie.\n\nAlergeni: gluten, arahide.", "price": "16 lei", "imageFile": null, "macros": { "calories": 315, "protein": "6,7 g", "carbs": "52,8 g", "fat": "9,8 g" } }
+          { "name": "Carrot Cake", "description": "130 g · Făină integrală de grâu, ouă, ulei, agave, morcovi, nuci, scorțișoară, sare, praf de copt, bicarbonat, coajă de portocală, unt, cremă de brânză, vanilie.\n\nAlergeni: lactate, gluten, ouă, nuci.", "price": "24 lei", "imageFile": "CARROT CAKE.jpg", "macros": { "calories": 373, "protein": "4,5 g", "carbs": "22,4 g", "fat": "29,3 g" } },
+          { "name": "Cocoa Peanut Butter Banana Bread", "description": "100 g · Făină integrală de spelta, agave, unt de arahide, banane, cacao, bicarbonat, praf de copt, scorțișoară, pastă de cafea, vanilie.\n\nAlergeni: gluten, arahide.", "price": "16 lei", "imageFile": "PEANUT BUTTER BANANA BREAD.jpg", "macros": { "calories": 315, "protein": "6,7 g", "carbs": "52,8 g", "fat": "9,8 g" } }
         ]
       }
     ]
@@ -98,9 +98,9 @@
         "items": [
           { "name": "Protein Shake Peanut Chocolate", "description": "360 ml · Lapte, proteină din zer Vilgain, banană și unt de arahide.", "price": "26 lei", "imageFile": "PROTEIN SHAKE PEANUT.jpg", "macros": { "calories": 410, "protein": "32 g", "carbs": "36 g", "fat": "16 g" }, "nutritionEstimated": true },
           { "name": "Protein Shake Pink Vanilla", "description": "360 ml · Lapte, proteină din zer Vilgain, banană și fructe de pădure.", "price": "26 lei", "imageFile": "PROTEIN SHAKE PINK VANILLA.jpg", "macros": { "calories": 370, "protein": "30 g", "carbs": "38 g", "fat": "10 g" }, "nutritionEstimated": true },
-          { "name": "Collagen Mango Lemonade", "description": "360 ml · Collagen Drink + Vitamina C Vilgain, lămâie, piure de mango și gheață.", "price": "29 lei", "imageFile": null, "macros": { "calories": 75, "protein": "9 g", "carbs": "9 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Electrolyte Lemonade", "description": "360 ml · Pudră de electroliți Vilgain, suc de lămâie, suc de portocale și miere.", "price": "25 lei", "imageFile": null, "macros": { "calories": 55, "protein": "0,3 g", "carbs": "14 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Post Workout Shake", "description": "380 ml · Pudră de proteine din zer Vilgain, banană, fructe de pădure, ovăz, unt de arahide.\n\nAlergeni: lapte, gluten, arahide.", "price": "28 lei", "imageFile": null, "macros": { "calories": 401, "protein": "24,7 g", "carbs": "48,7 g", "fat": "12,3 g" } }
+          { "name": "Collagen Mango Lemonade", "description": "360 ml · Collagen Drink + Vitamina C Vilgain, lămâie, piure de mango și gheață.", "price": "29 lei", "imageFile": "COLLAGEN MANGO LEOMNADE.jpg", "macros": { "calories": 75, "protein": "9 g", "carbs": "9 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Electrolyte Lemonade", "description": "360 ml · Pudră de electroliți Vilgain, suc de lămâie, suc de portocale și miere.", "price": "25 lei", "imageFile": "ELECTROLYTE LEMONADE.jpg", "macros": { "calories": 55, "protein": "0,3 g", "carbs": "14 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Post Workout Shake", "description": "380 ml · Pudră de proteine din zer Vilgain, banană, fructe de pădure, ovăz, unt de arahide.\n\nAlergeni: lapte, gluten, arahide.", "price": "28 lei", "imageFile": "POST WORKOUT SHAKE.jpg", "macros": { "calories": 401, "protein": "24,7 g", "carbs": "48,7 g", "fat": "12,3 g" } }
         ]
       },
       {
@@ -109,8 +109,8 @@
         "iconKey": "carrot",
         "items": [
           { "name": "Feel Green", "description": "360 ml · Portocală, banană și baby spanac.", "price": "23 lei", "imageFile": "FEEL GREEN SMOOTHIE.jpg", "macros": { "calories": 170, "protein": "3 g", "carbs": "41 g", "fat": "0,5 g" }, "nutritionEstimated": true },
-          { "name": "Bloody Roots", "description": "360 ml · Morcov, măr și sfeclă roșie.", "price": "23 lei", "imageFile": null, "macros": { "calories": 125, "protein": "2 g", "carbs": "29 g", "fat": "0,5 g" }, "nutritionEstimated": true },
-          { "name": "Energy Boost", "description": "360 ml · Portocală, ghimbir, măr și mango.", "price": "25 lei", "imageFile": null, "macros": { "calories": 150, "protein": "2 g", "carbs": "36 g", "fat": "0,5 g" }, "nutritionEstimated": true }
+          { "name": "Bloody Roots", "description": "360 ml · Morcov, măr și sfeclă roșie.", "price": "23 lei", "imageFile": "BLOODY ROOTS.jpg", "macros": { "calories": 125, "protein": "2 g", "carbs": "29 g", "fat": "0,5 g" }, "nutritionEstimated": true },
+          { "name": "Energy Boost", "description": "360 ml · Portocală, ghimbir, măr și mango.", "price": "25 lei", "imageFile": "ENERGY BOOST.jpg", "macros": { "calories": 150, "protein": "2 g", "carbs": "36 g", "fat": "0,5 g" }, "nutritionEstimated": true }
         ]
       },
       {
@@ -118,11 +118,11 @@
         "label": "Homemade Drinks",
         "iconKey": "drop",
         "items": [
-          { "name": "Limonadă", "description": "360 ml · Apă, suc de lămâie și miere.", "price": "19 lei", "imageFile": null, "macros": { "calories": 65, "protein": "0 g", "carbs": "17 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Limonadă cu mentă", "description": "360 ml · Apă, suc de lămâie, miere și mentă.", "price": "23 lei", "imageFile": null, "macros": { "calories": 65, "protein": "0 g", "carbs": "17 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Limonadă", "description": "360 ml · Apă, suc de lămâie și miere.", "price": "19 lei", "imageFile": "LIMONADA.jpg", "macros": { "calories": 65, "protein": "0 g", "carbs": "17 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Limonadă cu mentă", "description": "360 ml · Apă, suc de lămâie, miere și mentă.", "price": "23 lei", "imageFile": "LIMONADA MENTA.jpg", "macros": { "calories": 65, "protein": "0 g", "carbs": "17 g", "fat": "0 g" }, "nutritionEstimated": true },
           { "name": "Limonadă cu mango și chia", "description": "360 ml · Apă, suc de lămâie, piure de mango, semințe chia și miere.", "price": "25 lei", "imageFile": "LIMONADA CU MANGO SI CHIA.jpg", "macros": { "calories": 125, "protein": "1 g", "carbs": "26 g", "fat": "2 g" }, "nutritionEstimated": true },
-          { "name": "Iced Tea Mango", "description": "360 ml · Infuzie de ceai, suc de lămâie, gheață și miere.", "price": "23 lei", "imageFile": null, "macros": { "calories": 45, "protein": "0 g", "carbs": "12 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Iced Tea Summer Love", "description": "360 ml · Infuzie de ceai, suc de lămâie, gheață și miere.", "price": "23 lei", "imageFile": null, "macros": { "calories": 45, "protein": "0 g", "carbs": "12 g", "fat": "0 g" }, "nutritionEstimated": true }
+          { "name": "Iced Tea Mango", "description": "360 ml · Infuzie de ceai, suc de lămâie, gheață și miere.", "price": "23 lei", "imageFile": "ICED TEA MANGO.jpg", "macros": { "calories": 45, "protein": "0 g", "carbs": "12 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Iced Tea Summer Love", "description": "360 ml · Infuzie de ceai, suc de lămâie, gheață și miere.", "price": "23 lei", "imageFile": "ICED TEA SUMMER LOVE.jpg", "macros": { "calories": 45, "protein": "0 g", "carbs": "12 g", "fat": "0 g" }, "nutritionEstimated": true }
         ]
       },
       {
@@ -130,11 +130,11 @@
         "label": "Tea & Matcha",
         "iconKey": "tea-bag",
         "items": [
+          { "name": "Matcha", "description": "200 ml · Apă și pudră de matcha.", "description_en": "200 ml · Water and matcha powder.", "price": "20 lei", "imageFile": "MATCHA.jpg", "macros": { "calories": 5, "protein": "0,5 g", "carbs": "0,7 g", "fat": "0,1 g" }, "nutritionEstimated": true },
+          { "name": "Matcha Latte", "description": "200 ml · Cremă de lapte și pudră de matcha.", "description_en": "200 ml · Milk and matcha powder.", "price": "25 lei", "imageFile": "MATCHA LATTE.jpg", "macros": { "calories": 125, "protein": "6 g", "carbs": "10 g", "fat": "7 g" }, "nutritionEstimated": true },
+          { "name": "Iced Matcha Latte", "description": "300 ml · Lapte, pudră de matcha și gheață.", "description_en": "300 ml · Milk, matcha powder and ice.", "price": "25 lei", "imageFile": "ICED MATCHA.jpg", "macros": { "calories": 150, "protein": "8 g", "carbs": "12 g", "fat": "8 g" }, "nutritionEstimated": true },
           { "name": "Ceai Mango", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": "CEAI MANGO.jpg", "macros": { "calories": 2, "protein": "0 g", "carbs": "0,5 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Ceai Summer Love", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": "CEAI SUMMER LOVE.jpg", "macros": { "calories": 2, "protein": "0 g", "carbs": "0,5 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Iced Matcha Latte", "description": "300 ml · Lapte, pudră de matcha și gheață.", "price": "25 lei", "imageFile": null, "macros": { "calories": 150, "protein": "8 g", "carbs": "12 g", "fat": "8 g" }, "nutritionEstimated": true },
-          { "name": "Matcha", "description": "200 ml · Apă și pudră de matcha.", "price": "20 lei", "imageFile": null, "macros": { "calories": 5, "protein": "0,5 g", "carbs": "0,7 g", "fat": "0,1 g" }, "nutritionEstimated": true },
-          { "name": "Matcha Latte", "description": "200 ml · Cremă de lapte și pudră de matcha.", "price": "25 lei", "imageFile": "MATCHA LATTE.jpg", "macros": { "calories": 125, "protein": "6 g", "carbs": "10 g", "fat": "7 g" }, "nutritionEstimated": true }
+          { "name": "Ceai Summer Love", "description": "400 ml · Ceai și apă.", "price": "18 lei", "imageFile": "CEAI SUMMER LOVE.jpg", "macros": { "calories": 2, "protein": "0 g", "carbs": "0,5 g", "fat": "0 g" }, "nutritionEstimated": true }
         ]
       },
       {
@@ -142,17 +142,17 @@
         "label": "Soft Drinks",
         "iconKey": "drop",
         "items": [
-          { "name": "Apă plată Aqua Carpatica 330 ml", "description": "330 ml · Apă plată.", "price": "8 lei", "imageFile": null, "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Apă plată Aqua Carpatica 750 ml", "description": "750 ml · Apă plată.", "price": "12 lei", "imageFile": null, "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Apă minerală Aqua Carpatica 330 ml", "description": "330 ml · Apă minerală.", "price": "8 lei", "imageFile": null, "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Apă minerală Aqua Carpatica 750 ml", "description": "750 ml · Apă minerală.", "price": "12 lei", "imageFile": null, "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Apă de cocos Coconaki Classic", "description": "320 ml · Apă de cocos. Prețul include taxa SGR de 0,50 lei.", "price": "15 lei", "imageFile": null, "macros": { "calories": 60, "protein": "1,5 g", "carbs": "14 g", "fat": "0,5 g" }, "nutritionEstimated": true },
-          { "name": "Apă de cocos Coconaki Sparkling", "description": "320 ml · Apă de cocos carbogazoasă. Prețul include taxa SGR de 0,50 lei.", "price": "15 lei", "imageFile": null, "macros": { "calories": 60, "protein": "1,5 g", "carbs": "14 g", "fat": "0,5 g" }, "nutritionEstimated": true },
-          { "name": "Socată colorată Kofi Ti", "description": "300 ml · Socată. Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null, "macros": { "calories": 90, "protein": "0 g", "carbs": "22 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Kraft Kola Mandarin", "description": "200 ml · Prețul include taxa SGR de 0,50 lei.", "price": "16 lei", "imageFile": null, "macros": { "calories": 84, "protein": "0 g", "carbs": "21 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Cold Brew Coffee & Tonic", "description": "200 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null, "macros": { "calories": 55, "protein": "0 g", "carbs": "14 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Kombucha", "description": "500 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null, "macros": { "calories": 100, "protein": "0,5 g", "carbs": "24 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Apă de kefir", "description": "330 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": null, "macros": { "calories": 40, "protein": "0,5 g", "carbs": "9,5 g", "fat": "0 g" }, "nutritionEstimated": true }
+          { "name": "Apă plată Aqua Carpatica 330 ml", "description": "330 ml · Apă plată.", "price": "8 lei", "imageFile": "APA PLATA AQUA CARPATICA 330 ML.jpg", "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Apă plată Aqua Carpatica 750 ml", "description": "750 ml · Apă plată.", "price": "12 lei", "imageFile": "APA PLATA AQUA CARPATICA 750 ML.jpg", "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Apă minerală Aqua Carpatica 330 ml", "description": "330 ml · Apă minerală.", "price": "8 lei", "imageFile": "APA MINERALA AQUA CARPATICA 330 ML.jpg", "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Apă minerală Aqua Carpatica 750 ml", "description": "750 ml · Apă minerală.", "price": "12 lei", "imageFile": "APA MINERALA AQUA CARPATOCA 750 ML.jpg", "macros": { "calories": 0, "protein": "0 g", "carbs": "0 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Apă de cocos Coconaki Classic", "description": "320 ml · Apă de cocos. Prețul include taxa SGR de 0,50 lei.", "price": "15 lei", "imageFile": "APA DE COCOS WITH PULP.jpg", "macros": { "calories": 60, "protein": "1,5 g", "carbs": "14 g", "fat": "0,5 g" }, "nutritionEstimated": true },
+          { "name": "Apă de cocos Coconaki Sparkling", "description": "320 ml · Apă de cocos carbogazoasă. Prețul include taxa SGR de 0,50 lei.", "price": "15 lei", "imageFile": "APA DE COCOS SPARKLING.jpg", "macros": { "calories": 60, "protein": "1,5 g", "carbs": "14 g", "fat": "0,5 g" }, "nutritionEstimated": true },
+          { "name": "Socată colorată Kofi Ti", "description": "300 ml · Socată. Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": "SOCATA COLORATA KOFI TI.jpg", "macros": { "calories": 90, "protein": "0 g", "carbs": "22 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Kraft Kola Mandarin", "description": "200 ml · Prețul include taxa SGR de 0,50 lei.", "price": "16 lei", "imageFile": "KRAFT KOLA KOFI TI.jpg", "macros": { "calories": 84, "protein": "0 g", "carbs": "21 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Cold Brew Coffee & Tonic", "description": "200 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": "COLD BREW KOFI TI.jpg", "macros": { "calories": 55, "protein": "0 g", "carbs": "14 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Kombucha", "description": "500 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": "KOMBUCHA ZMEURA.jpg", "macros": { "calories": 100, "protein": "0,5 g", "carbs": "24 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Apă de kefir", "description": "330 ml · Prețul include taxa SGR de 0,50 lei.", "price": "18 lei", "imageFile": "APA DE KEFIR.jpg", "macros": { "calories": 40, "protein": "0,5 g", "carbs": "9,5 g", "fat": "0 g" }, "nutritionEstimated": true }
         ]
       },
       {
@@ -160,9 +160,9 @@
         "label": "Bere Draft Artizanală",
         "iconKey": "wine",
         "items": [
-          { "name": "OneTwo - Eins Zwei (German Lager) 5% ABV", "description": "400 ml · Bere draft artizanală.", "price": "20 lei", "imageFile": null, "macros": { "calories": 170, "protein": "2 g", "carbs": "13 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "OneTwo - Juicy (Hazy IPA) 5,5% ABV", "description": "400 ml · Bere draft artizanală.", "price": "23 lei", "imageFile": null, "macros": { "calories": 210, "protein": "2 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "OneTwo - Mango Habanero (Spicy Sour) 5,5% ABV", "description": "330 ml · Bere draft artizanală.", "price": "22 lei", "imageFile": null, "macros": { "calories": 160, "protein": "1 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true }
+          { "name": "OneTwo - Eins Zwei (German Lager) 5% ABV", "description": "400 ml · Bere draft artizanală.", "price": "20 lei", "imageFile": "BERE ONETWO EINS ZWEI.jpg", "macros": { "calories": 170, "protein": "2 g", "carbs": "13 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "OneTwo - Juicy (Hazy IPA) 5,5% ABV", "description": "400 ml · Bere draft artizanală.", "price": "23 lei", "imageFile": "BERE ONETWO JUICY.jpg", "macros": { "calories": 210, "protein": "2 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "OneTwo - Mango Habanero (Spicy Sour) 5,5% ABV", "description": "330 ml · Bere draft artizanală.", "price": "22 lei", "imageFile": "BERE ONETWO MANGO HABANERO.jpg", "macros": { "calories": 160, "protein": "1 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true }
         ]
       },
       {
@@ -170,15 +170,15 @@
         "label": "Vin & Prosecco",
         "iconKey": "wine",
         "items": [
-          { "name": "Prosecco Bendis Alb", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": null, "macros": { "calories": 100, "protein": "0,1 g", "carbs": "2,5 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Prosecco Bendis Roze", "description": "750 ml.", "price": "100 lei", "imageFile": null, "macros": { "calories": 600, "protein": "0,8 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Petro Vaselo Alb", "description": "750 ml / 125 ml.", "price": "100 / 26 lei", "imageFile": null, "macros": { "calories": 100, "protein": "0,1 g", "carbs": "2,5 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Petro Vaselo Roze", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": null, "macros": { "calories": 100, "protein": "0,1 g", "carbs": "2,5 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Petro Vaselo Roșu", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": null, "macros": { "calories": 105, "protein": "0,1 g", "carbs": "2,6 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Petro Vaselo Maletine Alb", "description": "750 ml.", "price": "180 lei", "imageFile": null, "macros": { "calories": 600, "protein": "0,8 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Petro Vaselo Ovaș Roșu", "description": "750 ml.", "price": "240 lei", "imageFile": null, "macros": { "calories": 630, "protein": "0,8 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Liliac Fetească Albă", "description": "750 ml.", "price": "110 lei", "imageFile": null, "macros": { "calories": 600, "protein": "0,8 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Vin Liliac Pinot Noir Roze", "description": "750 ml.", "price": "110 lei", "imageFile": null, "macros": { "calories": 600, "protein": "0,8 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true }
+          { "name": "Prosecco Bendis Alb", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": "PROSECCO BENDIS ALB.jpg", "macros": { "calories": 100, "protein": "0,1 g", "carbs": "2,5 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Prosecco Bendis Roze", "description": "750 ml.", "price": "100 lei", "imageFile": "PROSCCO BENDIS ROZE.jpg", "macros": { "calories": 600, "protein": "0,8 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Petro Vaselo Alb", "description": "750 ml / 125 ml.", "price": "100 / 26 lei", "imageFile": "VIN PETRO VASELO ALB.jpg", "macros": { "calories": 100, "protein": "0,1 g", "carbs": "2,5 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Petro Vaselo Roze", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": "VIN PETRO VASELO ROZE.jpg", "macros": { "calories": 100, "protein": "0,1 g", "carbs": "2,5 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Petro Vaselo Roșu", "description": "750 ml / 125 ml.", "price": "100 / 28 lei", "imageFile": "VIN PETRO VASELO ROSU.jpg", "macros": { "calories": 105, "protein": "0,1 g", "carbs": "2,6 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Petro Vaselo Maletine Alb", "description": "750 ml.", "price": "180 lei", "imageFile": "VIN PETRO VASELO MALETINE ALB.jpg", "macros": { "calories": 600, "protein": "0,8 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Petro Vaselo Ovaș Roșu", "description": "750 ml.", "price": "240 lei", "imageFile": "VIN PETRO VASELO ORAS\u0326 ROSU.jpg", "macros": { "calories": 630, "protein": "0,8 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Liliac Fetească Albă", "description": "750 ml.", "price": "110 lei", "imageFile": "VIN LILIAC FETEASCA ALBA.jpg", "macros": { "calories": 600, "protein": "0,8 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Vin Liliac Pinot Noir Roze", "description": "750 ml.", "price": "110 lei", "imageFile": "VIN LILIAC PINOT NOIR ROZE.jpg", "macros": { "calories": 600, "protein": "0,8 g", "carbs": "15 g", "fat": "0 g" }, "nutritionEstimated": true }
         ]
       },
       {
@@ -186,9 +186,9 @@
         "label": "Cocktails",
         "iconKey": "wine",
         "items": [
-          { "name": "Aperol Spritz", "description": "180 ml · Prosecco, Aperol, apă minerală, portocale și gheață.", "price": "35 lei", "imageFile": null, "macros": { "calories": 170, "protein": "0,2 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Hugo", "description": "180 ml · Prosecco, apă minerală, sirop de soc fără zahăr, gheață, mentă și felii de lămâie.", "price": "30 lei", "imageFile": null, "macros": { "calories": 90, "protein": "0,1 g", "carbs": "7 g", "fat": "0 g" }, "nutritionEstimated": true },
-          { "name": "Wine Cooler", "description": "200 ml · Vin alb, apă minerală, suc și felii de portocale, gheață.", "price": "30 lei", "imageFile": null, "macros": { "calories": 100, "protein": "0,1 g", "carbs": "8 g", "fat": "0 g" }, "nutritionEstimated": true }
+          { "name": "Aperol Spritz", "description": "180 ml · Prosecco, Aperol, apă minerală, portocale și gheață.", "price": "35 lei", "imageFile": "APEROL.jpg", "macros": { "calories": 170, "protein": "0,2 g", "carbs": "18 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Hugo", "description": "180 ml · Prosecco, apă minerală, sirop de soc fără zahăr, gheață, mentă și felii de lămâie.", "price": "30 lei", "imageFile": "HUGO.jpg", "macros": { "calories": 90, "protein": "0,1 g", "carbs": "7 g", "fat": "0 g" }, "nutritionEstimated": true },
+          { "name": "Wine Cooler", "description": "200 ml · Vin alb, apă minerală, suc și felii de portocale, gheață.", "price": "30 lei", "imageFile": "WINE COOLER.jpg", "macros": { "calories": 100, "protein": "0,1 g", "carbs": "8 g", "fat": "0 g" }, "nutritionEstimated": true }
         ]
       }
     ]
