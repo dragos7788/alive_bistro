@@ -116,13 +116,13 @@ function ParallaxHero() {
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <a
-            href="#menu"
+            href="/menu"
             className="w-full sm:w-auto px-8 py-4 bg-brand-green-700 hover:bg-brand-green-800 active:bg-brand-green-900 text-brand-cream-50 font-bold rounded-full transition-all duration-200 shadow-md shadow-brand-green-700/15 text-center focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand-green-700"
           >
             {t("home.hero.button")}
           </a>
           <a
-            href="#custom-menu"
+            href="/menu#custom-menu"
             className="performance-link inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 font-bold rounded-full transition-colors duration-200 text-center"
           >
             <Sparkles size={18} className="shrink-0" aria-hidden="true" />

@@ -2,6 +2,139 @@
 
 Site public + admin dashboard pentru meniu. Stack: React + Vite, Cloudflare Pages, D1 (SQLite), R2 (imagini), Cloudflare Access (auth admin).
 
+## Pagini publice
+
+- `/`: prezentarea bistroului si comunitatea.
+- `/menu`: meniul, cosul si configuratorul Performance (`/menu#custom-menu`).
+- `/account`: contul clientului; autentificarea ramane in modal.
+
+Linkurile vechi `/#menu`, `/#custom-menu` si `/#menu-calculator` redirectioneaza
+catre sectiunea corespunzatoare de pe `/menu`, pastrand parametrii URL.
+Navigarea intre pagini foloseste linkuri native si fallback-ul SPA Cloudflare Pages.
+Cosul ramane persistent la navigare si reincarcare.
+
+## Conturi clienti, recomandari si puncte (pregatire BT iPay)
+
+Pagina **Contul meu** (`/account`) foloseste Google OpenID Connect si Facebook
+Login. Bara de navigare include un avatar cu initiale si indicator de autentificare
+confirmat prin sesiunea serverului, vizibil si pe mobil. Apasarea deschide contul;
+deconectarea actualizeaza imediat avatarul. Doar autentificarea se deschide
+intr-un modal Headless UI cu focus blocat in interior, revenirea focusului la
+declansator si inchidere prin Escape, fundal sau buton. `#account` deschide
+loginul pentru vizitatori, inclusiv din linkuri de recomandare; inchiderea
+elimina fragmentul fara reincarcarea paginii. Dupa login, callback-ul deschide
+`/account`, cu puncte, recomandari, QR si istoric, fara modal. Linkurile vechi
+`#account` duc clientii autentificati la aceasta pagina. Vizitatorii care acceseaza
+direct `/account` primesc un buton de autentificare. Navigarea foloseste linkuri
+native, ca paginile existente, si fallback-ul SPA Cloudflare Pages.
+Google continua pe pagina oficiala
+a furnizorului, nu intr-un iframe. Sunt afisati doar furnizorii configurati.
+Ecranul de login prioritizeaza butonul Google, un mesaj scurt de bun venit si
+nota ca recompensele sunt in pregatire. Codul de recomandare este intr-o sectiune
+extensibila, deschisa automat cand exista un cod; regulile detaliate ale punctelor
+sunt extensibile in cont. Cardul de membru afiseaza un salut scurt, soldul si
+butonul de copiere a linkului de recomandare; la eroare ofera copiere manuala.
+Linkul este afisat alaturi de un cod QR SVG generat local cu `qrcode.react`,
+fara transmiterea datelor catre un serviciu extern. QR-ul codifica exact acelasi
+URL, inclusiv codul personal si `#account`. In dezvoltarea pe loopback, scanarea
+de pe alt dispozitiv nu poate accesa serverul local; pentru distribuire reala
+este necesar `AUTH_ORIGIN` pe domeniul public HTTPS.
+Istoricul si regulile sunt extensibile, iar conectarea altui provider apare doar
+cand exista un provider configurat inca neconectat. Actualizarea manuala apare
+doar la eroare.
+Sesiunea se reverifica la revenirea
+in pagina/tab, iar erorile sunt marcate ca stare neverificata, nu ca autentificare.
+Nu se stocheaza fotografii de profil sau identitati in localStorage.
+
+Autentificarea foloseste Google OpenID Connect si Facebook
+Login, prin authorization code flow pe server. Google foloseste PKCE, nonce si
+validare JWT (semnatura, issuer, audience, expirare). Facebook verifica tokenul
+cu `debug_token`, aplicatia emitenta si identitatea din `/me`.
+Nu exista autentificare simulata sau bypass local pentru clienti.
+
+In mediul local verificat nu sunt configurate credențiale OAuth/iPay; nu au fost
+verificate conturile externe din Google Cloud, Meta sau BT. Fara configurare,
+butoanele de login sunt dezactivate explicit. Nu confunda Google Pay cu Google
+Login sau Apple Pay cu Sign in with Apple: sunt servicii separate.
+
+### Activarea autentificarii
+
+1. Aplica `0005_customer_accounts.sql` cu `npm run db:migrate` pentru baza locala.
+   In productie, fa backup D1 si aplica migrarea explicit pe mediul vizat
+   (`npx wrangler d1 migrations apply alive-bistro-menu --remote`) inainte de deploy.
+2. In [Google Cloud Console](https://console.cloud.google.com/auth/clients),
+   creeaza OAuth client de tip Web application si configureaza consent screen.
+   Adauga URI-ul exact `https://DOMENIU/api/customer/callback`
+   (pentru local foloseste acelasi origin ca browserul).
+   Configureaza utilizatori de test daca aplicatia este in modul Testing.
+3. In [Meta for Developers](https://developers.facebook.com/apps/), creeaza/configureaza
+   aplicatia cu Facebook Login, URL-ul site-ului si acelasi callback exact.
+   Configureaza versiunea Graph API suportata de aplicatie; obtine aprobarile,
+   politica de confidentialitate si cerintele de stergere a datelor necesare
+   inainte de folosirea cu clienti reali.
+4. Local, copiaza `.dev.vars.example` in `.dev.vars` si completeaza
+   `AUTH_ORIGIN`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+   `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET`, `FACEBOOK_API_VERSION`.
+   `AUTH_ORIGIN` este un origin exact fara slash final, HTTPS in productie,
+   localhost/127.0.0.1 pentru dezvoltare. Repornește Wrangler dupa configurare.
+5. In Cloudflare Pages seteaza valorile separat pentru Preview/Production;
+   secretele se stocheaza ca secret bindings, niciodata cu prefix `VITE_`.
+   Foloseste aplicatii si redirect URI dedicate mediilor de test.
+
+API: `GET /api/customer/me`, `POST /api/customer/start` cu
+`{provider,referral?,link?}`, `GET /api/customer/callback`, `POST /api/customer/logout`.
+Raspunsurile folosesc `no-store`; scrierile cer Origin exact.
+State-ul OAuth este unic, legat de cookie si valabil 10 minute. Sesiunea dureaza
+7 zile, cu token opac hash-uit in D1 si cookie HttpOnly/SameSite=Lax/Secure pe
+HTTPS, fara tokenuri in localStorage. Codurile/tokenurile providerilor nu se
+returneaza clientului si nu se pastreaza dupa autentificare.
+Middleware-ul de cont nu inlocuieste Cloudflare Access pentru admin.
+
+Conturile NU se unesc automat dupa e-mail. Un client autentificat poate conecta
+explicit al doilea provider din contul existent. O identitate deja asociata
+altui client nu se transfera; evita crearea a doua conturi independente.
+Numele, e-mailul optional, identificatorii providerilor, recomandarile si
+istoricul punctelor sunt date personale stocate in D1. Inainte de lansare
+sunt necesare politica de confidentialitate, retentie/stergere, mecanismul
+cerut de Meta pentru stergere si limitare de trafic/abuz la nivel Cloudflare.
+Aceste fluxuri operationale nu sunt implementate automat aici.
+
+### Reguli implementate pentru fidelizare
+
+- Cod personal unic si link `/?ref=COD#account`, introdus inainte de primul login.
+- Recomandantul se fixeaza la crearea contului; fara autorecomandare sau schimbare
+  ulterioara. Linkul trebuie folosit in aceeasi vizita; nu urmareste utilizatorul
+  intre dispozitive/vizite si nu implementeaza cookie de afiliere.
+- 49,90 RON platiti = 49 puncte clientului si 49 recomandantului direct.
+  Regula se aplica tuturor achizitiilor viitoare, fara al doilea nivel.
+- Registru append-only, plati unice pe `payment_id` si `order_id`; retry-ul nu
+  dubleaza punctele. Rambursarile cumulative recalculeaza punctele pe suma neta,
+  cu retragere atat de la cumparator, cat si de la recomandant.
+- `recordSettledPayment` si `recordCumulativeRefund` sunt functii INTERNE pentru
+  integrarea viitoare, nu verifica ele insele plata bancara si nu au endpoint
+  public. Nu trebuie apelate pe baza datelor browserului sau a redirectului bancii.
+- Comenzile TEST, guest checkout-ul actual si totalurile coșului sunt nemodificate.
+  TEST nu acorda puncte; nici autentificarea, nici instalarea nu acorda puncte.
+  Identitatea pentru o comanda reala va trebui fixata din sesiunea serverului
+  cand va fi implementat checkout-ul BT iPay.
+
+### Plati: BT iPay inlocuieste planul EuPlatesc
+
+Nu exista inca o integrare BT iPay activa sau endpoint de confirmare.
+Sunt necesare contractul/contul de comerciant, credențiale sandbox, documentatia
+tehnica aferenta contului, activarea Apple Pay/Google Pay de catre BT si testarea
+confirmarii autentice server-la-server (inclusiv suma, moneda RON, comerciant,
+comanda si status de decontare). Documentatie:
+[BTePOS](https://btepos.ro/documentatie).
+Suportul wallet-urilor nu se deduce din simpla acceptare a cardurilor contactless.
+Voucherele, valoarea monetara a punctelor, remunerarea antrenorilor, antifrauda
+avansata si discountul de membru nu sunt activate.
+
+Instagram Login vizeaza conturi profesionale, nu este un login universal simplu
+pentru clientii cu cont personal. WhatsApp necesita verificare prin cod OTP
+si configurare WhatsApp Business, nu este echivalent cu Facebook Login.
+Acesti doi furnizori nu sunt implementati in etapa curenta.
+
 ## Restrictii pentru comenzile online
 
 Bauturile din categoriile `craft-beer`, `wine-prosecco` si `cocktails` raman
@@ -21,6 +154,9 @@ notificari push.
 
 Pe site-ul public, dupa 8 secunde apare un toast cu instalarea si mesajul
 promotional de 10% pentru membrii comunitatii ALIVE. Butonul foloseste
+un text scurt, iar nota precizeaza ca instalarea nu inseamna inscriere si
+reducerea nu este inca activa online. Linkul comunitatii duce la `/#community`
+inclusiv de pe pagina meniului. Instalarea foloseste
 `beforeinstallprompt` cand browserul il ofera; altfel afiseaza instructiuni
 pentru Safari iOS si meniul browserului. Inchiderea ascunde toastul pana la
 remontarea paginii (o reincarcare il poate afisa din nou). Nu apare in
@@ -123,7 +259,7 @@ Primele două carduri se încarcă normal; restul folosesc lazy loading, iar det
 ```sh
 npm run dev:cf      # build + wrangler pages dev → http://localhost:8788
 # Admin: http://localhost:8788/admin
-# Meniu public: http://localhost:8788/#menu
+# Meniu public: http://localhost:8788/menu
 ```
 
 > Local, Cloudflare Access nu e activ. Headerul `Cf-Access-Authenticated-User-Email` lipsește,
@@ -141,7 +277,7 @@ npm run deploy            # build + wrangler pages deploy
 
 ## Meniu Performance / Build your performance
 
-Secțiunea `#custom-menu`, accesibilă din navigație, din bara sticky a meniului și
+Secțiunea `/menu#custom-menu`, accesibilă din navigație, din bara sticky a meniului și
 din butonul „Construiește-ți farfuria” de lângă „Explorează Meniul” din prima secțiune,
 explică cei patru pași și include un calculator pentru o farfurie personalizată.
 Introducerea configuratorului conține doar text și butonul de configurare, fără

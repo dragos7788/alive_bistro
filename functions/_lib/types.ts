@@ -1,4 +1,10 @@
 export interface Env {
+  AUTH_ORIGIN?: string
+  GOOGLE_CLIENT_ID?: string
+  GOOGLE_CLIENT_SECRET?: string
+  FACEBOOK_APP_ID?: string
+  FACEBOOK_APP_SECRET?: string
+  FACEBOOK_API_VERSION?: string
   LOCAL_TEST_ORDERS?: string
   DB: {
     prepare(sql: string): D1Stmt

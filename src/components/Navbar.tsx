@@ -4,20 +4,27 @@ import { List, X } from "@phosphor-icons/react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import Logo from "./Logo"
+import { AccountAvatar } from "@/features/account/AccountAvatar"
+import type { AccountData } from "@/features/account/api"
 
 const navLinks = [
   { href: "#home", labelKey: "navbar.home" },
-  { href: "#menu", labelKey: "navbar.menu" },
-  { href: "#custom-menu", labelKey: "navbar.customMenu" },
+  { href: "/menu", labelKey: "navbar.menu" },
+  { href: "/menu#custom-menu", labelKey: "navbar.customMenu" },
   { href: "#community", labelKey: "navbar.community" },
+  { href: "#account", labelKey: "account.nav" },
 ]
 
-export default function Navbar() {
+export default function Navbar({ account, accountError }: { account: AccountData | null; accountError: boolean }) {
   const { t, i18n } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [langDropdownOpen, setLangDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const isHomePage = window.location.pathname === "/"
+  const linkHref = (href: string) => href === "#account"
+    ? account?.customer ? "/account" : "#account"
+    : href.startsWith("#") && !isHomePage ? `/${href}` : href
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -54,7 +61,7 @@ export default function Navbar() {
       >
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
           {/* Logo */}
-          <a href="#home" className="hover:opacity-90 transition-opacity">
+          <a href={linkHref("#home")} className="hover:opacity-90 transition-opacity">
             <Logo variant="transparent" size="md" className="text-brand-green-700" />
           </a>
 
@@ -63,10 +70,10 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={linkHref(link.href)}
                 className={cn(
                   "text-sm font-semibold tracking-wider transition-colors duration-200",
-                  link.href === "#custom-menu"
+                  link.href === "/menu#custom-menu"
                     ? "performance-link inline-flex min-h-11 items-center rounded-full px-4 py-2"
                     : "text-brand-green-700/80 hover:text-brand-green-900"
                 )}
@@ -119,6 +126,7 @@ export default function Navbar() {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-4">
+            <AccountAvatar account={account} hasError={accountError} />
             {/* Mobile Language Switcher (compact) */}
             <div className="md:hidden flex gap-1 border border-brand-green-700/10 rounded-full p-1 bg-brand-cream-50/50">
               <button
@@ -165,11 +173,11 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={linkHref(link.href)}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "text-2xl font-bold transition-colors",
-                  link.href === "#custom-menu"
+                  link.href === "/menu#custom-menu"
                     ? "performance-link rounded-full px-6 py-3"
                     : "text-brand-green-700 hover:text-brand-green-900"
                 )}

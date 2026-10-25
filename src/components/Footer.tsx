@@ -17,9 +17,9 @@ export default function Footer() {
 
           {/* Links */}
           <div className="flex gap-6 text-sm text-brand-cream-200">
-            <a href="#menu" className="hover:text-brand-cream-50 transition-colors">{t("footer.menu")}</a>
-            <a href="#community" className="hover:text-brand-cream-50 transition-colors">{t("footer.community")}</a>
-            <a href="#feedback" className="hover:text-brand-cream-50 transition-colors">{t("footer.feedback")}</a>
+            <a href="/menu" className="hover:text-brand-cream-50 transition-colors">{t("footer.menu")}</a>
+            <a href="/#community" className="hover:text-brand-cream-50 transition-colors">{t("footer.community")}</a>
+            <a href="/#feedback" className="hover:text-brand-cream-50 transition-colors">{t("footer.feedback")}</a>
           </div>
 
           {/* Socials */}

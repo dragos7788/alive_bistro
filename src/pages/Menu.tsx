@@ -129,8 +129,12 @@ export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
   const [addedMessage, setAddedMessage] = useState("")
   const summary = summarizeCart(cart.items, cartCatalog(menuGroups))
   const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0)
+  const headingRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => { getMenu().then(setMenuGroups) }, [])
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true })
+  }, [])
 
   // Whether the sticky menu nav has collapsed into its compact state.
   // Driven by a simple scroll threshold (with hysteresis) instead of a per-frame value so the
@@ -203,7 +207,7 @@ export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
   }, [activeCategory, activeGroup])
 
   return (
-    <section id="menu" className="min-h-screen py-24 px-6 bg-brand-cream-100 overflow-x-clip">
+    <section id="menu" aria-labelledby="menu-title" className="min-h-screen pb-24 pt-32 px-6 bg-brand-cream-100 overflow-x-clip">
       <button type="button" onClick={() => setIsCartOpen(true)}
         className="fixed bottom-5 right-5 z-40 flex min-h-12 items-center gap-2 rounded-full bg-brand-green-700 px-5 py-3 font-semibold text-white shadow-lg hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
         <ShoppingBag size={20} aria-hidden="true" />
@@ -223,14 +227,14 @@ export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
           className="text-center mb-16"
         >
           <p className="text-brand-green-700 uppercase tracking-[0.3em] text-xs font-bold mb-3 font-sans">{t("menu.tagline")}</p>
-          <h2 className="text-4xl md:text-6xl font-extrabold text-brand-green-700 tracking-tight font-serif lowercase">
+          <h1 id="menu-title" ref={headingRef} tabIndex={-1} className="text-4xl md:text-6xl font-extrabold text-brand-green-700 tracking-tight font-serif lowercase focus-visible:outline-2 focus-visible:outline-brand-green-700">
             <Trans
               i18nKey="menu.title"
               components={{ 1: <span className="text-brand-green-500 font-sans" /> }}
             >
               Meniul Nostru<span className="text-brand-green-500 font-sans">.</span>
             </Trans>
-          </h2>
+          </h1>
           <p className="text-brand-dark/80 text-sm mt-3 max-w-xl mx-auto font-light leading-relaxed font-sans">
             {t("menu.desc")}
           </p>

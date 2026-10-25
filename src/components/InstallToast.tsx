@@ -75,7 +75,7 @@ export function InstallToast() {
     <div aria-live="polite" aria-atomic="true">
       {isVisible && !isDismissed && !isInstalled && (
         <aside aria-label={t("installToast.label")}
-          className="fixed bottom-4 left-4 right-4 z-40 max-h-[70dvh] overflow-y-auto rounded-2xl border border-brand-green-700/20 bg-brand-cream-100 p-5 text-brand-dark shadow-xl sm:left-auto sm:w-96">
+          className="fixed bottom-4 left-4 right-4 z-40 max-h-[70dvh] overflow-y-auto rounded-2xl border border-brand-green-700/20 bg-brand-cream-100 p-4 text-brand-dark shadow-xl sm:left-auto sm:w-80">
           <div className="flex items-start justify-between gap-3">
             <h2 className="font-serif text-xl font-bold">{t("installToast.title")}</h2>
             <button type="button" aria-label={t("installToast.close")}
@@ -84,19 +84,18 @@ export function InstallToast() {
               <X size={20} aria-hidden="true" />
             </button>
           </div>
-          <p className="mt-2 text-sm">{t("installToast.description")}</p>
-          <p className="mt-3 text-sm font-semibold">{t("installToast.discount")}</p>
-          <p className="mt-1 text-xs">{t("installToast.membershipNote")}</p>
-          <div className="mt-4 flex flex-wrap items-center gap-2">
+          <p className="mt-1 text-sm font-semibold">{t("installToast.discount")}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <button type="button" onClick={() => void handleInstall()} disabled={isInstalling}
               aria-expanded={showInstructions} aria-controls="install-toast-instructions"
               className={`${buttonClass} flex items-center gap-2 bg-brand-green-700 text-white hover:bg-brand-green-800 disabled:opacity-50`}>
               <Download size={16} aria-hidden="true" />
               {t(isInstalling ? "installToast.installing" : "installToast.install")}
             </button>
-            <a href="#community" onClick={() => setIsDismissed(true)}
+            <a href="/#community" onClick={() => setIsDismissed(true)}
               className={`${buttonClass} underline`}>{t("installToast.community")}</a>
           </div>
+          <p className="mt-2 text-xs leading-relaxed">{t("installToast.membershipNote")}</p>
           <div id="install-toast-instructions" hidden={!showInstructions} className="mt-3 space-y-2 text-sm">
             <p>{t("installToast.ios")}</p>
             <p>{t("installToast.browser")}</p>
