@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
-import { Coffee as LucideCoffee, Flame, Beef, Wheat, Nut, X, Plus, Info, ChevronLeft, ChevronRight } from "lucide-react"
+import { Coffee as LucideCoffee, Flame, Beef, Wheat, Nut, X, Plus, Info, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react"
 import { useTranslation, Trans } from "react-i18next"
 import type { MenuItem, MenuCategory, MenuGroup } from "../features/menu/types"
 import { resolveIcon } from "../features/menu/icons"
@@ -10,6 +10,10 @@ import { getMenu } from "../features/menu/api"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
 import { MobileCategoryPicker } from "../features/menu/MobileCategoryPicker"
+import { cartCatalog, summarizeCart, type CartProduct } from "../features/cart/cart"
+import type { useCart } from "../features/cart/useCart"
+import { CartDialog } from "../features/cart/CartDialog"
+import { AddToCart } from "../features/cart/AddToCart"
 
 
 function CategoryBar({
@@ -115,12 +119,16 @@ function CategoryBar({
   )
 }
 
-export default function Menu() {
+export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
   const { t, i18n } = useTranslation()
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(menuData[0].categories[0].id)
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [addedMessage, setAddedMessage] = useState("")
+  const summary = summarizeCart(cart.items, cartCatalog(menuGroups))
+  const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0)
 
   useEffect(() => { getMenu().then(setMenuGroups) }, [])
 
@@ -165,6 +173,17 @@ export default function Menu() {
     setActiveCategory(group.categories[0].id)
   }
 
+  const handleAddToCart = (item: CartProduct) => {
+    const quantity = (cart.items.find(entry => entry.key === item.key)?.quantity ?? 0) + 1
+    if (item.isAvailable === false || quantity > (item.stockQuantity ?? Infinity)) {
+      setAddedMessage(t("cart.stockLimit"))
+      return
+    }
+    if (cart.addProduct(item)) {
+      setAddedMessage(`${t("cart.added", { name: item.name })} ${t("cart.quantity", { quantity })}`)
+    }
+  }
+
   // When the visible list changes (group or category), scroll up so the first product of the
   // new list sits just below the sticky nav. Skips the very first render so the page doesn't
   // jump on mount.
@@ -185,6 +204,15 @@ export default function Menu() {
 
   return (
     <section id="menu" className="min-h-screen py-24 px-6 bg-brand-cream-100 overflow-x-clip">
+      <button type="button" onClick={() => setIsCartOpen(true)}
+        className="fixed bottom-5 right-5 z-40 flex min-h-12 items-center gap-2 rounded-full bg-brand-green-700 px-5 py-3 font-semibold text-white shadow-lg hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
+        <ShoppingBag size={20} aria-hidden="true" />
+        {t("cart.open")} ({cartCount})
+      </button>
+      <p role="status" className="sr-only">{addedMessage}</p>
+      {cart.error && <p role="alert" className="mx-auto mb-4 max-w-4xl rounded-xl bg-red-50 p-4 text-red-800">{t(cart.error)}</p>}
+      <CartDialog open={isCartOpen} onClose={() => setIsCartOpen(false)} summary={summary}
+        onQuantityChange={cart.setQuantity} error={cart.error} />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -292,15 +320,14 @@ export default function Menu() {
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             {activeCategoryObj.items.map((item, i) => (
-              <motion.button
-                type="button"
-                onClick={() => setSelectedItem(item)}
+              <motion.div
                 key={item.name}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.07 }}
-                className="text-left w-full cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 hover:bg-white hover:shadow-lg hover:border-brand-green-700/25 transition-all duration-300 group"
+                className="text-left w-full flex flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 hover:bg-white hover:shadow-lg hover:border-brand-green-700/25 transition-all duration-300 group"
               >
+                <button type="button" onClick={() => setSelectedItem(item)} className="flex flex-1 flex-col text-left cursor-pointer">
                   <div className="relative w-full aspect-square overflow-hidden">
                     {item.image ? <img
                       src={item.image}
@@ -362,7 +389,11 @@ export default function Menu() {
                     <Info className="w-3.5 h-3.5" /> {t("menu.clickHint")}
                   </p>
                 </div>
-              </motion.button>
+                </button>
+                <div className="px-4 pb-4 md:px-5 md:pb-5">
+                  <AddToCart categoryId={activeCategoryObj.id} item={item} onAdd={handleAddToCart} items={cart.items} />
+                </div>
+              </motion.div>
             ))}
           </motion.div>
         </AnimatePresence>
@@ -481,6 +512,10 @@ export default function Menu() {
                       </div>
                     </>
                   )}
+                  <div className="mt-6">
+                    <AddToCart categoryId={activeCategoryObj.id} item={selectedItem} onAdd={handleAddToCart} items={cart.items} />
+                  </div>
+                  <p role="status" className="mt-3 text-sm text-brand-green-800">{addedMessage}</p>
                 </div>
               </motion.div>
               </DialogPanel>

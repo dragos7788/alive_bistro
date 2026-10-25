@@ -1,8 +1,9 @@
 import type { Ctx } from "../_lib/types.ts"
 import { err } from "../_lib/response.ts"
+import { publicStock, type StockSettings } from "../_lib/stock"
 
 type DbCat  = { id: string; group_id: string; label: string; label_en: string | null; icon_key: string }
-type DbItem = {
+type DbItem = StockSettings & {
   id: string; category_id: string; name: string; name_en: string | null
   description: string; description_en: string | null; price: string
   image_key: string | null; image_url: string | null; tag: string | null
@@ -18,7 +19,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
   try {
     const [catsRes, itemsRes] = await env.DB.batch([
       env.DB.prepare("SELECT id, group_id, label, label_en, icon_key FROM categories ORDER BY sort_order"),
-      env.DB.prepare("SELECT id, category_id, name, name_en, description, description_en, price, image_key, image_url, tag, calories, protein, carbs, fat FROM items WHERE is_visible = 1 ORDER BY category_id, sort_order"),
+      env.DB.prepare("SELECT id, category_id, name, name_en, description, description_en, price, image_key, image_url, tag, calories, protein, carbs, fat, is_available, stock_quantity, show_stock FROM items WHERE is_visible = 1 ORDER BY category_id, sort_order"),
     ])
 
     const cats  = catsRes.results  as unknown as DbCat[]
@@ -26,6 +27,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
 
     const byCat = new Map<string, typeof shaped[number][]>()
     const shaped = items.map((r) => ({
+      ...publicStock(r),
       name:           r.name,
       name_en:        r.name_en ?? undefined,
       description:    r.description,
@@ -73,11 +75,12 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
     return new Response(body, {
       headers: {
         "Content-Type":  "application/json",
-        "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
+        "Cache-Control": "no-cache, must-revalidate",
         ETag:            etag,
       },
     })
   } catch (e) {
+    console.error("Failed to load menu and inventory", e)
     return err("DB_ERROR", "Failed to load menu", 500)
   }
 }

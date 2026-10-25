@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { X } from "lucide-react"
 import { tagColors } from "../../features/menu/tags"
@@ -21,18 +21,23 @@ export type AdminItem = {
   fat: string | null
   sort_order: number
   is_visible: number
+  is_available: number
+  stock_quantity: number | null
+  show_stock: number
 }
 
 type FormData = {
   name: string; name_en: string; description: string; description_en: string
   price: string; tag: string; calories: string; protein: string; carbs: string
   fat: string; image_key: string; image_url: string; is_visible: boolean
+  is_available: boolean; stock_quantity: string; show_stock: boolean
 }
 
 const EMPTY: FormData = {
   name: "", name_en: "", description: "", description_en: "",
   price: "", tag: "", calories: "", protein: "", carbs: "",
   fat: "", image_key: "", image_url: "", is_visible: true,
+  is_available: true, stock_quantity: "", show_stock: false,
 }
 
 function itemToForm(item: AdminItem): FormData {
@@ -43,6 +48,9 @@ function itemToForm(item: AdminItem): FormData {
     protein: item.protein ?? "", carbs: item.carbs ?? "", fat: item.fat ?? "",
     image_key: item.image_key ?? "", image_url: item.image_url ?? "",
     is_visible: item.is_visible !== 0,
+    is_available: item.is_available !== 0,
+    stock_quantity: item.stock_quantity?.toString() ?? "",
+    show_stock: item.show_stock === 1,
   }
 }
 
@@ -55,14 +63,9 @@ interface Props {
 }
 
 export default function ItemForm({ item, categoryId, open, onClose, onSaved }: Props) {
-  const [form, setForm] = useState<FormData>(EMPTY)
+  const [form, setForm] = useState<FormData>(() => item ? itemToForm(item) : EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
-
-  useEffect(() => {
-    setForm(item ? itemToForm(item) : EMPTY)
-    setError("")
-  }, [item, open])
 
   const set = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }))
@@ -74,6 +77,11 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
   const handleSave = async () => {
     if (!form.name.trim() || !form.description.trim() || !form.price.trim()) {
       setError("Denumire, descriere și preț sunt obligatorii")
+      return
+    }
+    if (form.stock_quantity !== "" && (!/^\d+$/.test(form.stock_quantity)
+      || Number(form.stock_quantity) > 1000000 || form.price.includes("/"))) {
+      setError("Stocul trebuie să fie un număr întreg între 0 și 1.000.000. Pentru sticlă/pahar lasă stocul gol.")
       return
     }
     setSaving(true)
@@ -94,6 +102,10 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
         image_key: form.image_key || null,
         image_url: form.image_key ? null : (form.image_url || null),
         is_visible: form.is_visible,
+        is_available: form.is_available,
+        stock_quantity: form.stock_quantity === "" ? null : Number(form.stock_quantity),
+        show_stock: form.show_stock,
+        ...(item ? { expected_stock_quantity: item.stock_quantity } : {}),
       }
       const url  = item ? `/api/admin/items/${item.id}` : "/api/admin/items"
       const res  = await fetch(url, {
@@ -189,7 +201,26 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
               <span className="text-sm text-brand-dark/80">Vizibil în meniu</span>
             </label>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            <fieldset className="space-y-3 rounded-xl border border-brand-green-700/20 p-4">
+              <legend className="px-2 font-semibold text-brand-green-800">Disponibilitate și stoc</legend>
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={form.is_available}
+                  onChange={event => setForm(previous => ({ ...previous, is_available: event.target.checked }))} />
+                Disponibil pentru comandă
+              </label>
+              <Field label="Stoc numeric (gol = fără urmărire)">
+                <input type="number" min="0" max="1000000" step="1" className={input}
+                  disabled={form.price.includes("/")} value={form.stock_quantity} onChange={set("stock_quantity")} />
+              </Field>
+              {form.price.includes("/") && <p className="text-xs">Sticlă/pahar: doar disponibilitate comună. Golește stocul numeric înainte de a salva un preț dublu.</p>}
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={form.show_stock} disabled={form.stock_quantity === ""}
+                  onChange={event => setForm(previous => ({ ...previous, show_stock: event.target.checked }))} />
+                Afișează clientului cantitatea din stoc
+              </label>
+              <p className="text-xs">La stoc 0 sau dacă debifezi disponibilitatea, produsul rămâne vizibil, dar nu poate fi comandat. „Vizibil în meniu” controlează separat ascunderea produsului.</p>
+            </fieldset>
+            {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
           </div>
 
           <div className="flex gap-3 p-5 pt-0">

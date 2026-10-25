@@ -5,7 +5,7 @@ import { requireAdmin } from "../../../_lib/auth.ts"
 const VALID_GROUPS = new Set(["food", "drinks"])
 
 export const onRequestGet = async ({ request, env }: Ctx) => {
-  const deny = requireAdmin(request)
+  const deny = requireAdmin(request, env)
   if (deny) return deny
 
   const { results } = await env.DB.prepare(

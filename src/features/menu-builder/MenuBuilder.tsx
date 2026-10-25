@@ -4,12 +4,21 @@ import { useTranslation } from "react-i18next"
 import { builderGroups, calculateMenu, type MenuSelection } from "./calculator"
 import { BuilderStep } from "./BuilderStep"
 import { BuilderSummary } from "./BuilderSummary"
+import { performanceCartProduct, type CartProduct } from "../cart/cart"
 
 /** Lets guests configure a plate from the published custom-menu portions. */
-export function MenuBuilder() {
+export function MenuBuilder({ onAddToCart, cartError }: {
+  onAddToCart: (product: CartProduct) => boolean
+  cartError: string
+}) {
   const { t } = useTranslation()
   const [selection, setSelection] = useState<MenuSelection>({})
+  const [addedCount, setAddedCount] = useState(0)
   const total = calculateMenu(selection)
+
+  const handleAddToCart = () => {
+    if (onAddToCart(performanceCartProduct(selection))) setAddedCount(count => count + 1)
+  }
 
   return (
     <section id="custom-menu" aria-labelledby="builder-title"
@@ -54,7 +63,8 @@ export function MenuBuilder() {
                   })} />
               ))}
             </form>
-            <BuilderSummary total={total} onReset={() => setSelection({})} />
+            <BuilderSummary total={total} onReset={() => setSelection({})}
+              onAddToCart={handleAddToCart} addedCount={addedCount} cartError={cartError} />
           </div>
         </div>
       </div>

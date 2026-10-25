@@ -3,12 +3,13 @@ import { Plus, ChevronUp, ChevronDown, Pencil, Trash2, Eye, EyeOff } from "lucid
 import { resolveIcon } from "../../features/menu/icons"
 import ItemForm, { type AdminItem } from "./ItemForm"
 import CategoryManager, { type AdminCategory } from "./CategoryManager"
+import { TestOrders } from "./TestOrders"
 
-type View = "items" | "categories"
+type View = "items" | "categories" | "orders"
 
 export default function AdminApp() {
-  const [view, setView]             = useState<View>("items")
-  const [activeGroup, setActiveGroup] = useState<"food" | "drinks">("food")
+  const [view, setView]             = useState<View>(() => window.location.pathname === "/admin/orders" ? "orders" : "items")
+  const [activeGroup, setActiveGroup] = useState<"food" | "drinks">(() => window.location.pathname === "/admin/drinks" ? "drinks" : "food")
   const [categories, setCategories] = useState<AdminCategory[]>([])
   const [activeCatId, setActiveCatId] = useState<string | null>(null)
   const [items, setItems]           = useState<AdminItem[]>([])
@@ -32,19 +33,20 @@ export default function AdminApp() {
     setLoading(true)
     try {
       const res  = await fetch(`/api/admin/items?category=${catId}`)
-      const json = await res.json() as { data?: AdminItem[] }
-      setItems(json.data ?? [])
+      const json = await res.json() as { data?: AdminItem[]; error?: { message: string } }
+      if (!res.ok || !Array.isArray(json.data)) throw new Error(json.error?.message ?? "Răspuns invalid pentru produse")
+      setItems(json.data)
     } catch { setError("Nu s-au putut încărca produsele") } finally { setLoading(false) }
   }, [])
 
-  useEffect(() => { fetchCategories() }, [fetchCategories])
+  useEffect(() => { if (view !== "orders") fetchCategories() }, [fetchCategories, view])
 
   useEffect(() => {
     const first = categories.find((c) => c.group_id === activeGroup)?.id ?? null
     setActiveCatId(first)
   }, [activeGroup, categories])
 
-  useEffect(() => { if (activeCatId) fetchItems(activeCatId) }, [activeCatId, fetchItems])
+  useEffect(() => { if (view !== "orders" && activeCatId) fetchItems(activeCatId) }, [activeCatId, fetchItems, view])
 
   const move = async (id: string, dir: -1 | 1) => {
     const arr   = [...items]
@@ -61,17 +63,25 @@ export default function AdminApp() {
   }
 
   const toggleVisible = async (item: AdminItem) => {
-    await fetch(`/api/admin/items/${item.id}`, {
+    const response = await fetch(`/api/admin/items/${item.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...item, is_visible: item.is_visible ? 0 : 1 }),
+      body: JSON.stringify({ ...item, expected_stock_quantity: item.stock_quantity, is_visible: item.is_visible ? 0 : 1 }),
     })
+    if (!response.ok) {
+      const json = await response.json() as { error?: { message: string } }
+      setError(json.error?.message ?? "Vizibilitatea nu a putut fi salvată.")
+    }
     if (activeCatId) fetchItems(activeCatId)
   }
 
   const deleteItem = async (id: string) => {
     if (!confirm("Ștergi acest produs?")) return
-    await fetch(`/api/admin/items/${id}`, { method: "DELETE" })
+    const response = await fetch(`/api/admin/items/${id}`, { method: "DELETE" })
+    if (!response.ok) {
+      const json = await response.json() as { error?: { message: string } }
+      setError(json.error?.message ?? "Produsul nu a putut fi șters.")
+    }
     if (activeCatId) fetchItems(activeCatId)
   }
 
@@ -80,7 +90,7 @@ export default function AdminApp() {
   return (
     <div className="min-h-screen bg-brand-cream-100 text-brand-dark font-sans">
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-brand-cream-100 border-b border-brand-green-700/10 px-4 py-3 flex items-center gap-3">
+      <header className="sticky top-0 z-20 bg-brand-cream-100 border-b border-brand-green-700/10 px-4 py-3 flex flex-wrap items-center gap-3">
         <span className="font-bold text-brand-green-700 font-serif text-lg">ALIVE Admin</span>
         <div className="flex-1" />
         <button
@@ -91,15 +101,16 @@ export default function AdminApp() {
           onClick={() => setView("categories")}
           className={tab(view === "categories")}
         >Categorii</button>
+        <button onClick={() => setView("orders")} className={tab(view === "orders")}>Comenzi TEST</button>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
-        {error && (
+        {error && view !== "orders" && (
           <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
         )}
 
         {/* Group selector */}
-        <div className="flex gap-2">
+        {view !== "orders" && <div className="flex gap-2">
           {(["food", "drinks"] as const).map((g) => (
             <button
               key={g}
@@ -114,9 +125,9 @@ export default function AdminApp() {
               {g === "food" ? "Mâncare" : "Băuturi"}
             </button>
           ))}
-        </div>
+        </div>}
 
-        {view === "categories" ? (
+        {view === "orders" ? <TestOrders /> : view === "categories" ? (
           <CategoryManager
             categories={categories}
             groupId={activeGroup}
@@ -167,6 +178,13 @@ export default function AdminApp() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-brand-dark truncate">{item.name}</p>
                     <p className="text-xs text-brand-dark/50 font-medium">{item.price}</p>
+                    <p className="mt-1 text-xs font-semibold text-brand-green-800">
+                      {item.is_available === 0 || item.stock_quantity === 0 ? "Indisponibil" : "Disponibil"}
+                      {" · "}{item.stock_quantity === null ? "Fără urmărire stoc" : `Stoc: ${item.stock_quantity}`}
+                    </p>
+                    <p className="text-xs text-brand-dark/70">
+                      {item.show_stock === 1 && item.stock_quantity !== null ? "Cantitate vizibilă clientului" : "Cantitate ascunsă clientului"}
+                    </p>
                     {item.tag && <span className="text-[10px] px-1.5 py-0.5 rounded bg-brand-cream-200 text-brand-dark/60 font-bold">{item.tag}</span>}
                   </div>
                   <div className="flex flex-col gap-1 flex-shrink-0">
@@ -177,7 +195,7 @@ export default function AdminApp() {
                     <button onClick={() => toggleVisible(item)} className={iconBtn} title={item.is_visible ? "Ascunde" : "Afișează"}>
                       {item.is_visible ? <Eye className="w-3.5 h-3.5 text-brand-green-700/60" /> : <EyeOff className="w-3.5 h-3.5 text-brand-dark/40" />}
                     </button>
-                    <button onClick={() => setEditItem(item)} className={iconBtn}><Pencil className="w-3.5 h-3.5 text-brand-green-700/60" /></button>
+                    <button onClick={() => setEditItem(item)} aria-label={`Editează ${item.name}`} className={iconBtn}><Pencil className="w-3.5 h-3.5 text-brand-green-700/60" /></button>
                     <button onClick={() => deleteItem(item.id)} className={iconBtn}><Trash2 className="w-3.5 h-3.5 text-red-500/70" /></button>
                   </div>
                 </div>
@@ -197,6 +215,7 @@ export default function AdminApp() {
       </div>
 
       <ItemForm
+        key={`${editItem?.id ?? "new"}-${addingItem || editItem !== null}`}
         open={addingItem || editItem !== null}
         item={editItem}
         categoryId={activeCatId ?? ""}

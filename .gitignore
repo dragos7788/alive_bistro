@@ -29,3 +29,4 @@ src/assets/menu/optimized/
 
 # Temporary Cloudflare deployment output
 .wrangler/tmp/
+.wrangler/state/
