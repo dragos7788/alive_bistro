@@ -8,6 +8,7 @@ import Community from '@/pages/Community'
 import Feedback from '@/pages/Feedback'
 import AdminApp from '@/pages/admin/AdminApp'
 import { useCart } from '@/features/cart/useCart'
+import { InstallToast } from '@/components/InstallToast'
 
 export default function App() {
   const [isFeedback, setIsFeedback] = useState(false)
@@ -47,6 +48,7 @@ export default function App() {
       <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error} />
       <Community />
       <Footer />
+      <InstallToast />
     </div>
   )
 }

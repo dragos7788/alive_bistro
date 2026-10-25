@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { guardTestOrders, orderRequestHash, parseOrderInput, resolveOrder, testOrdersEnabled, type OrderRow } from "./test-orders"
+import { guardTestOrders, orderRequestHash, parseOrderInput, resolveOrder, testOrdersEnabled, UnavailableOrderError, type OrderRow } from "./test-orders"
 import type { Env } from "./types"
 import { cartProductKey, performanceCartProduct } from "../../src/features/cart/cart"
 import { canTransition, preparationStatuses } from "../../src/features/orders/types"
@@ -13,7 +13,7 @@ const item = { key: cartProductKey("breakfast", "Toast"), name: "Tampered client
 const body = { contact, items: [item], expectedTotalBani: 7200 }
 const key = "00000000-0000-4000-8000-000000000001"
 
-function database() {
+function database(categoryId = "breakfast") {
   const rows = new Map<string, OrderRow>()
   const prepare = vi.fn((sql: string) => {
     let args: unknown[] = []
@@ -26,7 +26,7 @@ function database() {
       },
       async all<T>() {
         return { results: [{
-          category_id: "breakfast", name: "Toast", price: "36 lei", description: "Toast",
+          category_id: categoryId, name: "Toast", price: "36 lei", description: "Toast",
         }] as T[] }
       },
       async run() {
@@ -113,6 +113,14 @@ describe("local TEST order boundaries", () => {
     expect(resolved.totalBani).toBe(8400)
     expect(resolved.lines[0].name).toBe("Toast")
     expect(resolved.lines[1].ingredients).toEqual([{ id: "chicken", amount: 100, unit: "g" }])
+  })
+  it.each(["craft-beer", "wine-prosecco", "cocktails"])("rejects forged orders from %s without persisting", async categoryId => {
+    const { env, rows } = database(categoryId)
+    const forged = { ...body, items: [{ ...item, key: cartProductKey(categoryId, "Toast") }] }
+
+    await expect(resolveOrder(parseOrderInput(forged), env)).rejects.toBeInstanceOf(UnavailableOrderError)
+    expect((await onRequestPost({ request: request(forged), env, params: {} })).status).toBe(409)
+    expect(rows.size).toBe(0)
   })
   it("hashes normalized requests consistently and detects changed quantities", async () => {
     const first = parseOrderInput(body)

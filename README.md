@@ -2,6 +2,59 @@
 
 Site public + admin dashboard pentru meniu. Stack: React + Vite, Cloudflare Pages, D1 (SQLite), R2 (imagini), Cloudflare Access (auth admin).
 
+## Restrictii pentru comenzile online
+
+Bauturile din categoriile `craft-beer`, `wine-prosecco` si `cocktails` raman
+vizibile in meniu, dar nu pot fi adaugate in cos sau comandate prin API.
+Regula comuna din `cartOptions` se aplica si portiilor sticla/pahar.
+Liniile alcoolice deja salvate in cos apar indisponibile si trebuie eliminate
+inainte de continuarea comenzii. Produsele alcoolice noi trebuie incadrate in
+aceste categorii; regula nu deduce continutul de alcool din numele produsului.
+
+## PWA (instalare pe dispozitiv)
+
+Build-ul de productie include manifestul, iconite PNG de 192/512 px si un service
+worker. Instalarea necesita HTTPS (sau localhost pentru testare) si suportul
+browserului. In Chrome/Edge se foloseste optiunea de instalare din browser; pe
+iPhone/iPad se foloseste Safari → Share → Add to Home Screen. Nu exista un
+notificari push.
+
+Pe site-ul public, dupa 8 secunde apare un toast cu instalarea si mesajul
+promotional de 10% pentru membrii comunitatii ALIVE. Butonul foloseste
+`beforeinstallprompt` cand browserul il ofera; altfel afiseaza instructiuni
+pentru Safari iOS si meniul browserului. Inchiderea ascunde toastul pana la
+remontarea paginii (o reincarcare il poate afisa din nou). Nu apare in
+modul standalone, dupa evenimentul `appinstalled`, in admin sau pe feedback.
+Linkul comunitatii deschide sectiunea existenta, nu un formular de inscriere.
+Instalarea nu acorda statut de membru, nu verifica eligibilitatea si nu modifica
+preturile sau totalul. Inscrierea, regulile si aplicarea efectiva a reducerii
+nu sunt implementate.
+
+Service worker-ul salveaza exclusiv pagina statica `offline.html`. Navigarile
+publice folosesc reteaua, cu pagina offline ca fallback la eroare de conexiune.
+Meniul, imaginile, raspunsurile API, contactele, comenzile, platile si paginile
+admin nu sunt salvate in Cache Storage de service worker; `/api` si `/admin`
+nu sunt interceptate. Cache-ul HTTP obisnuit ramane controlat de server.
+Cosul continua sa foloseasca mecanismul localStorage existent.
+
+Aceasta versiune nu permite navigarea completa sau comenzi offline. Daca reteaua
+cade dupa deschiderea aplicatiei, nu inlocuieste ecranul deja incarcat; cererile
+folosesc tratarea existenta a erorilor. Nu modifica fallback-ul existent al
+meniului; serverul ramane autoritatea pentru preturi si stoc.
+
+Actualizarile service worker-ului nu forteaza reincarcarea paginii si nu preiau
+taburile deja deschise. O versiune noua se activeaza dupa inchiderea tuturor
+ferestrelor controlate de versiunea anterioara. La schimbarea paginii offline,
+incrementeaza `OFFLINE_CACHE` in `public/sw.js`.
+
+Verificare: ruleaza build-ul servit prin `npm run dev:orders` sau
+`npm run preview`, deschide o data aplicatia online, apoi redeschide-o pentru
+controlul service worker-ului. Verifica manifestul/worker-ul in DevTools →
+Application. Cu reteaua offline, o reincarcare publica afiseaza pagina offline;
+rutele admin/API nu primesc acest fallback. `npm run dev` nu inregistreaza
+worker-ul. Pentru resetarea testelor elimina inregistrarea si cache-ul
+`alive-offline-*` din DevTools.
+
 ## Setup complet (prima dată)
 
 ### 1. Creează resursele Cloudflare

@@ -8,6 +8,11 @@ export type CartProduct = {
 }
 export const cartStorageKey = "alive_bistro_cart_v1"
 
+/** Identifies menu categories reserved for on-location alcohol purchases. */
+export function isAlcoholCategory(categoryId: string): boolean {
+  return ["craft-beer", "wine-prosecco", "cocktails"].includes(categoryId)
+}
+
 function readSelection(value: unknown): MenuSelection {
   if (!value || typeof value !== "object" || Array.isArray(value)
     || Object.keys(value).some(key => !builderGroups.some(group => group === key))) {
@@ -77,6 +82,7 @@ export function cartCatalog(groups: MenuGroup[]): Map<string, CartProduct> {
 
 /** Resolves individual products or explicitly labeled bottle/glass portions from the menu. */
 export function cartOptions(categoryId: string, item: MenuItem): CartProduct[] {
+  if (isAlcoholCategory(categoryId)) return []
   const key = cartProductKey(categoryId, item.name)
   const stock = { isAvailable: item.isAvailable !== false && item.stockQuantity !== 0, stockQuantity: item.stockQuantity }
   const priceBani = parsePriceBani(item.price)

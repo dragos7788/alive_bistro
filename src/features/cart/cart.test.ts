@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { cartCatalog, cartOptions, cartProductKey, parsePriceBani, performanceCartProduct, restoreCart, summarizeCart, updateCart } from "./cart"
+import { cartCatalog, cartOptions, cartProductKey, isAlcoholCategory, parsePriceBani, performanceCartProduct, restoreCart, summarizeCart, updateCart } from "./cart"
 import menu from "../menu/menu-data.json"
 
 const product = { key: cartProductKey("breakfast", "Toast"), name: "Toast" }
@@ -90,10 +90,25 @@ describe("cart", () => {
   it.each(["", "-2 lei", "0 lei", "12/15 lei", "12.345 lei", "12 EUR", "Infinity lei", "9007199254740991 lei"])(
     "rejects invalid price %s", price => expect(parsePriceBani(price)).toBeNull(),
   )
-  it("supports every published menu price", () => {
+  it("supports every non-alcoholic published menu price and excludes alcohol", () => {
     for (const group of menu) for (const category of group.categories) for (const item of category.items) {
-      expect(cartOptions(category.id, item).length, item.name).toBeGreaterThan(0)
+      if (isAlcoholCategory(category.id)) expect(cartOptions(category.id, item), item.name).toEqual([])
+      else expect(cartOptions(category.id, item).length, item.name).toBeGreaterThan(0)
     }
+  })
+  it.each(["craft-beer", "wine-prosecco", "cocktails"])("blocks %s including previously saved bottle/glass lines", categoryId => {
+    const item = { name: "Alcohol", price: "100 / 28 lei", description: "750 ml / 125 ml." }
+    const groups = [{ id: "drinks" as const, label: "Drinks", iconKey: "wine",
+      categories: [{ id: categoryId, label: "Alcohol", iconKey: "wine", items: [item] }] }]
+    const saved = restoreCart(JSON.stringify({ version: 1, items: [
+      { key: cartProductKey(categoryId, item.name), name: item.name, quantity: 1 },
+      { key: JSON.stringify([categoryId, item.name, "125 ml"]), name: item.name, quantity: 1 },
+    ] }))
+
+    expect(cartOptions(categoryId, { ...item, price: "28 lei" })).toEqual([])
+    expect(cartOptions(categoryId, item)).toEqual([])
+    expect(cartCatalog(groups).size).toBe(0)
+    expect(summarizeCart(saved, cartCatalog(groups)).totalBani).toBeNull()
   })
   it("keeps bottle and glass separate with their exact declared prices", () => {
     const options = cartOptions("wine", { name: "Prosecco", price: "100 / 28 lei", description: "750 ml / 125 ml." })

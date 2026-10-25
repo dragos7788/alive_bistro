@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import type { MenuItem } from "../menu/types"
-import { cartOptions, type CartEntry, type CartProduct } from "./cart"
+import { cartOptions, isAlcoholCategory, type CartEntry, type CartProduct } from "./cart"
 
 /** Provides explicit portion choices instead of guessing a price for bottle/glass products. */
 export function AddToCart({ categoryId, item, onAdd, items }: {
@@ -11,6 +11,7 @@ export function AddToCart({ categoryId, item, onAdd, items }: {
   items: CartEntry[]
 }) {
   const { t, i18n } = useTranslation()
+  if (isAlcoholCategory(categoryId)) return <p className="text-sm text-brand-dark">{t("cart.alcoholNotOrderable")}</p>
   const options = cartOptions(categoryId, item)
   const buttonClass = "flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700 disabled:cursor-not-allowed disabled:opacity-50"
   if (!options.length) return <p className="text-sm text-brand-dark">{t("cart.priceUnavailable")}</p>

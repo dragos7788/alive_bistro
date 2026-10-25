@@ -38,6 +38,7 @@
     "open": "Vezi coșul",
     "add": "Adaugă în coș",
     "choosePortion": "Alege porția de adăugat:",
+    "alcoholNotOrderable": "Băuturile alcoolice nu pot fi comandate online.",
     "priceUnavailable": "Prețul necesită confirmare; produsul nu poate fi adăugat momentan.",
     "addProduct": "Adaugă {{name}} în coș",
     "added": "{{name}} a fost adăugat în coș.",
@@ -176,6 +177,20 @@
       "v4_title": "Transparență & Autenticitate",
       "v4_text": "Folosim ingrediente premium, de sezon, și rețete curate. Îți spunem exact ce conține mâncarea și băutura ta: de la cafea de specialitate la suplimente active."
     }
+  },
+  "installToast": {
+    "label": "Instalare aplicație și comunitatea ALIVE",
+    "title": "ALIVE, mereu la îndemână",
+    "description": "Instalează aplicația ALIVE Bistro pentru acces rapid la meniu și la coșul tău.",
+    "discount": "Devino membru al comunității ALIVE și beneficiază de 10% reducere!",
+    "membershipNote": "Instalarea nu te înscrie automat în comunitate. Acesta este un mesaj promoțional; reducerea nu se aplică automat în coș.",
+    "install": "Instalează aplicația",
+    "installing": "Se deschide instalarea…",
+    "community": "Descoperă comunitatea",
+    "close": "Închide invitația de instalare",
+    "ios": "Pe iPhone/iPad: deschide site-ul în Safari, apasă Partajare și alege „Adaugă pe ecranul principal”.",
+    "browser": "Pe Android sau calculator: caută „Instalează aplicația” ori „Adaugă pe ecranul principal” în meniul browserului. Opțiunea depinde de browser și poate lipsi dacă aplicația este deja instalată.",
+    "error": "Nu am putut deschide instalarea. Încearcă din meniul browserului, urmând instrucțiunile de mai sus."
   },
   "community": {
     "tagline": "Energia Care Ne Unește",

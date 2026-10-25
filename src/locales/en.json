@@ -38,6 +38,7 @@
     "open": "View cart",
     "add": "Add to cart",
     "choosePortion": "Choose the portion to add:",
+    "alcoholNotOrderable": "Alcoholic drinks cannot be ordered online.",
     "priceUnavailable": "The price needs confirmation; this product cannot be added yet.",
     "addProduct": "Add {{name}} to cart",
     "added": "{{name}} was added to your cart.",
@@ -173,6 +174,20 @@
       "v4_title": "Transparency & Authenticity",
       "v4_text": "We use premium, seasonal ingredients and clean recipes. We tell you exactly what your food and drink contains: from specialty coffee to active supplements."
     }
+  },
+  "installToast": {
+    "label": "App installation and the ALIVE community",
+    "title": "ALIVE, always within reach",
+    "description": "Install ALIVE Bistro for quick access to the menu and your cart.",
+    "discount": "Become an ALIVE community member and enjoy 10% off!",
+    "membershipNote": "Installing does not automatically make you a member. This is a promotional message; the discount is not automatically applied to your cart.",
+    "install": "Install app",
+    "installing": "Opening installation…",
+    "community": "Discover the community",
+    "close": "Dismiss installation invitation",
+    "ios": "On iPhone/iPad: open the site in Safari, tap Share and choose “Add to Home Screen”.",
+    "browser": "On Android or desktop: look for “Install app” or “Add to Home Screen” in your browser menu. Availability depends on your browser; the option may be absent if the app is already installed.",
+    "error": "We could not open installation. Try your browser menu using the instructions above."
   },
   "community": {
     "tagline": "The Energy That Unites Us",
