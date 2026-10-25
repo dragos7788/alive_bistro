@@ -46,6 +46,12 @@ Sesiunea se reverifica la revenirea
 in pagina/tab, iar erorile sunt marcate ca stare neverificata, nu ca autentificare.
 Nu se stocheaza fotografii de profil sau identitati in localStorage.
 
+`wrangler.jsonc` fixeaza `compatibility_date` la `2026-08-06` pentru acelasi
+comportament Web Crypto local si in productie. Compatibilitatea veche nu expune
+identificatorul `CryptoKey` necesar verificarii semnaturilor Google prin `jose`.
+Diagnosticul callback-ului inregistreaza doar etapa si codul tehnic al erorii,
+niciodata tokenuri, coduri OAuth sau profilul clientului.
+
 Autentificarea foloseste Google OpenID Connect si Facebook
 Login, prin authorization code flow pe server. Google foloseste PKCE, nonce si
 validare JWT (semnatura, issuer, audience, expirare). Facebook verifica tokenul
@@ -147,7 +153,15 @@ aceste categorii; regula nu deduce continutul de alcool din numele produsului.
 ## PWA (instalare pe dispozitiv)
 
 Build-ul de productie include manifestul, iconite PNG de 192/512 px si un service
-worker. Instalarea necesita HTTPS (sau localhost pentru testare) si suportul
+worker.
+
+Iconita aplicatiei foloseste desenul furnizat de proprietar, rotit 90 de grade
+spre dreapta, pastrand culorile si fundalul alb originale. Sursa pregatita este
+`public/pwa/olive-icon.png`, cu PNG de 192/512 px pentru manifest
+si 180 px pentru Apple Touch, redimensionate cu Sharp.
+Iconitele instalate anterior pot necesita reinstalarea aplicatiei pentru actualizare.
+
+Instalarea necesita HTTPS (sau localhost pentru testare) si suportul
 browserului. In Chrome/Edge se foloseste optiunea de instalare din browser; pe
 iPhone/iPad se foloseste Safari → Share → Add to Home Screen. Nu exista un
 notificari push.

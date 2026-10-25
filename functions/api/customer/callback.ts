@@ -6,6 +6,7 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
   requireAuthOrigin(request, env)
   const headers = new Headers({ Location: `${authOrigin(env)}/?auth=error#account` })
   headers.append("Set-Cookie", setAuthCookie(request, "oauth", "", 0))
+  let stage = "state"
   try {
     const params = new URL(request.url).searchParams
     const state = params.get("state")
@@ -19,7 +20,9 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
     if (!transaction || !enabledProviders(env).includes(transaction.provider)) throw new CustomerAuthError("INVALID_STATE")
     const code = params.get("code")
     if (params.has("error") || !code || code.length > 4096) throw new CustomerAuthError("PROVIDER_REJECTED")
+    stage = "provider"
     const identity = await providerIdentity(code, transaction, env)
+    stage = "identity"
     const existing = await env.DB.prepare("SELECT customer_id FROM customer_identities WHERE provider=? AND subject=?")
       .bind(transaction.provider, identity.subject).first<{ customer_id: string }>()
     let customerId: string
@@ -40,6 +43,7 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
       const referrer = transaction.referral_code ? await env.DB.prepare("SELECT id FROM customers WHERE referral_code=?")
         .bind(transaction.referral_code).first<{ id: string }>() : null
       if (transaction.referral_code && !referrer) throw new CustomerAuthError("INVALID_REFERRAL")
+      stage = "create_customer"
       await env.DB.batch([
         env.DB.prepare(`INSERT INTO customers(id,name,email,referral_code,referred_by,created_at)
           SELECT ?,?,?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM customer_identities WHERE provider=? AND subject=?)`)
@@ -53,6 +57,7 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
       if (!created) throw new CustomerAuthError("ACCOUNT_ERROR", 503)
       customerId = created.customer_id
     }
+    stage = "session"
     const token = randomToken()
     const old = authCookie(request, "session")
     const now = Math.floor(Date.now() / 1000)
@@ -66,6 +71,9 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
   } catch (error) {
     // Never log authorization codes, tokens, profile data, or provider response bodies.
     console.error("Customer OAuth callback failed", error instanceof CustomerAuthError ? error.code : "PROVIDER_OR_DATABASE_ERROR")
+    const code = error && typeof error === "object" && "code" in error
+      && typeof error.code === "string" && /^ERR_[A-Z_]+$/.test(error.code) ? error.code : "UNCLASSIFIED"
+    console.error("Customer OAuth diagnostic", stage, code)
   }
   return new Response(null, { status: 303, headers })
 }
