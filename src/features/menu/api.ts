@@ -1,5 +1,6 @@
 import type { MenuGroup, MenuItem } from "./types"
 import { menuData } from "./seed"
+import { resolveMenuImage } from "./images"
 
 const localItems = new Map<string, MenuItem>()
 const localMatchaOrder = new Map<string, number>()
@@ -26,8 +27,7 @@ export async function getMenu(): Promise<MenuGroup[]> {
                 const localItem = localItems.get(item.name)
                 return {
                   ...item,
-                  image: item.image ?? localItem?.image,
-                  imageSrcSet: item.image ? item.imageSrcSet : localItem?.imageSrcSet,
+                  ...resolveMenuImage(item),
                   ...(item.description_en || localItem?.description_en
                     ? { description_en: item.description_en ?? localItem?.description_en }
                     : {}),

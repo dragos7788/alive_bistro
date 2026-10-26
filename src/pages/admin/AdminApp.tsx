@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { Plus, ChevronUp, ChevronDown, Pencil, Trash2, Eye, EyeOff } from "lucide-react"
 import { resolveIcon } from "../../features/menu/icons"
+import { resolveMenuImage } from "../../features/menu/images"
 import ItemForm, { type AdminItem } from "./ItemForm"
 import CategoryManager, { type AdminCategory } from "./CategoryManager"
 import { TestOrders } from "./TestOrders"
@@ -162,17 +163,22 @@ export default function AdminApp() {
               {!loading && items.length === 0 && (
                 <p className="text-sm text-brand-dark/50 py-4 text-center">Niciun produs în această categorie.</p>
               )}
-              {items.map((item, idx) => (
+              {items.map((item, idx) => {
+                const photo = resolveMenuImage(item)
+                return (
                 <div
                   key={item.id}
                   className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${
                     item.is_visible ? "bg-brand-cream-50 border-brand-green-700/10" : "bg-brand-cream-200/40 border-brand-green-700/5 opacity-60"
                   }`}
                 >
-                  {item.image_url || item.image_key ? (
+                  {photo.image ? (
                     <img
-                      src={item.image_key ? `/api/images/${item.image_key}` : item.image_url!}
+                      src={photo.image}
+                      srcSet={photo.imageSrcSet}
+                      sizes="56px"
                       alt={item.name}
+                      loading="lazy"
                       className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
                     />
                   ) : (
@@ -202,7 +208,8 @@ export default function AdminApp() {
                     <button onClick={() => deleteItem(item.id)} className={iconBtn}><Trash2 className="w-3.5 h-3.5 text-red-500/70" /></button>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
 
             {activeCatId && (

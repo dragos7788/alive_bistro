@@ -3,6 +3,7 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { X } from "lucide-react"
 import { tagColors } from "../../features/menu/tags"
 import ImageUploader from "./ImageUploader"
+import { resolveMenuImage } from "../../features/menu/images"
 
 export type AdminItem = {
   id: string
@@ -141,6 +142,7 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
           <div className="p-5 space-y-4">
             <ImageUploader
               currentUrl={currentImageUrl}
+              fallbackUrl={item ? resolveMenuImage({ name: item.name }).image : undefined}
               onUploaded={(key) => setForm((f) => ({ ...f, image_key: key, image_url: "" }))}
               onClear={() => setForm((f) => ({ ...f, image_key: "", image_url: "" }))}
             />

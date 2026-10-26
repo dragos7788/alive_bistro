@@ -3,14 +3,16 @@ import { X, Upload } from "lucide-react"
 
 interface Props {
   currentUrl?: string
+  fallbackUrl?: string
   onUploaded: (key: string, url: string) => void
   onClear: () => void
 }
 
-export default function ImageUploader({ currentUrl, onUploaded, onClear }: Props) {
+export default function ImageUploader({ currentUrl, fallbackUrl, onUploaded, onClear }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState("")
+  const previewUrl = currentUrl || fallbackUrl
 
   const handleFile = async (file: File) => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
@@ -41,18 +43,22 @@ export default function ImageUploader({ currentUrl, onUploaded, onClear }: Props
 
   return (
     <div className="space-y-2">
-      {currentUrl ? (
+      {previewUrl && (
         <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-brand-cream-200">
-          <img src={currentUrl} alt="Preview" className="w-full h-full object-cover" />
-          <button
+          <img src={previewUrl} alt="Previzualizare produs" className="w-full h-full object-cover" />
+          {currentUrl && <button
             type="button"
             onClick={onClear}
+            aria-label="Elimină imaginea personalizată"
             className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-brand-dark/70 hover:text-red-600 transition-colors"
           >
             <X className="w-4 h-4" />
-          </button>
+          </button>}
         </div>
-      ) : (
+      )}
+      {!currentUrl && fallbackUrl && (
+        <p className="text-xs text-brand-dark/70">Imagine implicită din meniu. Poți încărca o fotografie proprie pentru a o înlocui.</p>
+      )}
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -60,9 +66,8 @@ export default function ImageUploader({ currentUrl, onUploaded, onClear }: Props
           className="w-full h-28 rounded-lg border-2 border-dashed border-brand-green-700/30 flex flex-col items-center justify-center gap-1.5 text-brand-green-700/60 hover:border-brand-green-700/60 hover:text-brand-green-700 transition-colors disabled:opacity-50"
         >
           <Upload className="w-5 h-5" />
-          <span className="text-xs font-medium">{uploading ? "Se încarcă…" : "Alege imagine (jpeg/png/webp, max 2MB)"}</span>
+          <span className="text-xs font-medium">{uploading ? "Se încarcă…" : previewUrl ? "Înlocuiește imaginea (jpeg/png/webp, max 2MB)" : "Alege imagine (jpeg/png/webp, max 2MB)"}</span>
         </button>
-      )}
       <input
         ref={inputRef}
         type="file"
@@ -70,7 +75,7 @@ export default function ImageUploader({ currentUrl, onUploaded, onClear }: Props
         className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
       />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600">{error}</p>}
     </div>
   )
 }

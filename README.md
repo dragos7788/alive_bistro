@@ -483,6 +483,13 @@ Teste: `npx vitest run functions/_lib/test-orders.test.ts`.
 
 ## Băuturi, disponibilitate și stoc
 
+Lista produselor din admin si previzualizarea din editare folosesc aceeasi
+rezolvare a fotografiilor ca meniul public: imagine incarcata in R2, URL salvat,
+apoi fotografia inclusa in aplicatie, asociata dupa denumirea produsului.
+Fotografia implicita nu este salvata ca URL in D1 la editarea produsului.
+Eliminarea unei imagini personalizate revine la fotografia implicita, daca exista;
+produsele fara fotografie pastreaza substituentul vizual.
+
 Lista existentă din **Produse → Băuturi** folosește categoriile și produsele din
 aceeași bază ca meniul public; nu există o copie separată a băuturilor.
 Ruta `/admin/drinks` deschide direct această listă.
