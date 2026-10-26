@@ -61,13 +61,29 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
     const token = randomToken()
     const old = authCookie(request, "session")
     const now = Math.floor(Date.now() / 1000)
-    await env.DB.batch([
+    const statements = [
       env.DB.prepare("DELETE FROM customer_sessions WHERE expires_at<=? OR token_hash=?").bind(now, old ? await tokenHash(old) : ""),
       env.DB.prepare("INSERT INTO customer_sessions(token_hash,customer_id,expires_at) VALUES (?,?,?)")
         .bind(await tokenHash(token), customerId, now + 60 * 60 * 24 * 7),
-    ])
+    ]
+    const customerRecord = await env.DB.prepare("SELECT email FROM customers WHERE id=?")
+      .bind(customerId).first<{ email: string | null }>()
+    if (!customerRecord?.email && transaction.provider === "google" && identity.email) {
+      await env.DB.prepare("UPDATE customers SET email=? WHERE id=? AND email IS NULL")
+        .bind(identity.email, customerId).run()
+    }
+    const currentCustomer = customerRecord?.email ? customerRecord
+      : await env.DB.prepare("SELECT email FROM customers WHERE id=?").bind(customerId).first<{ email: string | null }>()
+    const emailMarketingConsent = transaction.marketing_email_consent === 1
+    if (emailMarketingConsent && currentCustomer?.email) {
+      statements.push(env.DB.prepare(`INSERT INTO customer_marketing_consent_events
+        (customer_id,channel,action,source,notice_version,created_at)
+        VALUES (?,'email','granted','login','email-marketing-v1',?)`).bind(customerId, now))
+    }
+    await env.DB.batch(statements)
     headers.append("Set-Cookie", setAuthCookie(request, "session", token, 60 * 60 * 24 * 7))
-    headers.set("Location", `${authOrigin(env)}/account`)
+    headers.set("Location", `${authOrigin(env)}/account${emailMarketingConsent && !currentCustomer?.email
+      ? "?auth=marketing-email-required" : ""}`)
   } catch (error) {
     // Never log authorization codes, tokens, profile data, or provider response bodies.
     console.error("Customer OAuth callback failed", error instanceof CustomerAuthError ? error.code : "PROVIDER_OR_DATABASE_ERROR")

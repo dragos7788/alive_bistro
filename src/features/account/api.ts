@@ -9,11 +9,13 @@ export type AccountData = {
   customer: null | {
     name: string; email: string | null; referralCode: string; referralUrl: string
     points: number; linkedProviders: Provider[]; history: HistoryEntry[]; vouchers: Voucher[]
+    emailMarketingConsent: boolean; emailMarketingConsentUpdatedAt: number | null
   }
 }
+type MarketingPreference = { emailMarketingConsent: boolean; emailMarketingConsentUpdatedAt: number | null }
 
 /** Calls the cookie-authenticated account API without caching personal information. */
-export async function accountRequest(path: "me" | "start" | "logout" | "vouchers", body?: object, signal?: AbortSignal): Promise<unknown> {
+export async function accountRequest(path: "me" | "start" | "logout" | "vouchers" | "marketing" | "marketing-invitation" | "push", body?: object, signal?: AbortSignal): Promise<unknown> {
   const response = await fetch(`/api/customer/${path}`, {
     method: body ? "POST" : "GET", credentials: "same-origin", cache: "no-store", signal,
     ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
@@ -23,7 +25,9 @@ export async function accountRequest(path: "me" | "start" | "logout" | "vouchers
     const code = json && typeof json === "object" && "error" in json
       && json.error && typeof json.error === "object" && "code" in json.error ? json.error.code : null
     throw new Error(code === "INVALID_REFERRAL" ? "account.invalidReferral"
-      : code === "INSUFFICIENT_POINTS" ? "account.notEnoughPoints" : "account.error")
+      : code === "INSUFFICIENT_POINTS" ? "account.notEnoughPoints"
+        : code === "EMAIL_REQUIRED" ? "account.marketingEmailRequired"
+          : code === "PUSH_DEVICE_IN_USE" ? "push.deviceInUse" : "account.error")
   }
   if (!json || typeof json !== "object" || !("data" in json)) throw new Error("account.error")
   return json.data
@@ -49,6 +53,15 @@ export async function generatePointsVoucher(): Promise<Voucher> {
   return data
 }
 
+/** Validates the result of a marketing preference update at the network boundary. */
+export function isMarketingPreference(value: unknown): value is MarketingPreference {
+  return !!value && typeof value === "object" && "emailMarketingConsent" in value
+    && typeof value.emailMarketingConsent === "boolean"
+    && "emailMarketingConsentUpdatedAt" in value
+    && (value.emailMarketingConsentUpdatedAt === null
+      || typeof value.emailMarketingConsentUpdatedAt === "number" && Number.isSafeInteger(value.emailMarketingConsentUpdatedAt))
+}
+
 /** Validates the account response at the network boundary. */
 export function isAccountData(value: unknown): value is AccountData {
   if (!value || typeof value !== "object" || !("providers" in value)
@@ -65,4 +78,8 @@ export function isAccountData(value: unknown): value is AccountData {
       !!row && typeof row === "object" && (row.kind === "purchase" || row.kind === "referral" || row.kind === "pointsVoucher")
       && Number.isSafeInteger(row.id) && Number.isSafeInteger(row.points_delta) && Number.isSafeInteger(row.created_at))
     && "vouchers" in c && Array.isArray(c.vouchers) && c.vouchers.every(isVoucher)
+    && "emailMarketingConsent" in c && typeof c.emailMarketingConsent === "boolean"
+    && "emailMarketingConsentUpdatedAt" in c
+    && (c.emailMarketingConsentUpdatedAt === null
+      || typeof c.emailMarketingConsentUpdatedAt === "number" && Number.isSafeInteger(c.emailMarketingConsentUpdatedAt))
 }

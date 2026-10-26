@@ -7,13 +7,15 @@ import CategoryManager, { type AdminCategory } from "./CategoryManager"
 import { TestOrders } from "./TestOrders"
 import { PromotionSettings } from "./PromotionSettings"
 import { CustomerLoyalty } from "./CustomerLoyalty"
+import { PushCampaigns } from "./PushCampaigns"
 
-type View = "items" | "categories" | "orders" | "promotion" | "loyalty"
+type View = "items" | "categories" | "orders" | "promotion" | "loyalty" | "push"
 
 export default function AdminApp() {
   const [view, setView]             = useState<View>(() => window.location.pathname === "/admin/promotion"
     ? "promotion" : window.location.pathname === "/admin/orders" ? "orders"
-      : window.location.pathname === "/admin/loyalty" ? "loyalty" : "items")
+      : window.location.pathname === "/admin/loyalty" ? "loyalty"
+        : window.location.pathname === "/admin/push" ? "push" : "items")
   const [activeGroup, setActiveGroup] = useState<"food" | "drinks">(() => window.location.pathname === "/admin/drinks" ? "drinks" : "food")
   const [categories, setCategories] = useState<AdminCategory[]>([])
   const [activeCatId, setActiveCatId] = useState<string | null>(null)
@@ -109,6 +111,7 @@ export default function AdminApp() {
         <button onClick={() => setView("orders")} className={tab(view === "orders")}>Comenzi TEST</button>
         <button onClick={() => setView("promotion")} className={tab(view === "promotion")}>Reduceri</button>
         <button onClick={() => setView("loyalty")} className={tab(view === "loyalty")}>Clienți și fidelitate</button>
+        <button onClick={() => setView("push")} className={tab(view === "push")}>Campanii push</button>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
@@ -134,7 +137,7 @@ export default function AdminApp() {
           ))}
         </div>}
 
-        {view === "loyalty" ? <CustomerLoyalty /> : view === "promotion" ? <PromotionSettings /> : view === "orders" ? <TestOrders /> : view === "categories" ? (
+        {view === "push" ? <PushCampaigns /> : view === "loyalty" ? <CustomerLoyalty /> : view === "promotion" ? <PromotionSettings /> : view === "orders" ? <TestOrders /> : view === "categories" ? (
           <CategoryManager
             categories={categories}
             groupId={activeGroup}

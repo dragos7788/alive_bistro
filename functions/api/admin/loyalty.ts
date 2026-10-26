@@ -32,11 +32,16 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
 
   if (customerId !== null) {
     if (!customerId || customerId.length > 100) return err("INVALID_INPUT", "Identificator client invalid.", 400)
-    const customer = await env.DB.prepare(`SELECT c.id,c.name,c.email,c.created_at AS createdAt,
+    const customerRow = await env.DB.prepare(`SELECT c.id,c.name,c.email,c.created_at AS createdAt,
       COALESCE((SELECT SUM(points_delta) FROM loyalty_ledger WHERE customer_id=c.id),0)
-      - COALESCE((SELECT SUM(points_spent) FROM customer_point_redemptions WHERE customer_id=c.id),0) AS points
-      FROM customers c WHERE c.id=?`).bind(customerId).first()
-    if (!customer) return err("NOT_FOUND", "Clientul nu a fost găsit.", 404)
+      - COALESCE((SELECT SUM(points_spent) FROM customer_point_redemptions WHERE customer_id=c.id),0) AS points,
+      COALESCE((SELECT action FROM customer_marketing_consent_events
+        WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1)='granted',0) AS emailMarketingConsent,
+      (SELECT created_at FROM customer_marketing_consent_events
+        WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1) AS emailMarketingConsentUpdatedAt
+      FROM customers c WHERE c.id=?`).bind(customerId).first<Record<string, unknown>>()
+    if (!customerRow) return err("NOT_FOUND", "Clientul nu a fost găsit.", 404)
+    const customer = { ...customerRow, emailMarketingConsent: customerRow.emailMarketingConsent === 1 }
 
     const historyCursor = parseCursor(params.get("before"), 3)
     if (historyCursor === false) return err("INVALID_INPUT", "Cursor istoric invalid.", 400)
@@ -72,13 +77,20 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
         WHEN expires_at <= ? THEN 'expired' ELSE 'active' END AS status
       FROM customer_vouchers WHERE customer_id=? ORDER BY created_at DESC,id DESC`)
       .bind(now, customerId).all()
-    const response = ok({ customer, history: historyPage, nextHistory, vouchers: vouchers.results })
+    const marketingConsentHistory = await env.DB.prepare(`SELECT id,action,source,notice_version AS noticeVersion,
+      created_at AS createdAt FROM customer_marketing_consent_events
+      WHERE customer_id=? AND channel='email' ORDER BY id DESC LIMIT 50`).bind(customerId).all()
+    const response = ok({ customer, history: historyPage, nextHistory, vouchers: vouchers.results, marketingConsentHistory: marketingConsentHistory.results })
     response.headers.set("Cache-Control", "no-store")
     return response
   }
 
   const search = params.get("search")?.trim() ?? ""
   if (search.length > 100) return err("INVALID_INPUT", "Căutarea nu poate depăși 100 de caractere.", 400)
+  const marketingFilter = params.get("marketing") ?? "all"
+  if (marketingFilter !== "all" && marketingFilter !== "granted" && marketingFilter !== "not-granted") {
+    return err("INVALID_INPUT", "Filtrul de marketing nu este valid.", 400)
+  }
   const cursor = parseCursor(params.get("before"), 2)
   if (cursor === false) return err("INVALID_INPUT", "Cursor client invalid.", 400)
   const customerCursor = cursor as [number, string] | null
@@ -87,12 +99,21 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
       - COALESCE((SELECT SUM(points_spent) FROM customer_point_redemptions WHERE customer_id=c.id),0) AS points,
     (SELECT COUNT(*) FROM customer_vouchers WHERE customer_id=c.id AND used_at IS NULL AND expires_at>?) AS activeVouchers,
     (SELECT COUNT(*) FROM customer_vouchers WHERE customer_id=c.id AND used_at IS NOT NULL) AS usedVouchers,
-    (SELECT COUNT(*) FROM customer_vouchers WHERE customer_id=c.id AND used_at IS NULL AND expires_at<=?) AS expiredVouchers
+    (SELECT COUNT(*) FROM customer_vouchers WHERE customer_id=c.id AND used_at IS NULL AND expires_at<=?) AS expiredVouchers,
+    COALESCE((SELECT action FROM customer_marketing_consent_events
+      WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1)='granted',0) AS emailMarketingConsent,
+    (SELECT created_at FROM customer_marketing_consent_events
+      WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1) AS emailMarketingConsentUpdatedAt
     FROM customers c
     WHERE (?='' OR instr(lower(c.name),lower(?))>0 OR instr(lower(COALESCE(c.email,'')),lower(?))>0)
+      AND (?='all'
+        OR (?='granted' AND COALESCE((SELECT action FROM customer_marketing_consent_events
+          WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1),'')='granted')
+        OR (?='not-granted' AND COALESCE((SELECT action FROM customer_marketing_consent_events
+          WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1),'')<>'granted'))
       AND (? IS NULL OR c.created_at < ? OR (c.created_at = ? AND c.id < ?))
     ORDER BY c.created_at DESC,c.id DESC LIMIT ?`)
-    .bind(now, now, search, search, search,
+    .bind(now, now, search, search, search, marketingFilter, marketingFilter, marketingFilter,
       customerCursor ? 1 : null, customerCursor?.[0] ?? null, customerCursor?.[0] ?? null,
       customerCursor?.[1] ?? null, CUSTOMER_PAGE_SIZE + 1)
     .all<Record<string, unknown>>()
@@ -101,7 +122,13 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
   const next = result.results.length > CUSTOMER_PAGE_SIZE && lastCustomer
     ? JSON.stringify([lastCustomer.createdAt, lastCustomer.id])
     : null
-  const response = ok({ customers: page, next })
+  const response = ok({
+    customers: page.map(customer => ({
+      ...customer,
+      emailMarketingConsent: customer.emailMarketingConsent === 1,
+    })),
+    next,
+  })
   response.headers.set("Cache-Control", "no-store")
   return response
 }

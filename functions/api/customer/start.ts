@@ -10,6 +10,9 @@ export async function onRequestPost({ request, env }: Ctx): Promise<Response> {
   try { input = JSON.parse(raw) } catch { throw new CustomerAuthError("INVALID_INPUT") }
   if (!input || typeof input !== "object" || !("provider" in input)
     || (input.provider !== "google" && input.provider !== "facebook")) throw new CustomerAuthError("INVALID_PROVIDER")
+  if ("marketingEmailConsent" in input && typeof input.marketingEmailConsent !== "boolean") {
+    throw new CustomerAuthError("INVALID_INPUT")
+  }
   const provider = input.provider
   if (!enabledProviders(env).includes(provider)) throw new CustomerAuthError("PROVIDER_NOT_CONFIGURED", 503)
   const linking = "link" in input && input.link === true
@@ -25,12 +28,13 @@ export async function onRequestPost({ request, env }: Ctx): Promise<Response> {
   const verifier = randomToken()
   const nonce = randomToken()
   const now = Math.floor(Date.now() / 1000)
+  const marketingEmailConsent = !linking && "marketingEmailConsent" in input && input.marketingEmailConsent === true
   await env.DB.batch([
     env.DB.prepare("DELETE FROM customer_oauth WHERE expires_at<=?").bind(now),
     env.DB.prepare(`INSERT INTO customer_oauth
-      (state_hash,browser_hash,provider,verifier,nonce,referral_code,link_customer_id,expires_at)
-      VALUES (?,?,?,?,?,?,?,?)`).bind(await tokenHash(state), await tokenHash(browser), provider,
-      verifier, nonce, referral || null, linking ? customer!.id : null, now + 600),
+      (state_hash,browser_hash,provider,verifier,nonce,referral_code,link_customer_id,expires_at,marketing_email_consent)
+      VALUES (?,?,?,?,?,?,?,?,?)`).bind(await tokenHash(state), await tokenHash(browser), provider,
+      verifier, nonce, referral || null, linking ? customer!.id : null, now + 600, marketingEmailConsent ? 1 : 0),
   ])
   const url = new URL(provider === "google" ? "https://accounts.google.com/o/oauth2/v2/auth"
     : `https://www.facebook.com/${env.FACEBOOK_API_VERSION}/dialog/oauth`)

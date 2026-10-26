@@ -9,6 +9,8 @@ type CustomerSummary = {
   activeVouchers: number
   usedVouchers: number
   expiredVouchers: number
+  emailMarketingConsent: boolean
+  emailMarketingConsentUpdatedAt: number | null
 }
 type HistoryEntry = {
   id: number
@@ -21,6 +23,7 @@ type CustomerDetail = {
   customer: CustomerSummary
   history: HistoryEntry[]
   nextHistory: string | null
+  marketingConsentHistory: { id: number; action: "granted" | "withdrawn"; source: "login" | "account"; noticeVersion: string; createdAt: number }[]
   vouchers: {
     id: string
     code: string
@@ -45,19 +48,35 @@ function formatDate(timestamp: number, withTime = false) {
 function isCustomerPage(value: unknown): value is { customers: CustomerSummary[]; next: string | null } {
   return !!value && typeof value === "object" && "customers" in value && Array.isArray(value.customers)
     && "next" in value && (typeof value.next === "string" || value.next === null)
+    && value.customers.every(customer => !!customer && typeof customer === "object"
+      && "emailMarketingConsent" in customer && typeof customer.emailMarketingConsent === "boolean"
+      && "emailMarketingConsentUpdatedAt" in customer
+      && (customer.emailMarketingConsentUpdatedAt === null
+        || typeof customer.emailMarketingConsentUpdatedAt === "number"))
 }
 
 function isCustomerDetail(value: unknown): value is CustomerDetail {
   return !!value && typeof value === "object" && "customer" in value && !!value.customer
-    && typeof value.customer === "object" && "history" in value && Array.isArray(value.history)
+    && typeof value.customer === "object" && "emailMarketingConsent" in value.customer
+    && typeof value.customer.emailMarketingConsent === "boolean"
+    && "emailMarketingConsentUpdatedAt" in value.customer
+    && (value.customer.emailMarketingConsentUpdatedAt === null
+      || typeof value.customer.emailMarketingConsentUpdatedAt === "number")
+    && "history" in value && Array.isArray(value.history)
     && "vouchers" in value && Array.isArray(value.vouchers)
     && "nextHistory" in value && (typeof value.nextHistory === "string" || value.nextHistory === null)
+    && "marketingConsentHistory" in value && Array.isArray(value.marketingConsentHistory)
+    && value.marketingConsentHistory.every(event => !!event && typeof event === "object"
+      && Number.isSafeInteger(event.id) && (event.action === "granted" || event.action === "withdrawn")
+      && (event.source === "login" || event.source === "account")
+      && typeof event.noticeVersion === "string" && Number.isSafeInteger(event.createdAt))
 }
 
 /** Lets administrators inspect customer point totals, transactions and voucher redemption status. */
 export function CustomerLoyalty() {
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
+  const [marketingFilter, setMarketingFilter] = useState<"all" | "granted" | "not-granted">("all")
   const [customers, setCustomers] = useState<CustomerSummary[]>([])
   const [next, setNext] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState("")
@@ -76,6 +95,7 @@ export function CustomerLoyalty() {
       try {
         const params = new URLSearchParams()
         if (search) params.set("search", search)
+        if (marketingFilter !== "all") params.set("marketing", marketingFilter)
         const response = await fetch(`/api/admin/loyalty?${params}`, { cache: "no-store", signal: controller.signal })
         const json: unknown = await response.json()
         const data = json && typeof json === "object" && "data" in json ? json.data : null
@@ -100,7 +120,7 @@ export function CustomerLoyalty() {
     }
     void loadCustomers()
     return () => controller.abort()
-  }, [search])
+  }, [marketingFilter, search])
 
   useEffect(() => {
     if (!selectedId) return
@@ -142,6 +162,7 @@ export function CustomerLoyalty() {
     try {
       const params = new URLSearchParams({ before: next })
       if (search) params.set("search", search)
+      if (marketingFilter !== "all") params.set("marketing", marketingFilter)
       const response = await fetch(`/api/admin/loyalty?${params}`, { cache: "no-store" })
       const json: unknown = await response.json()
       const data = json && typeof json === "object" && "data" in json ? json.data : null
@@ -201,13 +222,24 @@ export function CustomerLoyalty() {
         <button type="submit" className={`min-h-11 rounded-xl bg-brand-green-700 px-5 font-semibold text-white ${focusClass}`}>
           Caută
         </button>
+        <label className="sr-only" htmlFor="loyalty-marketing-filter">Filtrează după acordul pentru marketing prin email</label>
+        <select id="loyalty-marketing-filter" value={marketingFilter}
+          onChange={event => {
+            const value = event.target.value
+            if (value === "all" || value === "granted" || value === "not-granted") setMarketingFilter(value)
+          }}
+          className={`min-h-11 rounded-xl border border-brand-green-700/30 bg-white px-3 ${focusClass}`}>
+          <option value="all">Toți clienții</option>
+          <option value="granted">Abonați email</option>
+          <option value="not-granted">Fără acord email</option>
+        </select>
       </form>
       {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800">{error}</p>}
       {isLoading && <p role="status">Se încarcă clienții…</p>}
       {!isLoading && customers.length === 0 && <p>Nu există clienți care să corespundă căutării.</p>}
       {customers.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-brand-green-700/15 bg-brand-cream-50">
-          <table className="w-full min-w-[640px] text-left text-sm">
+          <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="bg-brand-cream-200/60">
               <tr>
                 <th scope="col" className="p-3">Client</th>
@@ -215,6 +247,7 @@ export function CustomerLoyalty() {
                 <th scope="col" className="p-3">Vouchere active</th>
                 <th scope="col" className="p-3">Utilizate</th>
                 <th scope="col" className="p-3">Expirate</th>
+                <th scope="col" className="p-3">Marketing email</th>
               </tr>
             </thead>
             <tbody>
@@ -232,6 +265,7 @@ export function CustomerLoyalty() {
                   <td className="p-3">{customer.activeVouchers}</td>
                   <td className="p-3">{customer.usedVouchers}</td>
                   <td className="p-3">{customer.expiredVouchers}</td>
+                  <td className="p-3">{customer.emailMarketingConsent ? "Acordat" : "Neacordat"}</td>
                 </tr>
               ))}
             </tbody>
@@ -251,7 +285,26 @@ export function CustomerLoyalty() {
             <p><span className="font-semibold">E-mail:</span> {detail.customer.email ?? "Indisponibil"}</p>
             <p><span className="font-semibold">Client din:</span> {formatDate(detail.customer.createdAt)}</p>
             <p><span className="font-semibold">Puncte disponibile:</span> {detail.customer.points}</p>
+            <p><span className="font-semibold">Marketing email:</span> {detail.customer.emailMarketingConsent ? "Acordat" : "Neacordat"}
+              {detail.customer.emailMarketingConsentUpdatedAt !== null
+                && <span className="block text-xs text-brand-dark/70">Actualizat: {formatDate(detail.customer.emailMarketingConsentUpdatedAt, true)}</span>}
+            </p>
           </div>
+          <section aria-labelledby="marketing-consent-history-heading" className="space-y-3">
+            <h2 id="marketing-consent-history-heading" className="text-lg font-bold text-brand-green-800">Istoric acord marketing</h2>
+            {detail.marketingConsentHistory.length === 0 ? <p className="text-sm">Clientul nu a acordat sau retras un acord de marketing.</p> : (
+              <ul className="space-y-2">
+                {detail.marketingConsentHistory.map(event => (
+                  <li key={event.id} className="rounded-xl border border-brand-green-700/10 p-3 text-sm">
+                    <span className="font-semibold">{event.action === "granted" ? "Acordat" : "Retras"}</span>
+                    {" · "}{event.source === "login" ? "Autentificare" : "Cont"}
+                    {" · "}{formatDate(event.createdAt, true)}
+                    <span className="block text-xs text-brand-dark/70">Informare: {event.noticeVersion}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
           <section aria-labelledby="loyalty-vouchers-heading" className="space-y-3">
             <h2 id="loyalty-vouchers-heading" className="text-lg font-bold text-brand-green-800">Vouchere emise</h2>
             {detail.vouchers.length === 0 ? <p className="text-sm">Nu au fost emise vouchere.</p> : (

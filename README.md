@@ -70,10 +70,13 @@ Login sau Apple Pay cu Sign in with Apple: sunt servicii separate.
 
 ### Activarea autentificarii
 
-1. Aplica migrarile pana la `0011_customer_voucher_redemption.sql` cu
+1. Aplica migrarile pana la `0014_marketing_invitation.sql` cu
    `npm run db:migrate` pentru baza locala. Migrarea 0010 adauga voucherele si
    acorda voucherul de bun venit clientilor existenti; clientii noi il primesc
    la crearea contului. Migrarea 0011 adauga istoricul utilizarii voucherelor.
+   Migrarea 0012 adauga jurnalul de acorduri pentru marketing prin email.
+   Migrarea 0013 adauga acordurile push, abonamentele si istoricul campaniilor.
+   Migrarea 0014 retine afisarea unica a invitatiei de marketing pe cont.
    In productie, fa backup D1 si aplica migrarea explicit pe mediul vizat
    (`npx wrangler d1 migrations apply alive-bistro-menu --remote`) inainte de deploy.
 2. In [Google Cloud Console](https://console.cloud.google.com/auth/clients),
@@ -96,14 +99,85 @@ Login sau Apple Pay cu Sign in with Apple: sunt servicii separate.
    Foloseste aplicatii si redirect URI dedicate mediilor de test.
 
 API: `GET /api/customer/me`, `POST /api/customer/start` cu
-`{provider,referral?,link?}`, `GET /api/customer/callback`, `POST /api/customer/logout`
-si `POST /api/customer/vouchers` pentru schimbarea a 1.000 de puncte cu un voucher.
+`{provider,referral?,link?,marketingEmailConsent?}`, `GET /api/customer/callback`,
+`POST /api/customer/logout`, `POST /api/customer/vouchers` pentru schimbarea a
+1.000 de puncte cu un voucher si `POST /api/customer/marketing` cu
+`{emailMarketingConsent:boolean}` pentru acordul sau retragerea acordului.
 Raspunsurile folosesc `no-store`; scrierile cer Origin exact.
 State-ul OAuth este unic, legat de cookie si valabil 10 minute. Sesiunea dureaza
 7 zile, cu token opac hash-uit in D1 si cookie HttpOnly/SameSite=Lax/Secure pe
 HTTPS, fara tokenuri in localStorage. Codurile/tokenurile providerilor nu se
 returneaza clientului si nu se pastreaza dupa autentificare.
 Middleware-ul de cont nu inlocuieste Cloudflare Access pentru admin.
+
+La autentificare, abonarea la noutati si oferte prin email este optionala si
+nebifata implicit. Callback-ul inregistreaza doar o alegere explicita si
+respinge activarea daca nu exista o adresa de email disponibila. Clientul poate
+modifica sau retrage acordul din cont; evenimentele includ sursa, versiunea
+informarii si data, iar adminul le poate consulta in istoricul clientului.
+Aceasta functie gestioneaza preferinta tehnica pentru email; nu trimite campanii
+si nu reprezinta singura o conformitate GDPR completa. Inainte de campanii,
+publica si leaga informarea completa de confidentialitate cu identitatea si
+datele de contact ale operatorului, scopurile, temeiurile, retentia, drepturile
+si destinatarii datelor; configureaza dezabonarea/suprimarea in platforma de
+email si valideaza fluxul cu responsabilul juridic/DPO.
+
+Dupa autentificare, invitatia „Lucruri bune, din cand in cand” ofera separat
+email si push pentru canalele fara o alegere anterioara. O retragere existenta
+nu declanseaza o noua solicitare. Emailul este oferit doar conturilor cu adresa
+disponibila, iar push doar dupa configurarea VAPID. Daca niciun canal nu este
+disponibil, invitatia nu este consumata. `POST /api/customer/marketing-invitation`
+cu `{action:"claim"}` rezerva atomic afisarea o singura data pe cont, inclusiv
+intre dispozitive, fara sa acorde consimtamant. Inchiderea, Escape si „Nu acum”
+nu activeaza niciun canal si nu afecteaza contul sau voucherul. Reincarcarea
+dupa rezervare nu mai afiseaza invitatia; preferintele raman disponibile in cont.
+Permisiunea browserului se cere doar din butonul explicit pentru push.
+
+### Campanii Web Push (optional)
+
+Instalarea PWA nu aboneaza clientul la marketing. In cont exista o actiune
+explicita pentru oferte prin push (`push-marketing-v1`), separata de acordul email.
+Doar dupa aceasta actiune se cere permisiunea browserului. Refuzul nu afecteaza
+contul, punctele sau voucherul. Retragerea elimina de pe server toate abonamentele
+push ale contului; mesajele deja acceptate de un serviciu push pot inca ajunge.
+Abonamentele unui dispozitiv nu se transfera intre clienti.
+
+Configurare inainte de activare:
+
+1. Aplica migrarile 0012, 0013 si `0014_marketing_invitation.sql` local, apoi separat in productie
+   dupa backup D1. Nu publica functiile inainte de migrari.
+2. Ruleaza `npm run push:keys` intr-un terminal privat o singura data. Pastreaza
+   perechea stabila; schimbarea ei necesita reabonarea dispozitivelor.
+3. In Cloudflare Pages, configureaza `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`
+   (secret binding) si `VAPID_SUBJECT=mailto:ADRESA_REALĂ_DE_CONTACT`.
+   Nu pune cheia privata in variabile `VITE_` si nu comite iesirea comenzii.
+   Pentru dezvoltare, adauga aceste valori manual in `.dev.vars`, fara commit.
+4. Publica informarea completa: operator, contact, scop marketing push, temei
+   consimtamant, date tehnice si furnizori push Apple/Google/Mozilla/Microsoft,
+   retentie, drepturi si retragere. Valideaza juridic inainte de campanii.
+5. Testeaza cu un cont propriu pe HTTPS, inclusiv refuz, retragere si receptie
+   pe telefon. Pe iOS/iPadOS 16.4+, Web Push necesita PWA adaugata pe Home Screen.
+
+Adminul are fila **Campanii push** (`/admin/push`), cu titlu, mesaj, destinatie
+interna si confirmare inainte de trimitere catre toate dispozitivele eligibile.
+Destinatarii sunt fixati la crearea campaniei, iar acordul este reverificat la
+fiecare trimitere. Loturile de maximum 10 sunt procesate cat timp pagina este
+deschisa. Istoricul persistent permite reluarea doar a loturilor neprocesate.
+Campania are un ID de idempotenta; repetarea aceleiasi cereri nu creeaza alte
+livrari. Erorile si rezultatele necunoscute nu sunt retrimise automat.
+Statusul `accepted` inseamna acceptare de serviciul push, nu afisare/citire.
+Abonamentele respinse cu 404/410 sunt eliminate automat.
+
+API: `GET/POST /api/customer/push` (sesiune client, Origin exact pentru scriere),
+`GET/POST /api/admin/push` (Cloudflare Access si Origin exact pentru scriere).
+Endpointurile acceptate sunt limitate la furnizorii push de browser;
+redirectionarile HTTP sunt interzise. Endpointurile si cheile dispozitivului
+nu se scriu in loguri si nu se returneaza in raportul admin.
+Registrul de acorduri este append-only. Stabileste operational perioada de
+pastrare si procesul de stergere/anonymizare pentru aceste date; aplicatia nu
+implementeaza automat retentia, exportul GDPR sau stergerea contului.
+Notificarile comerciale pot aparea pe ecranul blocat si continua dupa logout
+pana la retragerea acordului; nu include date personale in mesajele campaniilor.
 
 ### Jurnal de calorii
 
@@ -119,7 +193,7 @@ Conturile NU se unesc automat dupa e-mail. Un client autentificat poate conecta
 explicit al doilea provider din contul existent. O identitate deja asociata
 altui client nu se transfera; evita crearea a doua conturi independente.
 Numele, e-mailul optional, identificatorii providerilor, recomandarile si
-istoricul punctelor sunt date personale stocate in D1. Inainte de lansare
+istoricul punctelor si istoricul acordurilor de marketing sunt date personale stocate in D1. Inainte de lansare
 sunt necesare politica de confidentialitate, retentie/stergere, mecanismul
 cerut de Meta pentru stergere si limitare de trafic/abuz la nivel Cloudflare.
 Aceste fluxuri operationale nu sunt implementate automat aici.

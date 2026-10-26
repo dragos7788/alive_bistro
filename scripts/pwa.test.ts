@@ -15,19 +15,48 @@ function setup() {
     delete: vi.fn().mockResolvedValue(true),
   }
   const fetch = vi.fn().mockResolvedValue(new Response('online'))
+  const showNotification = vi.fn().mockResolvedValue(undefined)
+  const openWindow = vi.fn().mockResolvedValue(undefined)
   runInNewContext(source, {
     self: {
       location: { origin: 'https://alive.example' },
+      skipWaiting: vi.fn().mockResolvedValue(undefined),
+      registration: { showNotification },
+      clients: { claim: vi.fn().mockResolvedValue(undefined), matchAll: vi.fn().mockResolvedValue([]), openWindow },
       addEventListener: (type: string, handler: (event: unknown) => void) => {
         handlers[type] = handler
       },
     },
-    caches, fetch, Request, Response, URL,
+    caches, fetch, Request, Response, URL, console,
   })
-  return { handlers, caches, cache, fetch, offline }
+  return { handlers, caches, cache, fetch, offline, showNotification, openWindow }
 }
 
 describe('PWA service worker', () => {
+  it('displays a push campaign with a stable tag and internal destination', async () => {
+    const { handlers, showNotification } = setup()
+    const waitUntil = vi.fn()
+
+    handlers.push({ data: { json: () => ({ title: 'Oferta', body: 'Noutati', path: '/menu', campaignId: 'campaign-1' }) }, waitUntil })
+    await waitUntil.mock.calls[0][0]
+
+    expect(showNotification).toHaveBeenCalledWith('Oferta', expect.objectContaining({
+      body: 'Noutati', tag: 'campaign-1', data: { path: '/menu' },
+    }))
+  })
+  it.each(['/menu', 'https://untrusted.example/', '//untrusted.example/', '/api/customer/me'])(
+    'opens only allowlisted local notification destinations: %s', async path => {
+      const { handlers, openWindow } = setup()
+      const waitUntil = vi.fn()
+      const close = vi.fn()
+
+      handlers.notificationclick({ notification: { close, data: { path } }, waitUntil })
+      await waitUntil.mock.calls[0][0]
+
+      expect(close).toHaveBeenCalledOnce()
+      expect(openWindow).toHaveBeenCalledWith(`https://alive.example${path === '/menu' ? '/menu' : '/account'}`)
+    },
+  )
   it('precaches only the static offline document', async () => {
     const { handlers, caches, cache } = setup()
     const waitUntil = vi.fn()

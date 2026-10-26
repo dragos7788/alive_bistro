@@ -8,6 +8,9 @@ export interface Env {
   FACEBOOK_APP_SECRET?: string
   FACEBOOK_API_VERSION?: string
   LOCAL_TEST_ORDERS?: string
+  VAPID_PUBLIC_KEY?: string
+  VAPID_PRIVATE_KEY?: string
+  VAPID_SUBJECT?: string
   DB: {
     prepare(sql: string): D1Stmt
     batch(stmts: D1Stmt[]): Promise<{ results: Record<string, unknown>[] }[]>

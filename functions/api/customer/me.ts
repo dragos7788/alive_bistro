@@ -25,12 +25,17 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
     CASE WHEN expires_at > ? THEN 'active' ELSE 'expired' END AS status
     FROM customer_vouchers WHERE customer_id=? ORDER BY created_at DESC,id DESC`)
     .bind(Math.floor(Date.now() / 1000), customer.id).all()
+  const marketingConsent = await env.DB.prepare(`SELECT action,created_at AS updatedAt
+    FROM customer_marketing_consent_events WHERE customer_id=? AND channel='email'
+    ORDER BY id DESC LIMIT 1`).bind(customer.id).first<{ action: string; updatedAt: number }>()
   return ok({
     providers, paymentsEnabled: false,
     customer: {
       name: customer.name, email: customer.email, referralCode: customer.referral_code,
       referralUrl: `${authOrigin(env)}/?ref=${customer.referral_code}#account`,
       points: balance?.points ?? 0, linkedProviders: identities.map(identity => identity.provider), history, vouchers,
+      emailMarketingConsent: marketingConsent?.action === "granted",
+      emailMarketingConsentUpdatedAt: marketingConsent?.updatedAt ?? null,
     },
   })
 }

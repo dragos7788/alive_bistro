@@ -6,6 +6,7 @@ import { accountRequest, type Provider } from "./api"
 import type { useCustomerAccount } from "./useCustomerAccount"
 import { MemberCard } from "./MemberCard"
 import { AccountPage } from "./AccountPage"
+import { MarketingInvitation } from "./MarketingInvitation"
 
 /** Keeps sign-in in a dialog and member details on the standalone account page. */
 export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
@@ -17,15 +18,23 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
 }) {
   const { t } = useTranslation()
   const { account, clearCustomer, loadError, refresh } = state
-  const [error, setError] = useState(() => new URLSearchParams(window.location.search).has("auth") ? "account.authError" : "")
+  const [error, setError] = useState(() => {
+    const authError = new URLSearchParams(window.location.search).get("auth")
+    return authError === "marketing-email-required" ? "account.marketingEmailRequired"
+      : authError ? "account.authError" : ""
+  })
   const [pending, setPending] = useState(false)
+  const [preferenceRevision, setPreferenceRevision] = useState(0)
+  const [emailMarketingConsent, setEmailMarketingConsent] = useState(false)
   const [referral, setReferral] = useState(() => new URLSearchParams(window.location.search).get("ref") ?? "")
-
   async function handleSignIn(provider: Provider, link: boolean) {
     setPending(true)
     setError("")
     try {
-      const data = await accountRequest("start", { provider, referral: link ? "" : referral, link })
+      const data = await accountRequest("start", {
+        provider, referral: link ? "" : referral, link,
+        marketingEmailConsent: !link && emailMarketingConsent,
+      })
       if (!data || typeof data !== "object" || !("url" in data) || typeof data.url !== "string") throw new Error("account.error")
       const url = new URL(data.url)
       if (url.protocol !== "https:" || !["accounts.google.com", "www.facebook.com"].includes(url.hostname)) throw new Error("account.error")
@@ -52,16 +61,20 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
 
   const customer = account?.customer
   if (customer) {
-    return isPage ? (
-      <AccountPage name={customer.name}>
+    return (
+      <>
+      <MarketingInvitation key={customer.referralCode} email={customer.email} onUpdated={refresh}
+        onClose={() => { setPreferenceRevision(value => value + 1); refresh() }} />
+      {isPage && <AccountPage name={customer.name}>
         {(error || loadError) && <p role="alert" className="mb-4 text-red-800">{t(error || loadError)}</p>}
         {(error || loadError) && <button type="button" disabled={pending} onClick={() => { setError(""); refresh() }}
           className="mb-4 min-h-11 underline focus-visible:outline-2 focus-visible:outline-brand-green-700">{t("account.refresh")}</button>}
-        <MemberCard key={customer.referralCode} customer={customer} providers={account.providers} pending={pending}
+        <MemberCard key={`${customer.referralCode}-${preferenceRevision}`} customer={customer} providers={account.providers} pending={pending}
           onLogout={() => void handleLogout()} onLink={provider => void handleSignIn(provider, true)}
-          onVoucherGenerated={state.refresh} />
-      </AccountPage>
-    ) : null
+          onVoucherGenerated={state.refresh} onMarketingUpdated={state.refresh} />
+      </AccountPage>}
+      </>
+    )
   }
 
   return (
@@ -106,6 +119,13 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
                 </button>
               ))}
             </div>
+            <label className="flex items-start gap-3 border-t border-brand-green-700/10 pt-4 text-sm leading-relaxed">
+              <input type="checkbox" checked={emailMarketingConsent} disabled={pending}
+                onChange={event => setEmailMarketingConsent(event.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 accent-brand-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700" />
+              <span>{t("account.marketingEmailConsent")}</span>
+            </label>
+            <p className="text-xs leading-relaxed text-brand-green-800">{t("account.marketingDetails")}</p>
             <details open={referral ? true : undefined} className="border-t border-brand-green-700/10 pt-4 text-sm">
               <summary className="min-h-11 cursor-pointer py-3 text-brand-green-800 focus-visible:outline-2 focus-visible:outline-brand-green-700">{t("account.haveReferral")}</summary>
               <label className="sr-only" htmlFor="account-referral">{t("account.referralCode")}</label>

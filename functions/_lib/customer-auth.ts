@@ -76,7 +76,7 @@ export async function sessionCustomer(request: Request, env: Env): Promise<Custo
 
 export type OAuthTransaction = {
   provider: Provider; verifier: string; nonce: string; referral_code: string | null
-  link_customer_id: string | null
+  link_customer_id: string | null; marketing_email_consent: number
 }
 
 /** Exchanges a one-time code and verifies the provider's user identity on the server. */
