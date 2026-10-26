@@ -13,6 +13,8 @@ export type MenuItem = {
   description: string
   description_en?: string
   price: string
+  originalPrice?: string
+  discountPercent?: number
   image?: string
   imageSrcSet?: string
   tag?: string
@@ -29,6 +31,7 @@ export type MenuCategory = {
 
 export type MenuGroup = {
   id: "food" | "drinks"
+  foodDiscountPercent?: number
   label: string
   iconKey: string
   categories: MenuCategory[]

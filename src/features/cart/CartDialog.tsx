@@ -69,7 +69,13 @@ export function CartDialog({ open, onClose, summary, onQuantityChange, error }: 
                       ))}
                     </ul>
                   )}
-                  {line.priceBani !== null && <p className="text-sm">{t("cart.unitPrice", { price: money(line.priceBani) })}</p>}
+                  {line.priceBani !== null && <p className="text-sm">
+                    {line.originalPriceBani !== undefined && <>
+                      <span className="sr-only">{t("promotion.originalPrice")}: </span>
+                      <del>{money(line.originalPriceBani)}</del>{" · "}
+                    </>}
+                    {t("cart.unitPrice", { price: money(line.priceBani) })}
+                  </p>}
                   <div className="flex items-center gap-3">
                     <button type="button" className={buttonClass} aria-label={t("cart.decrease", { name: line.name })}
                       disabled={isCheckout || line.quantity <= 1} onClick={() => onQuantityChange(line, line.quantity - 1)}>

@@ -1,6 +1,8 @@
 import type { Ctx } from "../_lib/types.ts"
 import { err } from "../_lib/response.ts"
 import { publicStock, type StockSettings } from "../_lib/stock"
+import { readFoodDiscount } from "../_lib/food-promotion"
+import { discountedMenuPrice } from "../../src/features/pricing/discount"
 
 type DbCat  = { id: string; group_id: string; label: string; label_en: string | null; icon_key: string }
 type DbItem = StockSettings & {
@@ -17,6 +19,7 @@ const GROUPS = [
 
 export const onRequestGet = async ({ request, env }: Ctx) => {
   try {
+    const foodDiscountPercent = await readFoodDiscount(env)
     const [catsRes, itemsRes] = await env.DB.batch([
       env.DB.prepare("SELECT id, group_id, label, label_en, icon_key FROM categories ORDER BY sort_order"),
       env.DB.prepare("SELECT id, category_id, name, name_en, description, description_en, price, image_key, image_url, tag, calories, protein, carbs, fat, is_available, stock_quantity, show_stock FROM items WHERE is_visible = 1 ORDER BY category_id, sort_order"),
@@ -24,6 +27,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
 
     const cats  = catsRes.results  as unknown as DbCat[]
     const items = itemsRes.results as unknown as DbItem[]
+    const categoryGroups = new Map(cats.map(category => [category.id, category.group_id]))
 
     const byCat = new Map<string, typeof shaped[number][]>()
     const shaped = items.map((r) => ({
@@ -32,7 +36,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
       name_en:        r.name_en ?? undefined,
       description:    r.description,
       description_en: r.description_en ?? undefined,
-      price:          r.price,
+      ...discountedMenuPrice(r.price, categoryGroups.get(r.category_id) ?? "", r.category_id, foodDiscountPercent),
       image:          r.image_key ? `/api/images/${r.image_key}` : (r.image_url ?? undefined),
       tag:            r.tag ?? undefined,
       macros:         r.calories != null
@@ -61,6 +65,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
 
     const data = GROUPS.map((g) => ({
       ...g,
+      ...(g.id === "food" ? { foodDiscountPercent } : {}),
       categories: catsByGroup.get(g.id) ?? [],
     }))
 

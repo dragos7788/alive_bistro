@@ -6,7 +6,7 @@ import { useTranslation, Trans } from "react-i18next"
 import type { MenuItem, MenuCategory, MenuGroup } from "../features/menu/types"
 import { resolveIcon } from "../features/menu/icons"
 import { menuData } from "../features/menu/seed"
-import { getMenu } from "../features/menu/api"
+import { MenuPrice } from "../features/pricing/MenuPrice"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
 import { MobileCategoryPicker } from "../features/menu/MobileCategoryPicker"
@@ -119,19 +119,18 @@ function CategoryBar({
   )
 }
 
-export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
+export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof useCart>; menuGroups: MenuGroup[] }) {
   const { t, i18n } = useTranslation()
-  const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(menuData[0].categories[0].id)
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [addedMessage, setAddedMessage] = useState("")
-  const summary = summarizeCart(cart.items, cartCatalog(menuGroups))
+  const discountPercent = menuGroups.find(group => group.id === "food")?.foodDiscountPercent ?? 0
+  const summary = summarizeCart(cart.items, cartCatalog(menuGroups), discountPercent)
   const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0)
   const headingRef = useRef<HTMLHeadingElement>(null)
 
-  useEffect(() => { getMenu().then(setMenuGroups) }, [])
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true })
   }, [])
@@ -218,6 +217,9 @@ export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
       <CartDialog open={isCartOpen} onClose={() => setIsCartOpen(false)} summary={summary}
         onQuantityChange={cart.setQuantity} error={cart.error} />
       <div className="max-w-4xl mx-auto">
+        {discountPercent > 0 && <p className="mb-8 rounded-2xl border border-brand-green-700/20 bg-brand-green-100 p-4 text-center font-semibold text-brand-green-800">
+          {t("promotion.foodOffer", { percent: discountPercent })}
+        </p>}
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -357,7 +359,7 @@ export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
                 <div className="flex flex-col flex-1 p-4 md:p-5">
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <h3 className="text-brand-dark font-bold group-hover:text-brand-green-700 transition-colors text-sm sm:text-base font-serif lowercase leading-tight">{item.name}</h3>
-                    <span className="text-brand-green-700 font-bold text-xs sm:text-sm whitespace-nowrap">{item.price}</span>
+                    <span className="text-brand-green-700 font-bold text-xs sm:text-sm whitespace-nowrap"><MenuPrice item={item} /></span>
                   </div>
                   {activeCategoryObj.id === "tea-matcha" && (
                     <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
@@ -471,7 +473,7 @@ export default function Menu({ cart }: { cart: ReturnType<typeof useCart> }) {
                     <DialogTitle className="text-2xl sm:text-3xl font-extrabold text-brand-green-700 font-serif lowercase leading-tight">
                       {selectedItem.name}
                     </DialogTitle>
-                    <span className="text-brand-green-700 font-bold text-base whitespace-nowrap mt-1">{selectedItem.price}</span>
+                    <span className="text-brand-green-700 font-bold text-base whitespace-nowrap mt-1"><MenuPrice item={selectedItem} /></span>
                   </div>
 
                   {selectedItem.tag && (

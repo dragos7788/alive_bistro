@@ -3,6 +3,8 @@ import { err } from "./response"
 import { restoreCart, cartOptions, summarizeCart, type CartEntry, type CartProduct } from "../../src/features/cart/cart"
 import { normalizeContact, validateContact, type ContactDetails } from "../../src/features/cart/checkout"
 import { preparationStatuses, type TestOrder, type PreparationStatus, type OrderLine } from "../../src/features/orders/types"
+import { readFoodDiscount } from "./food-promotion"
+import { discountedMenuPrice } from "../../src/features/pricing/discount"
 
 /** Enables test ordering only on loopback URLs and with explicit server configuration. */
 export function testOrdersEnabled(request: Request, env: Pick<Env, "LOCAL_TEST_ORDERS">): boolean {
@@ -59,21 +61,24 @@ export async function orderRequestHash(input: OrderInput): Promise<string> {
 
 /** Uses server catalog data, never client names or prices, to snapshot order lines. */
 export async function resolveOrder(input: OrderInput, env: Env) {
+  const foodDiscountPercent = await readFoodDiscount(env)
   const { results } = await env.DB.prepare(
-    "SELECT id, category_id, name, price, description, is_available, stock_quantity FROM items WHERE is_visible = 1",
-  ).all<{ id: string; category_id: string; name: string; price: string; description: string; is_available: number; stock_quantity: number | null }>()
+    `SELECT i.id, i.category_id, c.group_id, i.name, i.price, i.description, i.is_available, i.stock_quantity
+      FROM items i JOIN categories c ON c.id=i.category_id WHERE i.is_visible = 1`,
+  ).all<{ id: string; category_id: string; group_id: string; name: string; price: string; description: string; is_available: number; stock_quantity: number | null }>()
   const catalog = new Map<string, CartProduct>()
   const stockItems = new Map<string, string>()
   for (const item of results) {
     for (const option of cartOptions(item.category_id, {
       ...item, isAvailable: item.is_available !== 0,
+      ...discountedMenuPrice(item.price, item.group_id, item.category_id, foodDiscountPercent),
       ...(item.stock_quantity !== null && item.stock_quantity !== undefined ? { stockQuantity: item.stock_quantity } : {}),
     })) {
       catalog.set(option.key, option)
       stockItems.set(option.key, item.id)
     }
   }
-  const summary = summarizeCart(input.items, catalog)
+  const summary = summarizeCart(input.items, catalog, foodDiscountPercent)
   if (summary.totalBani === null || summary.totalBani <= 0) throw new UnavailableOrderError("Unele produse sau porții nu mai sunt disponibile.")
   const lines: OrderLine[] = summary.lines.map(line => {
     if (line.priceBani === null || line.subtotalBani === null) throw new UnavailableOrderError("Preț indisponibil.")

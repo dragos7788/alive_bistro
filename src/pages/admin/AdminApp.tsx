@@ -4,11 +4,13 @@ import { resolveIcon } from "../../features/menu/icons"
 import ItemForm, { type AdminItem } from "./ItemForm"
 import CategoryManager, { type AdminCategory } from "./CategoryManager"
 import { TestOrders } from "./TestOrders"
+import { PromotionSettings } from "./PromotionSettings"
 
-type View = "items" | "categories" | "orders"
+type View = "items" | "categories" | "orders" | "promotion"
 
 export default function AdminApp() {
-  const [view, setView]             = useState<View>(() => window.location.pathname === "/admin/orders" ? "orders" : "items")
+  const [view, setView]             = useState<View>(() => window.location.pathname === "/admin/promotion"
+    ? "promotion" : window.location.pathname === "/admin/orders" ? "orders" : "items")
   const [activeGroup, setActiveGroup] = useState<"food" | "drinks">(() => window.location.pathname === "/admin/drinks" ? "drinks" : "food")
   const [categories, setCategories] = useState<AdminCategory[]>([])
   const [activeCatId, setActiveCatId] = useState<string | null>(null)
@@ -39,14 +41,14 @@ export default function AdminApp() {
     } catch { setError("Nu s-au putut încărca produsele") } finally { setLoading(false) }
   }, [])
 
-  useEffect(() => { if (view !== "orders") fetchCategories() }, [fetchCategories, view])
+  useEffect(() => { if (view === "items" || view === "categories") fetchCategories() }, [fetchCategories, view])
 
   useEffect(() => {
     const first = categories.find((c) => c.group_id === activeGroup)?.id ?? null
     setActiveCatId(first)
   }, [activeGroup, categories])
 
-  useEffect(() => { if (view !== "orders" && activeCatId) fetchItems(activeCatId) }, [activeCatId, fetchItems, view])
+  useEffect(() => { if ((view === "items" || view === "categories") && activeCatId) fetchItems(activeCatId) }, [activeCatId, fetchItems, view])
 
   const move = async (id: string, dir: -1 | 1) => {
     const arr   = [...items]
@@ -102,15 +104,16 @@ export default function AdminApp() {
           className={tab(view === "categories")}
         >Categorii</button>
         <button onClick={() => setView("orders")} className={tab(view === "orders")}>Comenzi TEST</button>
+        <button onClick={() => setView("promotion")} className={tab(view === "promotion")}>Reduceri</button>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
-        {error && view !== "orders" && (
+        {error && (view === "items" || view === "categories") && (
           <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
         )}
 
         {/* Group selector */}
-        {view !== "orders" && <div className="flex gap-2">
+        {(view === "items" || view === "categories") && <div className="flex gap-2">
           {(["food", "drinks"] as const).map((g) => (
             <button
               key={g}
@@ -127,7 +130,7 @@ export default function AdminApp() {
           ))}
         </div>}
 
-        {view === "orders" ? <TestOrders /> : view === "categories" ? (
+        {view === "promotion" ? <PromotionSettings /> : view === "orders" ? <TestOrders /> : view === "categories" ? (
           <CategoryManager
             categories={categories}
             groupId={activeGroup}

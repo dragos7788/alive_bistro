@@ -11,6 +11,10 @@ import { useCart } from '@/features/cart/useCart'
 import { InstallToast } from '@/components/InstallToast'
 import { CustomerAccount } from '@/features/account/CustomerAccount'
 import { useCustomerAccount } from '@/features/account/useCustomerAccount'
+import { CalorieJournalPage } from '@/features/calorie-journal/CalorieJournalPage'
+import { getMenu } from '@/features/menu/api'
+import { menuData } from '@/features/menu/seed'
+import type { MenuGroup } from '@/features/menu/types'
 
 export default function App() {
   const [isFeedback, setIsFeedback] = useState(false)
@@ -18,8 +22,17 @@ export default function App() {
   const cart = useCart()
   const isAdmin = window.location.pathname.startsWith("/admin")
   const isAccountPage = /^\/account\/?$/.test(window.location.pathname)
+  const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(window.location.pathname)
   const isMenuPage = /^\/menu\/?$/.test(window.location.pathname)
   const accountState = useCustomerAccount(!isAdmin && !isFeedback)
+  const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
+
+  useEffect(() => {
+    if (!isMenuPage) return
+    let current = true
+    void getMenu().then(groups => { if (current) setMenuGroups(groups) })
+    return () => { current = false }
+  }, [isMenuPage])
 
   useEffect(() => {
     if (!isAccountPage && isAccountOpen && accountState.account?.customer) {
@@ -58,9 +71,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-cream-100 text-brand-dark font-sans">
       <Navbar account={accountState.account} accountError={!!accountState.loadError} />
-      {isMenuPage ? <main>
-        <Menu cart={cart} />
-        <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error} />
+      {isCalorieJournalPage ? <CalorieJournalPage
+        key={accountState.account?.customer?.referralCode ?? "guest"}
+        customerName={accountState.account?.customer?.name ?? null}
+        isChecking={!accountState.account && !accountState.loadError}
+      /> : isMenuPage ? <main>
+        <Menu cart={cart} menuGroups={menuGroups} />
+        <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error}
+          discountPercent={menuGroups.find(group => group.id === "food")?.foodDiscountPercent ?? 0} />
       </main> : !isAccountPage && <>
         <div id="home">
           <Home />

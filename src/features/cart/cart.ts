@@ -1,10 +1,12 @@
 import type { MenuGroup, MenuItem } from "../menu/types"
 import { builderGroups, calculateMenu, ingredients, type MenuSelection } from "../menu-builder/calculator"
+import { discountBani, parsePriceBani } from "../pricing/discount"
+export { parsePriceBani } from "../pricing/discount"
 
 export type CartEntry = { key: string; name: string; quantity: number; selection?: MenuSelection }
 export type CartProduct = {
   key: string; name: string; priceBani: number | null; portion?: string; selection?: MenuSelection
-  isAvailable?: boolean; stockQuantity?: number
+  isAvailable?: boolean; stockQuantity?: number; originalPriceBani?: number
 }
 export const cartStorageKey = "alive_bistro_cart_v1"
 
@@ -51,27 +53,19 @@ function availableSelection(selection: MenuSelection): boolean {
 }
 
 /** Snapshots a nonempty plate with a stable identity and its current catalog price. */
-export function performanceCartProduct(value: MenuSelection): CartProduct {
+export function performanceCartProduct(value: MenuSelection, discountPercent = 0): CartProduct {
   const selection = readSelection(value)
   if (!availableSelection(selection)) throw new Error("Unavailable Performance selection")
   const total = calculateMenu(selection)
   return {
     key: performanceKey(selection), name: "Meniu Performance",
-    priceBani: Math.round(total.price * 100), selection,
+    priceBani: discountBani(Math.round(total.price * 100), discountPercent), selection,
   }
 }
 
 /** Identifies a menu product within its category without depending on list order. */
 export function cartProductKey(categoryId: string, name: string): string {
   return JSON.stringify([categoryId, name])
-}
-
-/** Parses a single RON price into integer bani; rejects ambiguous or invalid prices. */
-export function parsePriceBani(price: string): number | null {
-  const match = /^(\d+)(?:[.,](\d{1,2}))?\s*(?:lei|ron)$/i.exec(price.trim())
-  if (!match) return null
-  const amount = Number(match[1]) * 100 + Number((match[2] ?? "").padEnd(2, "0"))
-  return Number.isSafeInteger(amount) && amount > 0 ? amount : null
 }
 
 /** Builds the current catalog used to resolve cart prices and availability. */
@@ -86,7 +80,11 @@ export function cartOptions(categoryId: string, item: MenuItem): CartProduct[] {
   const key = cartProductKey(categoryId, item.name)
   const stock = { isAvailable: item.isAvailable !== false && item.stockQuantity !== 0, stockQuantity: item.stockQuantity }
   const priceBani = parsePriceBani(item.price)
-  if (priceBani !== null) return [{ key, name: item.name, priceBani, ...stock }]
+  if (priceBani !== null) return [{
+    key, name: item.name, priceBani, ...stock,
+    ...(item.originalPrice && parsePriceBani(item.originalPrice) !== null
+      ? { originalPriceBani: parsePriceBani(item.originalPrice)! } : {}),
+  }]
   const prices = /^(\d+(?:[.,]\d{1,2})?)\s*\/\s*(\d+(?:[.,]\d{1,2})?)\s*(lei|ron)$/i.exec(item.price.trim())
   const portions = /^(\d+)\s*ml\s*\/\s*(\d+)\s*ml\b/i.exec(item.description.trim())
   if (!prices || !portions) return []
@@ -138,17 +136,20 @@ export function updateCart(items: CartEntry[], product: Pick<CartProduct, "key" 
 }
 
 /** Resolves current prices; unavailable or unsafe lines cannot contribute to a total. */
-export function summarizeCart(items: CartEntry[], catalog: Map<string, CartProduct>) {
+export function summarizeCart(items: CartEntry[], catalog: Map<string, CartProduct>, performanceDiscountPercent = 0) {
   const lines = items.map(item => {
     const plate = item.selection && availableSelection(item.selection) ? calculateMenu(item.selection) : null
     const priceBani = item.selection
-      ? plate ? Math.round(plate.price * 100) : null
+      ? plate ? discountBani(Math.round(plate.price * 100), performanceDiscountPercent) : null
       : catalog.get(item.key)?.isAvailable === false
         || (catalog.get(item.key)?.stockQuantity ?? Infinity) < item.quantity
         ? null : catalog.get(item.key)?.priceBani ?? null
     const amount = priceBani === null ? null : priceBani * item.quantity
     return {
       ...item, plate, priceBani, stockQuantity: catalog.get(item.key)?.stockQuantity,
+      originalPriceBani: item.selection
+        ? plate && performanceDiscountPercent > 0 ? Math.round(plate.price * 100) : undefined
+        : catalog.get(item.key)?.originalPriceBani,
       subtotalBani: amount !== null && Number.isSafeInteger(amount) ? amount : null,
     }
   })

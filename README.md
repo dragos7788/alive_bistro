@@ -7,6 +7,7 @@ Site public + admin dashboard pentru meniu. Stack: React + Vite, Cloudflare Page
 - `/`: prezentarea bistroului si comunitatea.
 - `/menu`: meniul, cosul si configuratorul Performance (`/menu#custom-menu`).
 - `/account`: contul clientului; autentificarea ramane in modal.
+- `/calorie-journal`: jurnal privat de calorii disponibil clientilor autentificati.
 
 Linkurile vechi `/#menu`, `/#custom-menu` si `/#menu-calculator` redirectioneaza
 catre sectiunea corespunzatoare de pe `/menu`, pastrand parametrii URL.
@@ -95,6 +96,16 @@ State-ul OAuth este unic, legat de cookie si valabil 10 minute. Sesiunea dureaza
 HTTPS, fara tokenuri in localStorage. Codurile/tokenurile providerilor nu se
 returneaza clientului si nu se pastreaza dupa autentificare.
 Middleware-ul de cont nu inlocuieste Cloudflare Access pentru admin.
+
+### Jurnal de calorii
+
+Pagina `/calorie-journal` este disponibilă clientilor autentificati. Clientul
+poate adăuga preparate cu valori nutriționale din meniu sau înregistrări manuale,
+consulta totalurile pe zi și salva un obiectiv caloric zilnic. Valorile nutriționale
+sunt păstrate ca instantaneu la adăugare; macronutrienții necunoscuți rămân marcați
+ca indisponibili. Înregistrările și obiectivul sunt private pe baza sesiunii clientului.
+Migrarea `0006_calorie_journal.sql` adaugă tabelele necesare; rulează `npm run db:migrate`
+local și aplică migrarea D1 în producție înainte de deploy.
 
 Conturile NU se unesc automat dupa e-mail. Un client autentificat poate conecta
 explicit al doilea provider din contul existent. O identitate deja asociata
@@ -327,6 +338,37 @@ Configuratorul nu trimite comenzi. Disponibilitatea și prețul se confirmă cu 
 Interfața este disponibilă în română și engleză prin traducerile existente.
 
 Validare calculator: `npx vitest run src/features/menu-builder/calculator.test.ts`.
+
+## Reducere la mâncare (administrare)
+
+În `/admin`, fila **Reduceri** (sau ruta directă `/admin/promotion`) permite
+activarea unei reduceri procentuale pentru toți clienții, modificarea procentului
+și dezactivarea promoției. Pentru oferta de 10%, introdu `10` și salvează.
+Sunt incluse produsele din grupa `food` și meniurile Performance; categoria
+de deserturi `sweet-no-regrets` și toate produsele din `drinks` sunt excluse.
+Prețurile de bază din administrarea produselor rămân nemodificate.
+
+Aplică migrarea `0007_food_promotion.sql` înainte de a publica versiunea nouă:
+`npm run db:migrate` pentru local, respectiv, după backup și verificarea mediului,
+`npx wrangler d1 migrations apply alive-bistro-menu --remote` pentru producție.
+Promoția este inițial dezactivată; activarea se face explicit din administrare.
+Configurația se păstrează în D1, nu în browser. Nu este necesar un nou deploy
+pentru schimbarea procentului după instalarea acestei versiuni.
+
+`GET /api/admin/promotion` și `PUT /api/admin/promotion` folosesc protecția
+administratorului existentă (Cloudflare Access); scrierea cere același Origin.
+Payload-ul este `{ "foodDiscountPercent": 10 }`, cu procent întreg între 0 și 99;
+`0` dezactivează oferta. În dezvoltare, accesul administrativ local este disponibil
+doar în modul TEST explicit, ca la gestionarea stocului: `npm run dev:orders`.
+În producție, Cloudflare Access trebuie să protejeze atât `/admin/*`, cât și
+`/api/admin/*`; această funcție nu adaugă un bypass de autentificare public.
+
+API-ul public `/api/menu` publică prețul redus, prețul de bază și procentul, iar
+ETag-ul se schimbă la modificarea promoției. Reîncarcă pagina publică după salvare.
+Coșul recalculează prețurile curente inclusiv pentru farfuriile Performance
+restaurate; comenzile TEST verifică promoția direct în D1 și refuză totalurile
+vechi. Reducerea se rotunjește la ban pe produs; pentru Performance se aplică
+o singură dată totalului farfuriei, nu fiecărui ingredient separat.
 
 ## Coș de cumpărături — etapa 1
 

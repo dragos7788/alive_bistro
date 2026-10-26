@@ -10,6 +10,25 @@ describe("Performance cart", () => {
     carbs: { ingredientId: "rice", amount: 200 },
   }
 
+  it("recalculates a restored Performance cart with the current discount exactly once", () => {
+    const plate = performanceCartProduct(selection, 10)
+    const entries = updateCart([], plate, 2)
+
+    expect(plate.priceBani).toBe(2520)
+    expect(summarizeCart(entries, new Map(), 10).totalBani).toBe(5040)
+    expect(summarizeCart(entries, new Map(), 0).totalBani).toBe(5600)
+    expect(summarizeCart(entries, new Map(), 10).lines[0].originalPriceBani).toBe(2800)
+  })
+
+  it("uses the discounted menu price and keeps the original unit price visible", () => {
+    const catalog = new Map(cartOptions("breakfast", {
+      name: "Toast", description: "", price: "32.40 lei", originalPrice: "36 lei", discountPercent: 10,
+    }).map(option => [option.key, option]))
+    const summary = summarizeCart([{ ...product, quantity: 2 }], catalog, 10)
+
+    expect(summary.totalBani).toBe(6480)
+    expect(summary.lines[0].originalPriceBani).toBe(3600)
+  })
   it("adds a configured plate and a regular product to one exact total", () => {
     const plate = performanceCartProduct(selection)
     const items = updateCart(updateCart([], product, 1), plate, 2)

@@ -22,6 +22,9 @@ export default function Navbar({ account, accountError }: { account: AccountData
   const [langDropdownOpen, setLangDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const isHomePage = window.location.pathname === "/"
+  const visibleNavLinks = account?.customer
+    ? [...navLinks.slice(0, 3), { href: "/calorie-journal", labelKey: "calorieJournal.nav" }, ...navLinks.slice(3)]
+    : navLinks
   const linkHref = (href: string) => href === "#account"
     ? account?.customer ? "/account" : "#account"
     : href.startsWith("#") && !isHomePage ? `/${href}` : href
@@ -67,7 +70,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
+            {visibleNavLinks.map((link) => (
               <a
                 key={link.href}
                 href={linkHref(link.href)}
@@ -170,7 +173,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
             transition={{ duration: 0.25 }}
             className="fixed inset-0 z-40 bg-brand-cream-50/98 flex flex-col items-center justify-center gap-8 md:hidden text-center"
           >
-            {navLinks.map((link) => (
+            {visibleNavLinks.map((link) => (
               <a
                 key={link.href}
                 href={linkHref(link.href)}

@@ -1,6 +1,7 @@
 import { RotateCcw, Utensils, ShoppingBag } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import type { calculateMenu } from "./calculator"
+import { discountBani } from "../pricing/discount"
 
 interface BuilderSummaryProps {
   total: ReturnType<typeof calculateMenu>
@@ -8,16 +9,18 @@ interface BuilderSummaryProps {
   onAddToCart: () => void
   addedCount: number
   cartError: string
+  discountPercent: number
 }
 
 /** Displays the current plate, declared nutrition, allergens, and total cost. */
-export function BuilderSummary({ total, onReset, onAddToCart, addedCount, cartError }: BuilderSummaryProps) {
+export function BuilderSummary({ total, onReset, onAddToCart, addedCount, cartError, discountPercent }: BuilderSummaryProps) {
   const { t, i18n } = useTranslation()
   const number = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 1 })
   const money = new Intl.NumberFormat(i18n.language, {
-    style: "currency", currency: "RON", maximumFractionDigits: 0,
+    style: "currency", currency: "RON", maximumFractionDigits: 2,
   })
   const isEmpty = total.lines.length === 0
+  const discountedTotal = discountBani(Math.round(total.price * 100), discountPercent) / 100
 
   return (
     <aside aria-labelledby="builder-summary-title" className="self-start lg:sticky lg:top-24">
@@ -50,9 +53,14 @@ export function BuilderSummary({ total, onReset, onAddToCart, addedCount, cartEr
             <span className="text-sm font-bold">{t("builder.total")}</span>
             <output className="text-3xl font-extrabold" aria-live="polite" aria-atomic="true"
               aria-label={t("builder.total")}>
-              {money.format(total.price)}
+              {money.format(discountedTotal)}
             </output>
           </div>
+          {discountPercent > 0 && !isEmpty && <p className="mt-2 text-sm text-brand-green-800">
+            <span className="sr-only">{t("promotion.originalPrice")}: </span>
+            <del>{money.format(total.price)}</del>{" · "}{t("promotion.discount", { percent: discountPercent })}
+            <span className="mt-1 block text-xs">{t("promotion.performanceNote")}</span>
+          </p>}
           <p className="mt-2 text-xs text-brand-green-700">
             {t("builder.quantity")}: {number.format(total.grams)} g
             {total.millilitres > 0 && ` + ${number.format(total.millilitres)} ml`}
