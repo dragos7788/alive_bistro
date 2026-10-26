@@ -24,17 +24,21 @@ intr-un modal Headless UI cu focus blocat in interior, revenirea focusului la
 declansator si inchidere prin Escape, fundal sau buton. `#account` deschide
 loginul pentru vizitatori, inclusiv din linkuri de recomandare; inchiderea
 elimina fragmentul fara reincarcarea paginii. Dupa login, callback-ul deschide
-`/account`, cu puncte, recomandari, QR si istoric, fara modal. Linkurile vechi
+`/account`, cu puncte, vouchere, recomandari, QR si istoric, fara modal. Linkurile vechi
 `#account` duc clientii autentificati la aceasta pagina. Vizitatorii care acceseaza
 direct `/account` primesc un buton de autentificare. Navigarea foloseste linkuri
 native, ca paginile existente, si fallback-ul SPA Cloudflare Pages.
 Google continua pe pagina oficiala
 a furnizorului, nu intr-un iframe. Sunt afisati doar furnizorii configurati.
 Ecranul de login prioritizeaza butonul Google, un mesaj scurt de bun venit si
-nota ca recompensele sunt in pregatire. Codul de recomandare este intr-o sectiune
-extensibila, deschisa automat cand exista un cod; regulile detaliate ale punctelor
-sunt extensibile in cont. Cardul de membru afiseaza un salut scurt, soldul si
+nota ca punctele din cumparaturi vor fi acordate dupa activarea comenzilor online.
+Codul de recomandare este intr-o sectiune extensibila, deschisa automat cand exista
+un cod. Cardul de membru afiseaza un salut scurt, soldul, voucherele si
 butonul de copiere a linkului de recomandare; la eroare ofera copiere manuala.
+Voucherul de bun venit de 10% se acorda automat o singura data si expira dupa
+30 de zile. Clientii pot schimba 1.000 de puncte pentru un voucher de 10%;
+punctele se scad la emitere, iar voucherul expira dupa 30 de zile. Codurile sunt
+vizibile in cont; aplicarea lor la checkout necesita activarea comenzilor online.
 Linkul este afisat alaturi de un cod QR SVG generat local cu `qrcode.react`,
 fara transmiterea datelor catre un serviciu extern. QR-ul codifica exact acelasi
 URL, inclusiv codul personal si `#account`. In dezvoltarea pe loopback, scanarea
@@ -66,7 +70,10 @@ Login sau Apple Pay cu Sign in with Apple: sunt servicii separate.
 
 ### Activarea autentificarii
 
-1. Aplica `0005_customer_accounts.sql` cu `npm run db:migrate` pentru baza locala.
+1. Aplica migrarile pana la `0011_customer_voucher_redemption.sql` cu
+   `npm run db:migrate` pentru baza locala. Migrarea 0010 adauga voucherele si
+   acorda voucherul de bun venit clientilor existenti; clientii noi il primesc
+   la crearea contului. Migrarea 0011 adauga istoricul utilizarii voucherelor.
    In productie, fa backup D1 si aplica migrarea explicit pe mediul vizat
    (`npx wrangler d1 migrations apply alive-bistro-menu --remote`) inainte de deploy.
 2. In [Google Cloud Console](https://console.cloud.google.com/auth/clients),
@@ -89,7 +96,8 @@ Login sau Apple Pay cu Sign in with Apple: sunt servicii separate.
    Foloseste aplicatii si redirect URI dedicate mediilor de test.
 
 API: `GET /api/customer/me`, `POST /api/customer/start` cu
-`{provider,referral?,link?}`, `GET /api/customer/callback`, `POST /api/customer/logout`.
+`{provider,referral?,link?}`, `GET /api/customer/callback`, `POST /api/customer/logout`
+si `POST /api/customer/vouchers` pentru schimbarea a 1.000 de puncte cu un voucher.
 Raspunsurile folosesc `no-store`; scrierile cer Origin exact.
 State-ul OAuth este unic, legat de cookie si valabil 10 minute. Sesiunea dureaza
 7 zile, cu token opac hash-uit in D1 si cookie HttpOnly/SameSite=Lax/Secure pe
@@ -127,6 +135,16 @@ Aceste fluxuri operationale nu sunt implementate automat aici.
 - Registru append-only, plati unice pe `payment_id` si `order_id`; retry-ul nu
   dubleaza punctele. Rambursarile cumulative recalculeaza punctele pe suma neta,
   cu retragere atat de la cumparator, cat si de la recomandant.
+- Migrarea `0010_customer_vouchers.sql` emite un voucher de bun venit de 10%,
+  valabil 30 de zile, pentru fiecare client existent si pentru conturile noi.
+  Din cont, clientul poate schimba 1.000 de puncte cu un voucher de 10% valabil
+  30 de zile; soldul este verificat si debitat atomic. Voucherele sunt afisate in
+  cont, dar nu se pot aplica inca la checkout-ul de previzualizare.
+- Adminul protejat de Cloudflare Access include fila **Clienți și fidelitate**
+  (`/admin/loyalty`), cu căutare, solduri, istoric paginat al punctelor și starea
+  voucherelor pentru fiecare client. Migrarea `0011_customer_voucher_redemption.sql`
+  adaugă datele de folosire; ele vor fi scrise de integrarea checkoutului, care
+  nu este încă activă. Comenzile TEST nu pot consuma vouchere.
 - `recordSettledPayment` si `recordCumulativeRefund` sunt functii INTERNE pentru
   integrarea viitoare, nu verifica ele insele plata bancara si nu au endpoint
   public. Nu trebuie apelate pe baza datelor browserului sau a redirectului bancii.

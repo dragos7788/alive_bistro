@@ -58,7 +58,8 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
         {(error || loadError) && <button type="button" disabled={pending} onClick={() => { setError(""); refresh() }}
           className="mb-4 min-h-11 underline focus-visible:outline-2 focus-visible:outline-brand-green-700">{t("account.refresh")}</button>}
         <MemberCard key={customer.referralCode} customer={customer} providers={account.providers} pending={pending}
-          onLogout={() => void handleLogout()} onLink={provider => void handleSignIn(provider, true)} />
+          onLogout={() => void handleLogout()} onLink={provider => void handleSignIn(provider, true)}
+          onVoucherGenerated={state.refresh} />
       </AccountPage>
     ) : null
   }

@@ -201,7 +201,7 @@
     "welcomeSubtitle": "Join the community. Enjoy more, together.",
     "haveReferral": "Have a referral code?",
     "referralPlaceholder": "Enter your code",
-    "comingSoonNote": "Community points and rewards are coming soon.",
+    "comingSoonNote": "Purchase points will be awarded once online ordering and payments are enabled.",
     "benefitDetails": "About points and benefits",
     "signedIn": "Signed in",
     "signedInAs": "Signed in as {{name}}. Open my account",
@@ -211,7 +211,19 @@
     "nav": "My account",
     "title": "Your ALIVE account and points",
     "rules": "Earn 1 point for each whole leu paid online. The direct referrer also earns 1 point/leu on every paid order made by the referred customer.",
-    "notLive": "Coming soon: BT iPay payments and actual point awards are not activated yet. TEST orders earn no points. Vouchers and remuneration rules will be defined later.",
+    "notLive": "Purchase points will be awarded once online ordering and payments are enabled. The welcome voucher is valid for 30 days. You can generate a 10% voucher for each 1,000 points, which are deducted when the voucher is issued. Codes can be used at checkout once online ordering is enabled.",
+    "vouchers": "Your vouchers",
+    "voucherPointsRule": "Generate a 10% voucher for every 1,000 points. Points are deducted when the voucher is issued. Each voucher is valid for 30 days.",
+    "generateVoucher": "Generate voucher for 1,000 points",
+    "generatingVoucher": "Generating voucher…",
+    "voucherGenerated": "The voucher was generated and added to your account.",
+    "notEnoughPoints": "You do not have enough points. You need 1,000 points for a voucher.",
+    "noVouchers": "You do not have any vouchers yet.",
+    "welcomeVoucher": "Welcome voucher",
+    "pointsVoucherTitle": "Points voucher",
+    "voucherActive": "Active",
+    "voucherExpired": "Expired",
+    "voucherExpires": "Valid until {{date}}",
     "loading": "Loading your account…",
     "notConfigured": "Google/Facebook sign-in is not configured on the server yet.",
     "login": "Continue with {{provider}}",
@@ -230,7 +242,8 @@
     "history": "Last 30 transactions",
     "noHistory": "No points have been awarded yet.",
     "purchase": "Purchase",
-    "referral": "Referral"
+    "referral": "Referral",
+    "pointsVoucher": "Voucher generated"
   },
   "calorieJournal": {
     "nav": "Calorie journal",
@@ -273,8 +286,8 @@
   "installToast": {
     "label": "App installation and the ALIVE community",
     "title": "ALIVE with you.",
-    "discount": "10% off for community members.",
-    "membershipNote": "Installation is not membership. The discount is not yet active online.",
+    "discount": "Join the community and get a voucher for an extra 10% off.",
+    "membershipNote": "After joining, you’ll find the voucher in the Benefits section.",
     "install": "Install",
     "installing": "Opening installation…",
     "community": "Community",
@@ -303,12 +316,6 @@
       "instagram": "Daily updates, behind-the-scenes moments from our kitchen, wellness recipes, and stories full of energy.",
       "facebook": "Event announcements, themed brunches, and news from the well-being community.",
       "tiktok": "Videos of preparing our functional drinks, nutrition tips, and pure energy."
-    },
-    "stats": {
-      "members": "Community Members",
-      "events": "Hosted Events",
-      "workshops": "Nutrition Workshops",
-      "reviews": "5-star Reviews"
     }
   },
   "feedback": {

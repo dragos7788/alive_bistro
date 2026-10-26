@@ -8,6 +8,8 @@ import { onRequestPost as start } from "../api/customer/start"
 import { onRequestPost as logout } from "../api/customer/logout"
 import { onRequestGet as callback } from "../api/customer/callback"
 import { onRequestGet as me } from "../api/customer/me"
+import { onRequestPost as generateVoucher } from "../api/customer/vouchers"
+import { onRequestGet as adminLoyalty } from "../api/admin/loyalty"
 
 vi.mock("./customer-auth", async importOriginal => {
   const original = await importOriginal<typeof import("./customer-auth")>()
@@ -21,6 +23,8 @@ describe("Customer identity and loyalty persistence", () => {
     db = new DatabaseSync(":memory:")
     db.exec("PRAGMA foreign_keys=ON")
     db.exec(readFileSync(new URL("../../migrations/0005_customer_accounts.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0010_customer_vouchers.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0011_customer_voucher_redemption.sql", import.meta.url), "utf8"))
     // Adapter executes real SQLite, including atomic rollback and trigger behavior.
     const bound = new WeakMap<object, () => void>()
     const prepare: Env["DB"]["prepare"] = sql => {
@@ -106,6 +110,126 @@ describe("Customer identity and loyalty persistence", () => {
     expect(points("coach")).toBe(0)
     await expect(recordCumulativeRefund(env, payment.paymentId, 5000)).rejects.toThrow("INVALID_REFUND")
     await expect(recordCumulativeRefund(env, payment.paymentId, 0)).rejects.toThrow("INVALID_REFUND")
+  })
+  it("grants one welcome voucher to newly registered customers", async () => {
+    const { response } = await login()
+    expect(response.status).toBe(303)
+    const customer = db.prepare("SELECT id FROM customers WHERE email='test@example.com'").get() as { id: string }
+    const voucher = db.prepare("SELECT source,discount_percent,expires_at-created_at AS validity FROM customer_vouchers WHERE customer_id=?")
+      .get(customer.id) as { source: string; discount_percent: number; validity: number }
+    expect(voucher).toEqual({ source: "welcome", discount_percent: 10, validity: 30 * 24 * 60 * 60 })
+    await login()
+    expect(db.prepare("SELECT count(*) AS n FROM customer_vouchers WHERE customer_id=? AND source='welcome'")
+      .get(customer.id)?.n).toBe(1)
+  })
+  it("backfills a single welcome voucher for customers who already exist at migration time", () => {
+    const legacyDb = new DatabaseSync(":memory:")
+    try {
+      legacyDb.exec("PRAGMA foreign_keys=ON")
+      legacyDb.exec(readFileSync(new URL("../../migrations/0005_customer_accounts.sql", import.meta.url), "utf8"))
+      legacyDb.exec("INSERT INTO customers VALUES ('legacy','Legacy',NULL,'LEGACY0000000001',NULL,1)")
+      legacyDb.exec(readFileSync(new URL("../../migrations/0010_customer_vouchers.sql", import.meta.url), "utf8"))
+      const voucher = legacyDb.prepare(`SELECT source,discount_percent,expires_at-created_at AS validity
+        FROM customer_vouchers WHERE customer_id='legacy'`).get()
+      expect(voucher).toEqual({ source: "welcome", discount_percent: 10, validity: 30 * 24 * 60 * 60 })
+    } finally {
+      legacyDb.close()
+    }
+  })
+  it("exchanges each 1,000 points for one 10% voucher and deducts the points", async () => {
+    await recordSettledPayment(env, { ...payment, amountBani: 200000 })
+    const token = randomToken()
+    db.prepare("INSERT INTO customer_sessions VALUES (?,?,?)")
+      .run(await tokenHash(token), "buyer", Math.floor(Date.now() / 1000) + 100)
+    const request = post("vouchers", {}, `alive_session=${token}`)
+
+    const first = await generateVoucher({ request, env, params: {} })
+    expect(first.status).toBe(201)
+    const firstVoucher = (await first.json() as { data: { source: string; code: string; discountPercent: number; createdAt: number; expiresAt: number } }).data
+    expect(firstVoucher).toMatchObject({ source: "points", discountPercent: 10 })
+    expect(firstVoucher.code).toMatch(/^ALIVE-[A-Z0-9_-]{12}$/)
+    expect(firstVoucher.expiresAt - firstVoucher.createdAt).toBe(30 * 24 * 60 * 60)
+
+    const second = await generateVoucher({ request, env, params: {} })
+    expect(second.status).toBe(201)
+    const third = await generateVoucher({ request, env, params: {} })
+    expect(third.status).toBe(409)
+
+    const profile = await me({
+      request: new Request("http://localhost:8792/api/customer/me", { headers: { Cookie: `alive_session=${token}` } }),
+      env, params: {},
+    })
+    const account = (await profile.json() as { data: { customer: { points: number; vouchers: { source: string }[]; history: { kind: string; points_delta: number }[] } } }).data.customer
+    expect(account.points).toBe(0)
+    expect(account.vouchers.filter(voucher => voucher.source === "points")).toHaveLength(2)
+    expect(account.history).toContainEqual(expect.objectContaining({ kind: "pointsVoucher", points_delta: -1000 }))
+  })
+  it("rejects point voucher generation below the 1,000-point threshold", async () => {
+    await recordSettledPayment(env, { ...payment, amountBani: 99900 })
+    const token = randomToken()
+    db.prepare("INSERT INTO customer_sessions VALUES (?,?,?)")
+      .run(await tokenHash(token), "buyer", Math.floor(Date.now() / 1000) + 100)
+    const response = await generateVoucher({ request: post("vouchers", {}, `alive_session=${token}`), env, params: {} })
+    expect(response.status).toBe(409)
+    expect(db.prepare("SELECT count(*) AS n FROM customer_vouchers WHERE customer_id='buyer' AND source='points'").get()?.n).toBe(0)
+    expect(db.prepare("SELECT count(*) AS n FROM customer_point_redemptions WHERE customer_id='buyer'").get()?.n).toBe(0)
+  })
+  it("restricts the loyalty report to administrators and searches customers", async () => {
+    const denied = await adminLoyalty({ request: new Request("http://localhost:8792/api/admin/loyalty"), env, params: {} })
+    expect(denied.status).toBe(401)
+
+    const request = new Request("http://localhost:8792/api/admin/loyalty?search=buy", {
+      headers: { "Cf-Access-Authenticated-User-Email": "admin@alive.example" },
+    })
+    const response = await adminLoyalty({ request, env, params: {} })
+    const body = await response.json() as { data: { customers: { id: string; points: number; activeVouchers: number }[]; next: string | null } }
+    expect(response.headers.get("Cache-Control")).toBe("no-store")
+    expect(body.data.customers).toEqual([
+      expect.objectContaining({ id: "buyer", points: 0, activeVouchers: 1 }),
+    ])
+    expect(body.data.next).toBeNull()
+  })
+  it("shows points, voucher redemption status and activity in the admin customer detail", async () => {
+    await recordSettledPayment(env, { ...payment, amountBani: 150000 })
+    const now = Math.floor(Date.now() / 1000)
+    db.prepare(`INSERT INTO customer_vouchers
+      (id,code,customer_id,source,discount_percent,created_at,expires_at)
+      VALUES ('points-voucher','ALIVE-POINTS1234','buyer','points',10,?,?)`)
+      .run(now, now + 30 * 24 * 60 * 60)
+    db.prepare(`INSERT INTO customer_point_redemptions(customer_id,voucher_id,points_spent,created_at)
+      VALUES ('buyer','points-voucher',1000,?)`).run(now)
+    db.prepare(`UPDATE customer_vouchers SET used_at=?,used_order_id='ORDER-USED'
+      WHERE customer_id='buyer' AND source='welcome'`).run(now)
+
+    const request = new Request("http://localhost:8792/api/admin/loyalty?customer=buyer", {
+      headers: { "Cf-Access-Authenticated-User-Email": "admin@alive.example" },
+    })
+    const response = await adminLoyalty({ request, env, params: {} })
+    const body = await response.json() as {
+      data: {
+        customer: { id: string; points: number }
+        history: { kind: string; pointsDelta: number }[]
+        vouchers: { source: string; status: string; usedOrderId: string | null }[]
+      }
+    }
+    expect(body.data.customer).toMatchObject({ id: "buyer", points: 500 })
+    expect(body.data.history).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: "purchase", pointsDelta: 1500 }),
+      expect.objectContaining({ kind: "pointsVoucher", pointsDelta: -1000 }),
+    ]))
+    expect(body.data.vouchers).toEqual(expect.arrayContaining([
+      expect.objectContaining({ source: "welcome", status: "used", usedOrderId: "ORDER-USED" }),
+      expect.objectContaining({ source: "points", status: "active", usedOrderId: null }),
+    ]))
+  })
+  it("prevents voucher redemption from being reused or marked against a TEST order", () => {
+    const voucher = db.prepare("SELECT id FROM customer_vouchers WHERE customer_id='buyer' LIMIT 1").get() as { id: string }
+    const now = Math.floor(Date.now() / 1000)
+    expect(() => db.prepare("UPDATE customer_vouchers SET used_at=?,used_order_id='TEST-ORDER' WHERE id=?")
+      .run(now, voucher.id)).toThrow("INVALID_VOUCHER_REDEMPTION")
+    db.prepare("UPDATE customer_vouchers SET used_at=?,used_order_id='ORDER-1' WHERE id=?").run(now, voucher.id)
+    expect(() => db.prepare("UPDATE customer_vouchers SET used_at=?,used_order_id='ORDER-2' WHERE id=?")
+      .run(now, voucher.id)).toThrow("INVALID_VOUCHER_REDEMPTION")
   })
   it.each([0, -1, 1.5, 100000001])("rejects invalid amounts %s", async amountBani => {
     await expect(recordSettledPayment(env, { ...payment, amountBani })).rejects.toThrow()

@@ -204,7 +204,7 @@
     "welcomeSubtitle": "Intră în comunitate. Bucură-te de mai mult, împreună cu noi.",
     "haveReferral": "Ai un cod de recomandare?",
     "referralPlaceholder": "Introdu codul",
-    "comingSoonNote": "Punctele și recompensele comunității vin în curând.",
+    "comingSoonNote": "Punctele din cumpărături se vor acorda după activarea comenzilor și plăților online.",
     "benefitDetails": "Despre puncte și beneficii",
     "signedIn": "Autentificat",
     "signedInAs": "Autentificat ca {{name}}. Deschide contul meu",
@@ -214,7 +214,19 @@
     "nav": "Contul meu",
     "title": "Contul și punctele ALIVE",
     "rules": "Primești 1 punct pentru fiecare leu întreg plătit online. Recomandantul direct primește și el 1 punct/leu la fiecare comandă plătită de clientul recomandat.",
-    "notLive": "Programul este în pregătire: plățile BT iPay și acordarea efectivă a punctelor nu sunt încă activate. Comenzile TEST nu acordă puncte. Conversia în vouchere sau remunerare se va stabili ulterior.",
+    "notLive": "Punctele din cumpărături se vor acorda după activarea comenzilor și plăților online. Voucherul de bun venit este valabil 30 de zile. La fiecare 1.000 de puncte poți genera un voucher de 10%, iar punctele se scad la emitere. Codurile vor putea fi folosite la checkout după activarea comenzilor online.",
+    "vouchers": "Voucherele tale",
+    "voucherPointsRule": "Poți genera un voucher de 10% pentru fiecare 1.000 de puncte. Punctele se scad la emiterea voucherului. Fiecare voucher este valabil 30 de zile.",
+    "generateVoucher": "Generează voucher pentru 1.000 de puncte",
+    "generatingVoucher": "Se generează voucherul…",
+    "voucherGenerated": "Voucherul a fost generat și adăugat în cont.",
+    "notEnoughPoints": "Nu ai suficiente puncte. Ai nevoie de 1.000 de puncte pentru un voucher.",
+    "noVouchers": "Nu ai încă vouchere.",
+    "welcomeVoucher": "Voucher de bun venit",
+    "pointsVoucherTitle": "Voucher din puncte",
+    "voucherActive": "Activ",
+    "voucherExpired": "Expirat",
+    "voucherExpires": "Valabil până la {{date}}",
     "loading": "Se încarcă datele contului…",
     "notConfigured": "Autentificarea Google/Facebook nu este încă configurată pe server.",
     "login": "Continuă cu {{provider}}",
@@ -233,7 +245,8 @@
     "history": "Ultimele 30 de operațiuni",
     "noHistory": "Nu există încă puncte acordate.",
     "purchase": "Achiziție",
-    "referral": "Recomandare"
+    "referral": "Recomandare",
+    "pointsVoucher": "Voucher generat"
   },
   "calorieJournal": {
     "nav": "Jurnal de calorii",
@@ -276,8 +289,8 @@
   "installToast": {
     "label": "Instalare aplicație și comunitatea ALIVE",
     "title": "ALIVE cu tine.",
-    "discount": "10% reducere pentru membrii comunității.",
-    "membershipNote": "Instalarea nu înseamnă înscriere. Reducerea nu este încă activă online.",
+    "discount": "Alătură-te comunității și primești un voucher cu 10% reducere suplimentară.",
+    "membershipNote": "După înscriere, vei găsi voucherul în zona Beneficii.",
     "install": "Instalează",
     "installing": "Se deschide instalarea…",
     "community": "Comunitate",
@@ -306,12 +319,6 @@
       "instagram": "Noutăți zilnice, momente din culisele bucătăriei noastre, rețete wellness și story-uri pline de energie.",
       "facebook": "Anunțuri de evenimente, brunch-uri tematice și noutăți din comunitatea de wellbeing.",
       "tiktok": "Videoclipuri cu prepararea băuturilor noastre funcționale, sfaturi de nutriție și energie pură."
-    },
-    "stats": {
-      "members": "Membri în Comunitate",
-      "events": "Evenimente Găzduite",
-      "workshops": "Workshop-uri de Nutriție",
-      "reviews": "Recenzii de 5 stele"
     }
   },
   "feedback": {

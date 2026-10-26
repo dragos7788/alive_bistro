@@ -3,14 +3,16 @@ import { Check, Copy, Gift, LogOut } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { QRCodeSVG } from "qrcode.react"
 import type { AccountData, Provider } from "./api"
+import { RewardsPanel } from "./RewardsPanel"
 
 /** Presents member rewards and referral actions without exposing technical account details. */
-export function MemberCard({ customer, providers, pending, onLogout, onLink }: {
+export function MemberCard({ customer, providers, pending, onLogout, onLink, onVoucherGenerated }: {
   customer: NonNullable<AccountData["customer"]>
   providers: Provider[]
   pending: boolean
   onLogout: () => void
   onLink: (provider: Provider) => void
+  onVoucherGenerated: () => void
 }) {
   const { t, i18n } = useTranslation()
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle")
@@ -68,6 +70,7 @@ export function MemberCard({ customer, providers, pending, onLogout, onLink }: {
           )}
         </div>
       </div>
+      <RewardsPanel points={customer.points} vouchers={customer.vouchers} onVoucherGenerated={onVoucherGenerated} />
       <div className="divide-y divide-brand-green-700/10 text-sm md:col-span-2">
         <details>
           <summary className={`min-h-11 cursor-pointer py-3 font-medium ${focusClass}`}>{t("account.activity")}</summary>

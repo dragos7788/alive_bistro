@@ -51,13 +51,6 @@ const eventPillarsKeys = [
   },
 ]
 
-const highlightsKeys = [
-  { labelKey: "community.stats.members", value: "2,500+" },
-  { labelKey: "community.stats.events", value: "120+" },
-  { labelKey: "community.stats.workshops", value: "45+" },
-  { labelKey: "community.stats.reviews", value: "98%" },
-]
-
 export default function Community() {
   const { t } = useTranslation()
 
@@ -159,21 +152,6 @@ export default function Community() {
           ))}
         </div>
 
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl border border-brand-green-700/10 bg-brand-cream-200/60"
-        >
-          {highlightsKeys.map((h) => (
-            <div key={h.labelKey} className="text-center">
-              <div className="text-3xl font-extrabold text-brand-green-700 mb-1 tracking-tight font-serif">{h.value}</div>
-              <div className="text-brand-dark/60 text-xs font-semibold font-sans">{t(h.labelKey)}</div>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   )
