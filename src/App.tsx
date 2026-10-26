@@ -78,7 +78,7 @@ export default function App() {
       /> : isMenuPage ? <main>
         <Menu cart={cart} menuGroups={menuGroups} />
         <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error}
-          discountPercent={menuGroups.find(group => group.id === "food")?.foodDiscountPercent ?? 0} />
+          discountPercent={menuGroups.find(group => group.id === "food")?.performanceDiscountPercent ?? 0} />
       </main> : !isAccountPage && <>
         <div id="home">
           <Home />

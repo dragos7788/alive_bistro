@@ -129,24 +129,28 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
     <Dialog open={open} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-brand-dark/50 backdrop-blur-sm" aria-hidden />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-brand-cream-50 shadow-2xl">
-          <div className="flex items-center justify-between p-5 border-b border-brand-green-700/10">
+        <DialogPanel className="flex w-full max-w-5xl max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-2xl bg-brand-cream-50 shadow-2xl">
+          <div className="flex shrink-0 items-center justify-between p-5 border-b border-brand-green-700/10">
             <DialogTitle className="font-bold text-brand-green-700 font-serif">
               {item ? "Editează produs" : "Produs nou"}
             </DialogTitle>
-            <button type="button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-brand-cream-200 transition-colors">
+            <button type="button" onClick={onClose} aria-label="Închide editarea produsului" className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-brand-cream-200 transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="p-5 space-y-4">
+          <div className="min-h-0 overflow-y-auto p-5">
+            <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+            <div className="min-w-0">
             <ImageUploader
               currentUrl={currentImageUrl}
               fallbackUrl={item ? resolveMenuImage({ name: item.name }).image : undefined}
               onUploaded={(key) => setForm((f) => ({ ...f, image_key: key, image_url: "" }))}
               onClear={() => setForm((f) => ({ ...f, image_key: "", image_url: "" }))}
             />
+            </div>
 
+            <div className="min-w-0 space-y-4">
             <div className="grid grid-cols-1 gap-3">
               <Field label="Denumire RO *">
                 <input className={input} value={form.name} onChange={set("name")} placeholder="ex: Omletă Franțuzească" />
@@ -223,9 +227,11 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
               <p className="text-xs">La stoc 0 sau dacă debifezi disponibilitatea, produsul rămâne vizibil, dar nu poate fi comandat. „Vizibil în meniu” controlează separat ascunderea produsului.</p>
             </fieldset>
             {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+            </div>
+            </div>
           </div>
 
-          <div className="flex gap-3 p-5 pt-0">
+          <div className="flex shrink-0 gap-3 border-t border-brand-green-700/10 bg-brand-cream-50 p-4 sm:justify-end">
             <button type="button" onClick={onClose} className={`flex-1 ${btnSecondary}`}>Anulează</button>
             <button type="button" onClick={handleSave} disabled={saving} className={`flex-1 ${btnPrimary}`}>
               {saving ? "Se salvează…" : "Salvează"}

@@ -24,6 +24,7 @@ export type MenuItem = {
 
 export type MenuCategory = {
   id: string
+  discountPercent?: number
   label: string
   iconKey: string
   items: MenuItem[]
@@ -31,7 +32,7 @@ export type MenuCategory = {
 
 export type MenuGroup = {
   id: "food" | "drinks"
-  foodDiscountPercent?: number
+  performanceDiscountPercent?: number
   label: string
   iconKey: string
   categories: MenuCategory[]

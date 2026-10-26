@@ -126,7 +126,8 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [addedMessage, setAddedMessage] = useState("")
-  const discountPercent = menuGroups.find(group => group.id === "food")?.foodDiscountPercent ?? 0
+  const discountPercent = menuGroups.find(group => group.id === "food")?.performanceDiscountPercent ?? 0
+  const hasCategoryDiscounts = menuGroups.some(group => group.categories.some(category => (category.discountPercent ?? 0) > 0))
   const summary = summarizeCart(cart.items, cartCatalog(menuGroups), discountPercent)
   const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0)
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -217,8 +218,10 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
       <CartDialog open={isCartOpen} onClose={() => setIsCartOpen(false)} summary={summary}
         onQuantityChange={cart.setQuantity} error={cart.error} />
       <div className="max-w-4xl mx-auto">
-        {discountPercent > 0 && <p className="mb-8 rounded-2xl border border-brand-green-700/20 bg-brand-green-100 p-4 text-center font-semibold text-brand-green-800">
-          {t("promotion.foodOffer", { percent: discountPercent })}
+        {(hasCategoryDiscounts || discountPercent > 0) && <p className="mb-8 rounded-2xl border border-brand-green-700/20 bg-brand-green-100 p-4 text-center font-semibold text-brand-green-800">
+          {hasCategoryDiscounts && t("promotion.categoryOffer")}
+          {hasCategoryDiscounts && discountPercent > 0 && " "}
+          {discountPercent > 0 && t("promotion.performanceOffer", { percent: discountPercent })}
         </p>}
         {/* Header */}
         <motion.div

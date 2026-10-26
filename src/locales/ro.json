@@ -61,7 +61,8 @@
     "originalPrice": "Preț de bază",
     "discountedPrice": "Preț redus",
     "discount": "-{{percent}}%",
-    "foodOffer": "{{percent}}% reducere la mâncare și meniurile Performance, pentru toți clienții. Deserturile și băuturile sunt excluse.",
+    "categoryOffer": "Reduceri în categoriile selectate, pentru toți clienții. Procentul și prețul redus sunt afișate la fiecare produs inclus.",
+    "performanceOffer": "{{percent}}% reducere la meniurile Performance.",
     "performanceNote": "Prețurile ingredientelor sunt cele de bază. Reducerea se aplică o singură dată la totalul meniului."
   },
   "navbar": {

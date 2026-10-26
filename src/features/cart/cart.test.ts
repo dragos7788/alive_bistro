@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { cartCatalog, cartOptions, cartProductKey, isAlcoholCategory, parsePriceBani, performanceCartProduct, restoreCart, summarizeCart, updateCart } from "./cart"
 import menu from "../menu/menu-data.json"
+import { discountedMenuPrice } from "../pricing/discount"
 
 const product = { key: cartProductKey("breakfast", "Toast"), name: "Toast" }
 
@@ -103,6 +104,38 @@ describe("Performance cart", () => {
 })
 
 describe("cart", () => {
+  it("keeps separate category percentages and the Performance percentage without stacking", () => {
+    const groups = [{
+      id: "food" as const, label: "Food", iconKey: "fork-knife",
+      categories: [
+        { id: "breakfast", label: "Breakfast", iconKey: "egg", items: [
+          { name: "Toast", description: "", ...discountedMenuPrice("36 lei", 10) },
+        ] },
+        { id: "sweet-no-regrets", label: "Desserts", iconKey: "cake", items: [
+          { name: "Cake", description: "", ...discountedMenuPrice("30 lei", 20) },
+        ] },
+      ],
+    }]
+    const plate = performanceCartProduct({ protein: { ingredientId: "chicken", amount: 100 } })
+    const entries = [
+      { ...product, quantity: 1 },
+      { key: cartProductKey("sweet-no-regrets", "Cake"), name: "Cake", quantity: 1 },
+      { ...plate, quantity: 1 },
+    ]
+
+    const summary = summarizeCart(entries, cartCatalog(groups), 25)
+
+    expect(summary.lines.map(line => line.priceBani)).toEqual([3240, 2400, 900])
+    expect(summary.totalBani).toBe(6540)
+  })
+
+  it("preserves original prices for discounted bottle/glass portions", () => {
+    const options = cartOptions("dual-portions", {
+      name: "Drink", description: "750 ml / 125 ml.", ...discountedMenuPrice("100 / 28 lei", 10),
+    })
+
+    expect(options.map(option => [option.priceBani, option.originalPriceBani])).toEqual([[9000, 10000], [2520, 2800]])
+  })
   it.each([["36 lei", 3600], ["12,50 lei", 1250], ["0.10 RON", 10], [" 9.9 lei ", 990]])(
     "parses %s exactly into bani", (input, expected) => expect(parsePriceBani(input)).toBe(expected),
   )

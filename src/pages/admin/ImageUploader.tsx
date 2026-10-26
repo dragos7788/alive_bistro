@@ -44,8 +44,8 @@ export default function ImageUploader({ currentUrl, fallbackUrl, onUploaded, onC
   return (
     <div className="space-y-2">
       {previewUrl && (
-        <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-brand-cream-200">
-          <img src={previewUrl} alt="Previzualizare produs" className="w-full h-full object-cover" />
+        <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-lg bg-brand-cream-200 md:h-80">
+          <img src={previewUrl} alt="Previzualizare produs" className="h-full w-full object-contain object-center" />
           {currentUrl && <button
             type="button"
             onClick={onClear}

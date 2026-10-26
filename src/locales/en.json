@@ -61,7 +61,8 @@
     "originalPrice": "Base price",
     "discountedPrice": "Discounted price",
     "discount": "-{{percent}}%",
-    "foodOffer": "{{percent}}% off food and Performance menus for all customers. Desserts and drinks are excluded.",
+    "categoryOffer": "Discounts in selected categories for all customers. The percentage and discounted price are shown on each included product.",
+    "performanceOffer": "{{percent}}% off Performance menus.",
     "performanceNote": "Ingredient prices are base prices. The discount is applied once to the menu total."
   },
   "navbar": {

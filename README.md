@@ -349,35 +349,55 @@ Interfața este disponibilă în română și engleză prin traducerile existent
 
 Validare calculator: `npx vitest run src/features/menu-builder/calculator.test.ts`.
 
-## Reducere la mâncare (administrare)
+## Reduceri pe categorii (administrare)
 
 În `/admin`, fila **Reduceri** (sau ruta directă `/admin/promotion`) permite
-activarea unei reduceri procentuale pentru toți clienții, modificarea procentului
-și dezactivarea promoției. Pentru oferta de 10%, introdu `10` și salvează.
-Sunt incluse produsele din grupa `food` și meniurile Performance; categoria
-de deserturi `sweet-no-regrets` și toate produsele din `drinks` sunt excluse.
+configurarea unui procent independent pentru fiecare categorie existenta in
+meniu, inclusiv deserturi si bauturi. Categoriile nou create apar automat cu 0%.
+Meniul Performance are un procent separat, aplicat la totalul farfuriei.
+Pentru o oferta de 10%, introdu `10` la categoria dorita si salveaza randul ei.
+Procentele nu se cumuleaza; `0` sau butonul **Dezactiveaza** opreste oferta.
 Prețurile de bază din administrarea produselor rămân nemodificate.
 
-Aplică migrarea `0007_food_promotion.sql` înainte de a publica versiunea nouă:
+Aplica migrarile `0008_category_promotions.sql` si
+`0009_food_category_discount_defaults.sql` inainte de a publica versiunea noua:
 `npm run db:migrate` pentru local, respectiv, după backup și verificarea mediului,
 `npx wrangler d1 migrations apply alive-bistro-menu --remote` pentru producție.
-Promoția este inițial dezactivată; activarea se face explicit din administrare.
+Aceasta versiune inlocuieste reducerea generala la mancare cu setari independente,
+initial 0% prin migrarea 0008. Migrarea 0009 seteaza o singura data 10% pentru
+categoriile existente din grupa `food`, cu exceptia `sweet-no-regrets`.
+Deserturile, bauturile si Performance isi pastreaza setarile existente.
+Modificarile ulterioare din admin raman persistente; categoriile nou create
+raman implicit la 0%. Procentul vechi din `food_promotion`
+ramane arhivat in D1, dar nu se mai aplica si nu este migrat automat.
+Reducerile se pot modifica sau dezactiva din administrare.
 Configurația se păstrează în D1, nu în browser. Nu este necesar un nou deploy
 pentru schimbarea procentului după instalarea acestei versiuni.
 
 `GET /api/admin/promotion` și `PUT /api/admin/promotion` folosesc protecția
 administratorului existentă (Cloudflare Access); scrierea cere același Origin.
-Payload-ul este `{ "foodDiscountPercent": 10 }`, cu procent întreg între 0 și 99;
-`0` dezactivează oferta. În dezvoltare, accesul administrativ local este disponibil
+GET returneaza `{ data: { categories: [{ id, label, groupId, discountPercent }],
+performanceDiscountPercent } }`. PUT accepta fie
+`{ "categoryId": "breakfast-brunch", "discountPercent": 10 }`, fie
+`{ "performanceDiscountPercent": 15 }`, nu ambele; raspunsul este
+`{ "data": { "discountPercent": 10 } }`, cu procent intreg intre 0 si 99.
+Categoriile inexistente produc 404, payload-ul vechi `foodDiscountPercent`
+produce 400, iar o eroare D1 produce 503. Salvarile sunt idempotente si nu
+suprascriu reducerile celorlalte categorii.
+În dezvoltare, accesul administrativ local este disponibil
 doar în modul TEST explicit, ca la gestionarea stocului: `npm run dev:orders`.
 În producție, Cloudflare Access trebuie să protejeze atât `/admin/*`, cât și
 `/api/admin/*`; această funcție nu adaugă un bypass de autentificare public.
 
-API-ul public `/api/menu` publică prețul redus, prețul de bază și procentul, iar
+API-ul public `/api/menu` pastreaza structura `data` cu grupele meniului,
+adauga `discountPercent` pe categorii si `performanceDiscountPercent` pe grupa
+`food`. Nu mai publica `foodDiscountPercent`. Publică prețul redus, prețul de bază și procentul, iar
 ETag-ul se schimbă la modificarea promoției. Reîncarcă pagina publică după salvare.
 Coșul recalculează prețurile curente inclusiv pentru farfuriile Performance
 restaurate; comenzile TEST verifică promoția direct în D1 și refuză totalurile
-vechi. Reducerea se rotunjește la ban pe produs; pentru Performance se aplică
+vechi. Preturile sticla/pahar sunt reduse individual; restrictia existenta
+pentru cumpararea alcoolului doar la locatie ramane neschimbata.
+Reducerea se rotunjește la ban pe produs; pentru Performance se aplică
 o singură dată totalului farfuriei, nu fiecărui ingredient separat.
 
 ## Coș de cumpărături — etapa 1
@@ -489,6 +509,9 @@ apoi fotografia inclusa in aplicatie, asociata dupa denumirea produsului.
 Fotografia implicita nu este salvata ca URL in D1 la editarea produsului.
 Eliminarea unei imagini personalizate revine la fotografia implicita, daca exista;
 produsele fara fotografie pastreaza substituentul vizual.
+Editorul de produse foloseste doua coloane pe desktop si una pe mobil.
+Previzualizarea centreaza fotografia integral, fara decupare; antetul si
+butoanele de salvare raman vizibile cand continutul formularului este derulat.
 
 Lista existentă din **Produse → Băuturi** folosește categoriile și produsele din
 aceeași bază ca meniul public; nu există o copie separată a băuturilor.

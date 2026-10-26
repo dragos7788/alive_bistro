@@ -13,19 +13,22 @@ const item = { key: cartProductKey("breakfast", "Toast"), name: "Tampered client
 const body = { contact, items: [item], expectedTotalBani: 7200 }
 const key = "00000000-0000-4000-8000-000000000001"
 
-function database(categoryId = "breakfast", discountPercent = 0, groupId = "food") {
+function database(categoryId = "breakfast", discountPercent = 0, groupId = "food", performancePercent = 0) {
   const rows = new Map<string, OrderRow>()
   const prepare = vi.fn((sql: string) => {
     let args: unknown[] = []
     return {
       bind(...values: unknown[]) { args = values; return this },
       async first<T>() {
-        if (sql.includes("FROM food_promotion")) return { discount_percent: discountPercent } as T
+        if (sql.includes("FROM performance_promotion")) return { discount_percent: performancePercent } as T
         const row = sql.includes("idempotency_key") ? rows.get(String(args[0]))
           : [...rows.values()].find(row => row.number === args[0])
         return (row ?? null) as T | null
       },
       async all<T>() {
+        if (sql.includes("LEFT JOIN category_promotions")) return { results: [{
+          id: categoryId, group_id: groupId, label: "Test category", discount_percent: discountPercent,
+        }] as T[] }
         return { results: [{
           category_id: categoryId, group_id: groupId, name: "Toast", price: "36 lei", description: "Toast",
         }] as T[] }
@@ -115,15 +118,15 @@ describe("local TEST order boundaries", () => {
     expect(resolved.lines[0].name).toBe("Toast")
     expect(resolved.lines[1].ingredients).toEqual([{ id: "chicken", amount: 100, unit: "g" }])
   })
-  it("applies the stored promotion to food and Performance on the server", async () => {
-    const { env } = database("breakfast", 10)
+  it("applies category and independent Performance promotions exactly once on the server", async () => {
+    const { env } = database("breakfast", 10, "food", 25)
     const plate = performanceCartProduct({ protein: { ingredientId: "chicken", amount: 100 } })
     const input = parseOrderInput({ ...body, items: [item, { ...plate, quantity: 1 }] })
 
     const resolved = await resolveOrder(input, env)
 
-    expect(resolved.lines.map(line => line.priceBani)).toEqual([3240, 1080])
-    expect(resolved.totalBani).toBe(7560)
+    expect(resolved.lines.map(line => line.priceBani)).toEqual([3240, 900])
+    expect(resolved.totalBani).toBe(7380)
   })
   it("rejects a stale checkout total after activation and saves the discounted total", async () => {
     const { env, rows } = database("breakfast", 10)
@@ -139,7 +142,7 @@ describe("local TEST order boundaries", () => {
     expect((await discounted.json()).data.totalBani).toBe(6480)
   })
   it.each([["sweet-no-regrets", "food"], ["coffee-bar", "drinks"]])(
-    "does not discount %s on the server", async (categoryId, groupId) => {
+    "supports a configured discount for %s on the server", async (categoryId, groupId) => {
       const { env } = database(categoryId, 10, groupId)
       const input = parseOrderInput({ ...body, items: [{
         ...item, key: cartProductKey(categoryId, "Toast"),
@@ -147,9 +150,17 @@ describe("local TEST order boundaries", () => {
 
       const resolved = await resolveOrder(input, env)
 
-      expect(resolved.totalBani).toBe(7200)
+      expect(resolved.totalBani).toBe(6480)
     },
   )
+  it("does not inherit a category discount for Performance", async () => {
+    const { env } = database("breakfast", 50)
+    const plate = performanceCartProduct({ protein: { ingredientId: "chicken", amount: 100 } })
+
+    const resolved = await resolveOrder(parseOrderInput({ ...body, items: [{ ...plate, quantity: 1 }] }), env)
+
+    expect(resolved.totalBani).toBe(1200)
+  })
   it.each(["craft-beer", "wine-prosecco", "cocktails"])("rejects forged orders from %s without persisting", async categoryId => {
     const { env, rows } = database(categoryId)
     const forged = { ...body, items: [{ ...item, key: cartProductKey(categoryId, "Toast") }] }

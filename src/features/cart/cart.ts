@@ -86,6 +86,8 @@ export function cartOptions(categoryId: string, item: MenuItem): CartProduct[] {
       ? { originalPriceBani: parsePriceBani(item.originalPrice)! } : {}),
   }]
   const prices = /^(\d+(?:[.,]\d{1,2})?)\s*\/\s*(\d+(?:[.,]\d{1,2})?)\s*(lei|ron)$/i.exec(item.price.trim())
+  const originals = item.originalPrice
+    ? /^(\d+(?:[.,]\d{1,2})?)\s*\/\s*(\d+(?:[.,]\d{1,2})?)\s*(lei|ron)$/i.exec(item.originalPrice.trim()) : null
   const portions = /^(\d+)\s*ml\s*\/\s*(\d+)\s*ml\b/i.exec(item.description.trim())
   if (!prices || !portions) return []
   return [1, 2].map(index => {
@@ -95,6 +97,8 @@ export function cartOptions(categoryId: string, item: MenuItem): CartProduct[] {
       name: `${item.name} (${portion})`,
       portion,
       priceBani: parsePriceBani(`${prices[index]} ${prices[3]}`),
+      ...(originals && parsePriceBani(`${originals[index]} ${originals[3]}`) !== null
+        ? { originalPriceBani: parsePriceBani(`${originals[index]} ${originals[3]}`)! } : {}),
       ...stock,
     }
   }).filter(option => option.priceBani !== null)

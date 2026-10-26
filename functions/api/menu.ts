@@ -1,7 +1,7 @@
 import type { Ctx } from "../_lib/types.ts"
 import { err } from "../_lib/response.ts"
 import { publicStock, type StockSettings } from "../_lib/stock"
-import { readFoodDiscount } from "../_lib/food-promotion"
+import { readPromotions } from "../_lib/food-promotion"
 import { discountedMenuPrice } from "../../src/features/pricing/discount"
 
 type DbCat  = { id: string; group_id: string; label: string; label_en: string | null; icon_key: string }
@@ -19,7 +19,8 @@ const GROUPS = [
 
 export const onRequestGet = async ({ request, env }: Ctx) => {
   try {
-    const foodDiscountPercent = await readFoodDiscount(env)
+    const promotions = await readPromotions(env)
+    const discounts = new Map(promotions.categories.map(category => [category.id, category.discountPercent]))
     const [catsRes, itemsRes] = await env.DB.batch([
       env.DB.prepare("SELECT id, group_id, label, label_en, icon_key FROM categories ORDER BY sort_order"),
       env.DB.prepare("SELECT id, category_id, name, name_en, description, description_en, price, image_key, image_url, tag, calories, protein, carbs, fat, is_available, stock_quantity, show_stock FROM items WHERE is_visible = 1 ORDER BY category_id, sort_order"),
@@ -27,7 +28,6 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
 
     const cats  = catsRes.results  as unknown as DbCat[]
     const items = itemsRes.results as unknown as DbItem[]
-    const categoryGroups = new Map(cats.map(category => [category.id, category.group_id]))
 
     const byCat = new Map<string, typeof shaped[number][]>()
     const shaped = items.map((r) => ({
@@ -36,7 +36,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
       name_en:        r.name_en ?? undefined,
       description:    r.description,
       description_en: r.description_en ?? undefined,
-      ...discountedMenuPrice(r.price, categoryGroups.get(r.category_id) ?? "", r.category_id, foodDiscountPercent),
+      ...discountedMenuPrice(r.price, discounts.get(r.category_id) ?? 0),
       image:          r.image_key ? `/api/images/${r.image_key}` : (r.image_url ?? undefined),
       tag:            r.tag ?? undefined,
       macros:         r.calories != null
@@ -56,6 +56,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
         label:    cat.label,
         label_en: cat.label_en ?? undefined,
         iconKey:  cat.icon_key,
+        discountPercent: discounts.get(cat.id) ?? 0,
         items:    byCat.get(cat.id) ?? [],
       }
       const list = catsByGroup.get(cat.group_id) ?? []
@@ -65,7 +66,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
 
     const data = GROUPS.map((g) => ({
       ...g,
-      ...(g.id === "food" ? { foodDiscountPercent } : {}),
+      ...(g.id === "food" ? { performanceDiscountPercent: promotions.performanceDiscountPercent } : {}),
       categories: catsByGroup.get(g.id) ?? [],
     }))
 
