@@ -1,4 +1,6 @@
 export interface Env {
+  ACCESS_TEAM_DOMAIN?: string
+  ACCESS_AUD?: string
   AUTH_ORIGIN?: string
   GOOGLE_CLIENT_ID?: string
   GOOGLE_CLIENT_SECRET?: string

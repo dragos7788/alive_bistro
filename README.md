@@ -275,9 +275,18 @@ Primele două carduri se încarcă normal; restul folosesc lazy loading, iar det
 
 În [Cloudflare Zero Trust](https://one.dash.cloudflare.com):
 1. **Access → Applications → Add an application** → tip: Self-hosted
-2. Application domain: `alive-bistro.pages.dev/admin*`
+2. Domeniu: `alive-bistro.ro`, cu destinatii pentru `admin` si `api/admin`
+   (inclusiv subrutele). Protejeaza separat orice domeniu Pages folosit pentru admin.
 3. Policy: Allow → Emails → adaugă adresele care pot accesa dashboard-ul
-4. Identity providers: One-time PIN (nu necesită cont extern)
+4. Identity providers: Cloudflare, Google configurat in Access sau One-time PIN.
+
+Middleware-ul `/api/admin/*` verifica semnatura RS256, emitentul, expirarea si
+audienta tokenului Access din `Cf-Access-Jwt-Assertion` sau din cookie-ul
+`CF_Authorization`. Emailul este preluat numai din tokenul verificat, nu dintr-un
+header furnizat de client. `ACCESS_TEAM_DOMAIN` si `ACCESS_AUD` din
+`wrangler.jsonc` sunt identificatori publici, nu secrete. AUD se copiaza din
+aplicatia Access, fila **Additional settings → Application Audience (AUD) Tag**.
+O configuratie lipsa produce 503; credentialele lipsa/invalide produc 401.
 
 ### 4. Dev local (full stack)
 
@@ -287,9 +296,10 @@ npm run dev:cf      # build + wrangler pages dev → http://localhost:8788
 # Meniu public: http://localhost:8788/menu
 ```
 
-> Local, Cloudflare Access nu e activ. Headerul `Cf-Access-Authenticated-User-Email` lipsește,
-> deci endpoint-urile `/api/admin/*` returnează 401. Pentru a testa admin-ul local, adaugă
-> temporar headerul în request (ex: Postman, sau dezactivează `requireAdmin` în dev).
+> Local, Cloudflare Access nu este activ. Pentru operatiunile administrative de
+> test suportate, foloseste `npm run dev:orders`: exceptia necesita explicit
+> `LOCAL_TEST_ORDERS=true` si o adresa loopback. Nu dezactiva autentificarea si nu
+> simula identitatea prin headere. In productie, tokenul Access este obligatoriu.
 
 ### 5. Deploy în producție
 
