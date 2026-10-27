@@ -120,7 +120,11 @@ function CategoryBar({
   )
 }
 
-export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof useCart>; menuGroups: MenuGroup[] }) {
+export default function Menu({ cart, menuGroups, isSalesEnabled }: {
+  cart: ReturnType<typeof useCart>
+  menuGroups: MenuGroup[]
+  isSalesEnabled: boolean
+}) {
   const { t, i18n } = useTranslation()
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(menuData[0].categories[0].id)
@@ -209,15 +213,15 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
 
   return (
     <section id="menu" aria-labelledby="menu-title" className="min-h-screen pb-24 pt-32 px-6 bg-brand-cream-100 overflow-x-clip">
-      <button type="button" onClick={() => setIsCartOpen(true)}
+      {isSalesEnabled && <button type="button" onClick={() => setIsCartOpen(true)}
         className="fixed bottom-5 right-5 z-40 flex min-h-12 items-center gap-2 rounded-full bg-brand-green-700 px-5 py-3 font-semibold text-white shadow-lg hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
         <ShoppingBag size={20} aria-hidden="true" />
         {t("cart.open")} ({cartCount})
-      </button>
-      <p role="status" className="sr-only">{addedMessage}</p>
-      {cart.error && <p role="alert" className="mx-auto mb-4 max-w-4xl rounded-xl bg-red-50 p-4 text-red-800">{t(cart.error)}</p>}
-      <CartDialog open={isCartOpen} onClose={() => setIsCartOpen(false)} summary={summary}
-        onQuantityChange={cart.setQuantity} error={cart.error} />
+      </button>}
+      <p role="status" className="sr-only">{isSalesEnabled && addedMessage}</p>
+      {isSalesEnabled && cart.error && <p role="alert" className="mx-auto mb-4 max-w-4xl rounded-xl bg-red-50 p-4 text-red-800">{t(cart.error)}</p>}
+      {isSalesEnabled && <CartDialog open={isCartOpen} onClose={() => setIsCartOpen(false)} summary={summary}
+        onQuantityChange={cart.setQuantity} error={cart.error} />}
       <div className="max-w-4xl mx-auto">
         {(hasCategoryDiscounts || discountPercent > 0) && <p className="mb-8 rounded-2xl border border-brand-green-700/20 bg-brand-green-100 p-4 text-center font-semibold text-brand-green-800">
           {hasCategoryDiscounts && t("promotion.categoryOffer")}
@@ -411,7 +415,7 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                 </div>
                 </button>
                 <div className="px-4 pb-4 md:px-5 md:pb-5">
-                  <AddToCart categoryId={activeCategoryObj.id} item={item} onAdd={handleAddToCart} items={cart.items} />
+                  {isSalesEnabled && <AddToCart categoryId={activeCategoryObj.id} item={item} onAdd={handleAddToCart} items={cart.items} />}
                 </div>
               </motion.div>
             ))}
@@ -539,9 +543,9 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                     </>
                   )}
                   <div className="mt-6">
-                    <AddToCart categoryId={activeCategoryObj.id} item={selectedItem} onAdd={handleAddToCart} items={cart.items} />
+                    {isSalesEnabled && <AddToCart categoryId={activeCategoryObj.id} item={selectedItem} onAdd={handleAddToCart} items={cart.items} />}
                   </div>
-                  <p role="status" className="mt-3 text-sm text-brand-green-800">{addedMessage}</p>
+                  <p role="status" className="mt-3 text-sm text-brand-green-800">{isSalesEnabled && addedMessage}</p>
                 </div>
               </motion.div>
               </DialogPanel>

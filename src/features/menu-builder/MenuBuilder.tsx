@@ -7,9 +7,10 @@ import { BuilderSummary } from "./BuilderSummary"
 import { performanceCartProduct, type CartProduct } from "../cart/cart"
 
 /** Lets guests configure a plate from the published custom-menu portions. */
-export function MenuBuilder({ onAddToCart, cartError, discountPercent = 0 }: {
+export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPercent = 0 }: {
   onAddToCart: (product: CartProduct) => boolean
   cartError: string
+  isSalesEnabled: boolean
   discountPercent?: number
 }) {
   const { t } = useTranslation()
@@ -65,7 +66,7 @@ export function MenuBuilder({ onAddToCart, cartError, discountPercent = 0 }: {
               ))}
             </form>
             <BuilderSummary total={total} discountPercent={discountPercent} onReset={() => setSelection({})}
-              onAddToCart={handleAddToCart} addedCount={addedCount} cartError={cartError} />
+              onAddToCart={handleAddToCart} addedCount={addedCount} cartError={cartError} isSalesEnabled={isSalesEnabled} />
           </div>
         </div>
       </div>

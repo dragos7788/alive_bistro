@@ -1,5 +1,6 @@
 import type { Ctx } from "../../_lib/types"
 import { err, ok } from "../../_lib/response"
+import { readCommerceSettings, salesDisabledResponse } from "../../_lib/commerce"
 import { guardTestOrders, orderFromRow, orderRequestHash, parseOrderInput, resolveOrder, UnavailableOrderError, type OrderInput, type OrderRow } from "../../_lib/test-orders"
 
 export const onRequestPost = async ({ request, env }: Ctx) => {
@@ -18,6 +19,7 @@ export const onRequestPost = async ({ request, env }: Ctx) => {
     return err("VALIDATION_ERROR", "Verifică produsele, cantitățile și datele de contact (maximum 100 de linii, 99 de bucăți pe linie).", 400)
   }
   try {
+    if (!(await readCommerceSettings(env)).salesEnabled) return salesDisabledResponse()
     const hash = await orderRequestHash(input)
     const existing = await env.DB.prepare("SELECT * FROM test_orders WHERE idempotency_key = ?").bind(key).first<OrderRow>()
     if (existing) {
@@ -56,6 +58,7 @@ export const onRequestPost = async ({ request, env }: Ctx) => {
     return ok(orderFromRow(row), row.number === number ? 201 : 200)
   } catch (error) {
     console.error("Failed to persist TEST order", error)
+    if (error instanceof Error && error.message.includes("SALES_DISABLED")) return salesDisabledResponse()
     if (error instanceof Error && error.message.includes("STOCK_UNAVAILABLE")) {
       return err("STOCK_UNAVAILABLE", "Stoc insuficient sau produs indisponibil. Reîncarcă meniul și ajustează coșul.", 409)
     }

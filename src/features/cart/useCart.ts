@@ -11,10 +11,14 @@ function loadCart(): { items: CartEntry[]; error: string } {
 }
 
 /** Manages the guest cart and explicitly reports browser-storage failures. */
-export function useCart() {
+export function useCart(isSalesEnabled = true) {
   const [state, setState] = useState(loadCart)
 
   const setQuantity = (product: Pick<CartProduct, "key" | "name" | "selection">, quantity: number) => {
+    if (!isSalesEnabled) {
+      setState({ ...state, error: "commerce.disabled" })
+      return false
+    }
     let items: CartEntry[]
     try {
       items = updateCart(state.items, product, quantity)

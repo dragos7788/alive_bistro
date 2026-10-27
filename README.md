@@ -14,6 +14,34 @@ catre sectiunea corespunzatoare de pe `/menu`, pastrand parametrii URL.
 Navigarea intre pagini foloseste linkuri native si fallback-ul SPA Cloudflare Pages.
 Cosul ramane persistent la navigare si reincarcare.
 
+## Oprirea globala a comercializarii
+
+In partea de sus a panoului admin, **Comercializare produse** permite oprirea sau
+reactivarea vanzarii pentru intreaga aplicatie. Setarea este persistenta in D1,
+nu in browserul administratorului. Oprirea ascunde cosul, formularul de checkout
+si toate butoanele de adaugare, inclusiv din detaliile produselor si configuratorul
+Performance. Meniul, preturile, calculatorul nutritional si conturile raman
+disponibile. Continutul cosurilor este pastrat pentru o eventuala reactivare;
+comenzile existente pot fi in continuare administrate.
+
+Aplica migrarea `0018_commerce_settings.sql` inainte de deploy:
+`npm run db:migrate` local, respectiv `npm run db:migrate:prod` pentru productie,
+dupa backup. Valoarea initiala este **activata**, pentru a pastra comportamentul
+existent. Fara migrare sau daca verificarea esueaza, actiunile de cumparare raman
+ascunse si este afisata o eroare, nu o stare activata presupusa.
+
+`GET /api/commerce` publica `{data:{salesEnabled:boolean}}` fara cache.
+`GET /api/admin/commerce` si `PUT /api/admin/commerce` sunt protejate de
+autentificarea admin; scrierea cere Origin identic si
+`{salesEnabled:boolean}`. Actualizarile sunt idempotente. Paginile publice verifica
+setarea la incarcare, la revenirea in tab si la fiecare 15 secunde cat sunt vizibile;
+un cos deja deschis este ascuns la primirea starii oprite. Serverul respinge
+comenzile noi cu `SALES_DISABLED` (403) imediat dupa oprire, inclusiv cererile
+directe sau aflate in curs la inserarea in baza de date.
+
+Comutatorul nu activeaza plati sau comenzi reale: restrictia existenta pentru
+comenzi exclusiv in modul local TEST ramane neschimbata.
+
 ## Conturi clienti, recomandari si puncte (pregatire BT iPay)
 
 Pagina **Contul meu** (`/account`) foloseste Google OpenID Connect si Facebook

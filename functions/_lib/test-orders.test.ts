@@ -20,6 +20,7 @@ function database(categoryId = "breakfast", discountPercent = 0, groupId = "food
     return {
       bind(...values: unknown[]) { args = values; return this },
       async first<T>() {
+        if (sql.includes("FROM commerce_settings")) return { sales_enabled: 1 } as T
         if (sql.includes("FROM performance_promotion")) return { discount_percent: performancePercent } as T
         const row = sql.includes("idempotency_key") ? rows.get(String(args[0]))
           : [...rows.values()].find(row => row.number === args[0])
@@ -88,7 +89,7 @@ describe("local TEST order boundaries", () => {
     const { env: enabled, prepare } = database()
     const env = { ...enabled, LOCAL_TEST_ORDERS: undefined }
     const ctx = { request: request(), env, params: {} }
-    expect((await orderConfig(ctx).json()).data.testOrdersEnabled).toBe(false)
+    expect((await (await orderConfig(ctx)).json()).data.testOrdersEnabled).toBe(false)
     expect((await listOrders(ctx)).status).toBe(403)
     expect((await onRequestPost(ctx)).status).toBe(403)
     expect(prepare).not.toHaveBeenCalled()

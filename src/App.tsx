@@ -15,15 +15,19 @@ import { CalorieJournalPage } from '@/features/calorie-journal/CalorieJournalPag
 import { getMenu } from '@/features/menu/api'
 import { menuData } from '@/features/menu/seed'
 import type { MenuGroup } from '@/features/menu/types'
+import { useCommerceSettings } from '@/features/commerce/useCommerceSettings'
+import { useTranslation } from "react-i18next"
 
 export default function App() {
   const [isFeedback, setIsFeedback] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(() => window.location.hash === "#account")
-  const cart = useCart()
+  const { t } = useTranslation()
   const isAdmin = window.location.pathname.startsWith("/admin")
   const isAccountPage = /^\/account\/?$/.test(window.location.pathname)
   const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(window.location.pathname)
   const isMenuPage = /^\/menu\/?$/.test(window.location.pathname)
+  const commerce = useCommerceSettings(isMenuPage)
+  const cart = useCart(commerce.salesEnabled)
   const accountState = useCustomerAccount(!isAdmin && !isFeedback)
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
 
@@ -76,8 +80,9 @@ export default function App() {
         customerName={accountState.account?.customer?.name ?? null}
         isChecking={!accountState.account && !accountState.loadError}
       /> : isMenuPage ? <main>
-        <Menu cart={cart} menuGroups={menuGroups} />
-        <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error}
+        {commerce.error && <p role="alert" className="mx-auto max-w-4xl px-6 pt-24 text-sm text-red-800">{t(commerce.error)}</p>}
+        <Menu cart={cart} menuGroups={menuGroups} isSalesEnabled={commerce.salesEnabled} />
+        <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error} isSalesEnabled={commerce.salesEnabled}
           discountPercent={menuGroups.find(group => group.id === "food")?.performanceDiscountPercent ?? 0} />
       </main> : !isAccountPage && <>
         <div id="home">

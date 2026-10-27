@@ -10,10 +10,11 @@ interface BuilderSummaryProps {
   addedCount: number
   cartError: string
   discountPercent: number
+  isSalesEnabled: boolean
 }
 
 /** Displays the current plate, declared nutrition, allergens, and total cost. */
-export function BuilderSummary({ total, onReset, onAddToCart, addedCount, cartError, discountPercent }: BuilderSummaryProps) {
+export function BuilderSummary({ total, onReset, onAddToCart, addedCount, cartError, discountPercent, isSalesEnabled }: BuilderSummaryProps) {
   const { t, i18n } = useTranslation()
   const number = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 1 })
   const money = new Intl.NumberFormat(i18n.language, {
@@ -83,19 +84,19 @@ export function BuilderSummary({ total, onReset, onAddToCart, addedCount, cartEr
                 : t("builder.noDeclaredAllergens")}
             </p>
           )}
-          <button type="button" onClick={onAddToCart} disabled={isEmpty}
+          {isSalesEnabled && <><button type="button" onClick={onAddToCart} disabled={isEmpty}
             className="mt-5 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-green-700 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700 disabled:cursor-not-allowed disabled:opacity-50">
             <ShoppingBag size={17} aria-hidden="true" /> {t("cart.add")}
           </button>
           <p role="status" className="mt-2 text-sm text-brand-green-800">
             {addedCount > 0 && t("cart.performanceAdded", { count: addedCount })}
           </p>
-          {cartError && <p role="alert" className="mt-2 text-sm text-red-800">{t(cartError)}</p>}
+          {cartError && <p role="alert" className="mt-2 text-sm text-red-800">{t(cartError)}</p>}</>}
           <button type="button" onClick={onReset} disabled={isEmpty}
             className="mt-5 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-brand-green-700/30 text-sm font-semibold text-brand-green-700 hover:bg-brand-green-100 disabled:cursor-not-allowed disabled:opacity-50">
             <RotateCcw size={15} aria-hidden="true" /> {t("builder.reset")}
           </button>
-          <p className="mt-4 text-xs leading-relaxed">{t("builder.orderNote")}</p>
+          {isSalesEnabled && <p className="mt-4 text-xs leading-relaxed">{t("builder.orderNote")}</p>}
         </div>
       </div>
       <p className="mt-4 px-2 text-xs leading-relaxed text-brand-dark">{t("builder.nutritionNote")}</p>

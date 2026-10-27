@@ -1,4 +1,8 @@
 {
+  "commerce": {
+    "loadError": "Starea comercializării nu a putut fi verificată. Coșul este indisponibil temporar; reîncercăm automat.",
+    "disabled": "Comercializarea produselor este oprită momentan."
+  },
   "checkout": {
     "testApiUnavailable": "API-ul local pentru comenzi TEST nu este disponibil. Pornește modul full-stack cu npm run dev:orders; previzualizarea nu trimite comenzi.",
     "testSaveError": "Salvarea nu a fost confirmată. Reîncearcă aici fără să modifici datele, pentru a evita duplicatele.",

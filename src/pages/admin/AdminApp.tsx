@@ -8,6 +8,7 @@ import { TestOrders } from "./TestOrders"
 import { PromotionSettings } from "./PromotionSettings"
 import { CustomerLoyalty } from "./CustomerLoyalty"
 import { PushCampaigns } from "./PushCampaigns"
+import { CommerceSettings } from "./CommerceSettings"
 
 type View = "items" | "categories" | "orders" | "promotion" | "loyalty" | "push"
 
@@ -115,6 +116,7 @@ export default function AdminApp() {
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+        <CommerceSettings />
         {error && (view === "items" || view === "categories") && (
           <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
         )}

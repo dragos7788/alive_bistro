@@ -1,4 +1,8 @@
 {
+  "commerce": {
+    "loadError": "Sales status could not be verified. The cart is temporarily unavailable; we will retry automatically.",
+    "disabled": "Product sales are currently paused."
+  },
   "checkout": {
     "testApiUnavailable": "The local TEST order API is unavailable. Start full-stack mode with npm run dev:orders; the preview does not submit orders.",
     "testSaveError": "Saving was not confirmed. Retry here without changing details to avoid duplicates.",
