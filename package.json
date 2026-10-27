@@ -19,7 +19,7 @@
     "dev:cf": "npm run build && wrangler pages dev dist",
     "dev:orders": "npm run build && wrangler pages dev dist --ip 127.0.0.1 --compatibility-date=2026-08-06 --binding LOCAL_TEST_ORDERS=true",
     "db:migrate": "wrangler d1 migrations apply alive-bistro-menu --local",
-    "db:migrate:prod": "wrangler d1 migrations apply alive-bistro-menu",
+    "db:migrate:prod": "wrangler d1 migrations apply alive-bistro-menu --remote",
     "db:seed": "node scripts/seed-menu-db.mjs && wrangler d1 execute alive-bistro-menu --local --file=scripts/seed-data.sql",
     "pretest": "npm run images:optimize",
     "test": "vitest run",
