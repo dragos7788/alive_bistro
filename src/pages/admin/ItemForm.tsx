@@ -18,6 +18,7 @@ export type AdminItem = {
   image_position_x: number
   image_position_y: number
   image_zoom: number
+  image_zoom_out: number
   tag: string | null
   calories: number | null
   protein: string | null
@@ -54,7 +55,7 @@ function itemToForm(item: AdminItem): FormData {
     protein: item.protein ?? "", carbs: item.carbs ?? "", fat: item.fat ?? "",
     image_key: item.image_key ?? "", image_url: item.image_url ?? "",
     image_position_x: item.image_position_x ?? 50, image_position_y: item.image_position_y ?? 50,
-    image_zoom: item.image_zoom ?? 100,
+    image_zoom: item.image_zoom_out < 100 ? item.image_zoom_out : item.image_zoom ?? 100,
     is_visible: item.is_visible !== 0,
     is_available: item.is_available !== 0,
     stock_quantity: item.stock_quantity?.toString() ?? "",

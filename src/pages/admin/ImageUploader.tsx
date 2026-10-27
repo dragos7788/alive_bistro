@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import { X, Upload } from "lucide-react"
+import { getImageCropStyle } from "../../features/menu/image-crop"
 
 interface Props {
   currentUrl?: string
@@ -36,10 +37,12 @@ export default function ImageUploader({
   const previewUrl = currentUrl || fallbackUrl
 
   const handleCropPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (fit !== "cover" || !previewRef.current?.naturalWidth || !previewRef.current.naturalHeight) return
+    if (fit !== "cover" || imageZoom < 100 || !previewRef.current?.naturalWidth || !previewRef.current.naturalHeight) return
     const bounds = event.currentTarget.getBoundingClientRect()
     const image = previewRef.current
-    const scale = Math.max(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight)
+    const scale = imageZoom < 100
+      ? Math.min(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight)
+      : Math.max(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight)
     const zoomFactor = imageZoom / 100
     cropDragRef.current = {
       pointerId: event.pointerId,
@@ -107,7 +110,7 @@ export default function ImageUploader({
     <div className="space-y-2">
       {previewUrl && (
         <div
-          className={`relative aspect-square w-full overflow-hidden rounded-lg bg-brand-cream-200 ${fit === "cover" ? `touch-none select-none ${isDraggingCrop ? "cursor-grabbing" : "cursor-grab"}` : ""}`}
+          className={`relative aspect-square w-full overflow-hidden rounded-lg bg-white ${fit === "cover" ? `touch-none select-none ${imageZoom > 100 ? isDraggingCrop ? "cursor-grabbing" : "cursor-grab" : ""}` : ""}`}
           onPointerDown={handleCropPointerDown}
           onPointerMove={handleCropPointerMove}
           onPointerUp={handleCropPointerEnd}
@@ -117,14 +120,8 @@ export default function ImageUploader({
             ref={previewRef}
             src={previewUrl}
             alt="Previzualizare decupajul fotografiei în meniul public"
-            className={`absolute max-w-none bg-white ${fit === "cover" ? "object-cover" : "object-contain"}`}
-            style={{
-              width: `${fit === "cover" ? imageZoom : 100}%`,
-              height: `${fit === "cover" ? imageZoom : 100}%`,
-              left: fit === "cover" ? `-${imagePosition.x * (imageZoom - 100) / 100}%` : "0",
-              top: fit === "cover" ? `-${imagePosition.y * (imageZoom - 100) / 100}%` : "0",
-              objectPosition: `${imagePosition.x}% ${imagePosition.y}%`,
-            }}
+            className="absolute max-w-none"
+            style={getImageCropStyle(imagePosition, imageZoom, fit)}
             draggable={false}
           />
           {currentUrl && <button
@@ -141,12 +138,12 @@ export default function ImageUploader({
       {previewUrl && fit === "cover" && (
         <fieldset className="space-y-3 rounded-lg border border-brand-green-700/15 p-3">
           <legend className="px-1 text-xs font-semibold text-brand-green-800">Încadrare fotografie</legend>
-          <p className="text-xs text-brand-dark/70">Trage fotografia în cadrul pătrat pentru a alege zona afișată.</p>
+          <p className="text-xs text-brand-dark/70">La zoom peste 100%, trage fotografia pentru a alege zona afișată. Sub 100%, fotografia întreagă este încadrată în pătrat.</p>
           <label className="flex items-center gap-3 text-xs text-brand-dark/80">
             <span className="w-16 shrink-0">Zoom</span>
             <input
               type="range"
-              min="100"
+              min="50"
               max="300"
               step="10"
               value={imageZoom}
@@ -164,9 +161,10 @@ export default function ImageUploader({
               max="100"
               step="1"
               value={imagePosition.x}
+              disabled={imageZoom < 100}
               onChange={(event) => onImagePositionChange("x", Number(event.target.value))}
               aria-label="Poziție orizontală a fotografiei"
-              className="min-w-0 flex-1 accent-brand-green-700"
+              className="min-w-0 flex-1 accent-brand-green-700 disabled:opacity-40"
             />
             <output className="w-9 text-right tabular-nums">{imagePosition.x}%</output>
           </label>
@@ -178,9 +176,10 @@ export default function ImageUploader({
               max="100"
               step="1"
               value={imagePosition.y}
+              disabled={imageZoom < 100}
               onChange={(event) => onImagePositionChange("y", Number(event.target.value))}
               aria-label="Poziție verticală a fotografiei"
-              className="min-w-0 flex-1 accent-brand-green-700"
+              className="min-w-0 flex-1 accent-brand-green-700 disabled:opacity-40"
             />
             <output className="w-9 text-right tabular-nums">{imagePosition.y}%</output>
           </label>

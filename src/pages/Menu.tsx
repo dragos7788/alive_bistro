@@ -9,6 +9,7 @@ import { menuData } from "../features/menu/seed"
 import { MenuPrice } from "../features/pricing/MenuPrice"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
+import { getImageCropStyle } from "../features/menu/image-crop"
 import { MobileCategoryPicker } from "../features/menu/MobileCategoryPicker"
 import { cartCatalog, summarizeCart, type CartProduct } from "../features/cart/cart"
 import type { useCart } from "../features/cart/useCart"
@@ -337,7 +338,7 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                 className="text-left w-full flex flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 hover:bg-white hover:shadow-lg hover:border-brand-green-700/25 transition-all duration-300 group"
               >
                 <button type="button" onClick={() => setSelectedItem(item)} className="flex flex-1 flex-col text-left cursor-pointer">
-                  <div className="relative w-full aspect-square overflow-hidden">
+                  <div className="relative w-full aspect-square overflow-hidden bg-white">
                     {item.image ? <img
                       src={item.image}
                       srcSet={item.imageSrcSet}
@@ -346,14 +347,12 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                       decoding="async"
                       alt={item.name}
                       referrerPolicy="no-referrer"
-                      className={`absolute max-w-none ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
-                      style={{
-                        width: `${activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100}%`,
-                        height: `${activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100}%`,
-                        left: `-${(item.imagePosition?.x ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100) - 100) / 100}%`,
-                        top: `-${(item.imagePosition?.y ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100) - 100) / 100}%`,
-                        objectPosition: `${item.imagePosition?.x ?? 50}% ${item.imagePosition?.y ?? 50}%`,
-                      }}
+                      className="absolute max-w-none bg-white"
+                      style={getImageCropStyle(
+                        item.imagePosition ?? { x: 50, y: 50 },
+                        item.imageZoom ?? 100,
+                        activeCategoryObj.id === "wine-prosecco" ? "contain" : "cover",
+                      )}
                     /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
                     {item.discountPercent ? (
                       <span className="absolute right-3 top-3 rounded-full bg-brand-green-700 px-3 py-1.5 text-xs font-extrabold text-brand-cream-50 shadow-lg">
@@ -469,7 +468,7 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                 </button>
 
                 {selectedItem.image ? (
-                  <div className="relative w-full aspect-[4/3] overflow-hidden">
+                  <div className="relative w-full aspect-[4/3] overflow-hidden bg-white">
                     <img
                       src={selectedItem.image}
                       srcSet={selectedItem.imageSrcSet}
@@ -477,14 +476,12 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                       decoding="async"
                       alt={selectedItem.name}
                       referrerPolicy="no-referrer"
-                      className={`absolute max-w-none ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
-                      style={{
-                        width: `${activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100}%`,
-                        height: `${activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100}%`,
-                        left: `-${(selectedItem.imagePosition?.x ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100) - 100) / 100}%`,
-                        top: `-${(selectedItem.imagePosition?.y ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100) - 100) / 100}%`,
-                        objectPosition: `${selectedItem.imagePosition?.x ?? 50}% ${selectedItem.imagePosition?.y ?? 50}%`,
-                      }}
+                      className="absolute max-w-none bg-white"
+                      style={getImageCropStyle(
+                        selectedItem.imagePosition ?? { x: 50, y: 50 },
+                        selectedItem.imageZoom ?? 100,
+                        activeCategoryObj.id === "wine-prosecco" ? "contain" : "cover",
+                      )}
                     />
                   </div>
                 ) : (

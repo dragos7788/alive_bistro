@@ -2,7 +2,7 @@ import type { Ctx } from "../../../_lib/types.ts"
 import { ok, err } from "../../../_lib/response.ts"
 import { requireAdmin } from "../../../_lib/auth.ts"
 import { validateStock } from "../../../_lib/stock"
-import { parseImagePosition, parseImageZoom } from "../../../_lib/image-position"
+import { parseImagePosition, parseImageZoom, splitImageZoom } from "../../../_lib/image-position"
 
 export const onRequestGet = async ({ request, env }: Ctx) => {
   const deny = requireAdmin(request, env)
@@ -31,7 +31,8 @@ export const onRequestPost = async ({ request, env }: Ctx) => {
   const imagePosition = parseImagePosition(b.image_position_x, b.image_position_y)
   if (!imagePosition) return err("VALIDATION_ERROR", "Poziția imaginii trebuie să fie între 0 și 100.", 400)
   const imageZoom = parseImageZoom(b.image_zoom)
-  if (imageZoom === null) return err("VALIDATION_ERROR", "Zoom-ul imaginii trebuie să fie între 100 și 300%.", 400)
+  if (imageZoom === null) return err("VALIDATION_ERROR", "Zoom-ul imaginii trebuie să fie între 50 și 300%.", 400)
+  const storedZoom = splitImageZoom(imageZoom)
   let stock
   try { stock = validateStock(b, String(b.price)) }
   catch (error) { return err("VALIDATION_ERROR", error instanceof Error ? error.message : "Stoc invalid", 400) }
@@ -42,15 +43,15 @@ export const onRequestPost = async ({ request, env }: Ctx) => {
   ).bind(b.category_id).all<{ next: number }>()
 
   await env.DB.prepare(
-    `INSERT INTO items (id, category_id, name, name_en, description, description_en, price, image_key, image_url, tag, calories, protein, carbs, fat, sort_order, is_available, stock_quantity, show_stock, is_visible, image_position_x, image_position_y, image_zoom)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO items (id, category_id, name, name_en, description, description_en, price, image_key, image_url, tag, calories, protein, carbs, fat, sort_order, is_available, stock_quantity, show_stock, is_visible, image_position_x, image_position_y, image_zoom, image_zoom_out)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(
     id, b.category_id, b.name, b.name_en ?? null, b.description, b.description_en ?? null,
     b.price, b.image_key ?? null, b.image_url ?? null, b.tag ?? null,
     b.calories ?? null, b.protein ?? null, b.carbs ?? null, b.fat ?? null,
     last?.next ?? 0,
     stock.is_available, stock.stock_quantity, stock.show_stock, b.is_visible === false || b.is_visible === 0 ? 0 : 1,
-    imagePosition.x, imagePosition.y, imageZoom,
+    imagePosition.x, imagePosition.y, storedZoom.image_zoom, storedZoom.image_zoom_out,
   ).run()
 
   const row = await env.DB.prepare("SELECT * FROM items WHERE id = ?").bind(id).first()

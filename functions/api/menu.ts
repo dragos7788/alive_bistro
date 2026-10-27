@@ -2,6 +2,7 @@ import type { Ctx } from "../_lib/types.ts"
 import { err } from "../_lib/response.ts"
 import { publicStock, type StockSettings } from "../_lib/stock"
 import { readPromotions } from "../_lib/food-promotion"
+import { resolveImageZoom } from "../_lib/image-position"
 import { discountedMenuPrice } from "../../src/features/pricing/discount"
 
 type DbCat  = { id: string; group_id: string; label: string; label_en: string | null; icon_key: string }
@@ -9,7 +10,7 @@ type DbItem = StockSettings & {
   id: string; category_id: string; name: string; name_en: string | null
   description: string; description_en: string | null; price: string
   image_key: string | null; image_url: string | null; tag: string | null
-  image_position_x: number; image_position_y: number; image_zoom: number
+  image_position_x: number; image_position_y: number; image_zoom: number; image_zoom_out: number
   calories: number | null; protein: string | null; carbs: string | null; fat: string | null
 }
 
@@ -24,7 +25,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
     const discounts = new Map(promotions.categories.map(category => [category.id, category.discountPercent]))
     const [catsRes, itemsRes] = await env.DB.batch([
       env.DB.prepare("SELECT id, group_id, label, label_en, icon_key FROM categories ORDER BY sort_order"),
-      env.DB.prepare("SELECT id, category_id, name, name_en, description, description_en, price, image_key, image_url, image_position_x, image_position_y, image_zoom, tag, calories, protein, carbs, fat, is_available, stock_quantity, show_stock FROM items WHERE is_visible = 1 ORDER BY category_id, sort_order"),
+      env.DB.prepare("SELECT id, category_id, name, name_en, description, description_en, price, image_key, image_url, image_position_x, image_position_y, image_zoom, image_zoom_out, tag, calories, protein, carbs, fat, is_available, stock_quantity, show_stock FROM items WHERE is_visible = 1 ORDER BY category_id, sort_order"),
     ])
 
     const cats  = catsRes.results  as unknown as DbCat[]
@@ -40,7 +41,7 @@ export const onRequestGet = async ({ request, env }: Ctx) => {
       ...discountedMenuPrice(r.price, discounts.get(r.category_id) ?? 0),
       image:          r.image_key ? `/api/images/${r.image_key}` : (r.image_url ?? undefined),
       imagePosition:  { x: r.image_position_x, y: r.image_position_y },
-      imageZoom:      r.image_zoom,
+      imageZoom:      resolveImageZoom(r.image_zoom, r.image_zoom_out),
       tag:            r.tag ?? undefined,
       macros:         r.calories != null
         ? { calories: r.calories, protein: r.protein!, carbs: r.carbs ?? undefined, fat: r.fat! }

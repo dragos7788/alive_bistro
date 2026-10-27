@@ -348,9 +348,10 @@ locale și macronutrienții lipsă din răspunsul API sunt completate din sursa 
 
 Fotografiile din carduri și din detalii folosesc un cadru pătrat, fără zoom la
 hover. În administrare, încadrarea fiecărui produs poate fi ajustată prin
-repoziționare și zoom de la 100% la 300%; previzualizarea arată exact decupajul
-folosit de meniu. Produsele din categoria vinurilor păstrează imaginea întreagă,
-fără decupare sau zoom.
+repoziționare și zoom de la 50% la 300%. Sub 100%, fotografia întreagă este
+afișată în cadru; previzualizarea arată exact încadrarea folosită de meniu.
+Produsele din categoria vinurilor păstrează imaginea întreagă, fără decupare
+sau zoom.
 Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
 crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 

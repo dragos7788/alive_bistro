@@ -1,0 +1,2 @@
+ALTER TABLE items ADD COLUMN image_zoom_out INTEGER NOT NULL DEFAULT 100
+  CHECK (image_zoom_out BETWEEN 50 AND 100);
