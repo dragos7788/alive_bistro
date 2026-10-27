@@ -347,10 +347,10 @@ Generatorul păstrează ingredientele, alergenii și macronutrienții în D1; fo
 locale și macronutrienții lipsă din răspunsul API sunt completate din sursa comună.
 
 Fotografiile din carduri și din detalii folosesc un cadru pătrat, fără zoom la
-hover. În administrare, poziția de încadrare poate fi ajustată separat pe
-orizontală și verticală pentru fiecare produs; previzualizarea arată decupajul
+hover. În administrare, încadrarea fiecărui produs poate fi ajustată prin
+repoziționare și zoom de la 100% la 300%; previzualizarea arată exact decupajul
 folosit de meniu. Produsele din categoria vinurilor păstrează imaginea întreagă,
-fără decupare.
+fără decupare sau zoom.
 Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
 crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 

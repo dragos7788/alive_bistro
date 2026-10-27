@@ -346,8 +346,12 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                       decoding="async"
                       alt={item.name}
                       referrerPolicy="no-referrer"
-                      className={`h-full w-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
+                      className={`absolute max-w-none ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
                       style={{
+                        width: `${activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100}%`,
+                        height: `${activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100}%`,
+                        left: `-${(item.imagePosition?.x ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100) - 100) / 100}%`,
+                        top: `-${(item.imagePosition?.y ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : item.imageZoom ?? 100) - 100) / 100}%`,
                         objectPosition: `${item.imagePosition?.x ?? 50}% ${item.imagePosition?.y ?? 50}%`,
                       }}
                     /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
@@ -415,22 +419,23 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
           </motion.div>
         </AnimatePresence>
 
-        {/* Coffee section teaser */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 p-6 rounded-2xl border border-brand-green-700/15 bg-brand-cream-200/50 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left"
-        >
-          <div className="w-12 h-12 rounded-full bg-brand-green-700/10 flex items-center justify-center flex-shrink-0 text-brand-green-700">
-            <LucideCoffee size={24} />
-          </div>
-          <div>
-            <p className="text-brand-green-700 font-bold text-base font-serif lowercase">{t("menu.teaserTitle")}</p>
-            <p className="text-brand-dark/70 text-xs md:text-sm font-light mt-1 font-sans">{t("menu.teaserDesc")}</p>
-          </div>
-        </motion.div>
+        {activeCategoryObj.id === "coffee-bar" && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-16 p-6 rounded-2xl border border-brand-green-700/15 bg-brand-cream-200/50 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left"
+          >
+            <div className="w-12 h-12 rounded-full bg-brand-green-700/10 flex items-center justify-center flex-shrink-0 text-brand-green-700">
+              <LucideCoffee size={24} />
+            </div>
+            <div>
+              <p className="text-brand-green-700 font-bold text-base font-serif lowercase">{t("menu.teaserTitle")}</p>
+              <p className="text-brand-dark/70 text-xs md:text-sm font-light mt-1 font-sans">{t("menu.teaserDesc")}</p>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Item detail modal */}
@@ -464,7 +469,7 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                 </button>
 
                 {selectedItem.image ? (
-                  <div className="w-full aspect-[4/3] overflow-hidden">
+                  <div className="relative w-full aspect-[4/3] overflow-hidden">
                     <img
                       src={selectedItem.image}
                       srcSet={selectedItem.imageSrcSet}
@@ -472,8 +477,12 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                       decoding="async"
                       alt={selectedItem.name}
                       referrerPolicy="no-referrer"
-                      className={`h-full w-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
+                      className={`absolute max-w-none ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
                       style={{
+                        width: `${activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100}%`,
+                        height: `${activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100}%`,
+                        left: `-${(selectedItem.imagePosition?.x ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100) - 100) / 100}%`,
+                        top: `-${(selectedItem.imagePosition?.y ?? 50) * ((activeCategoryObj.id === "wine-prosecco" ? 100 : selectedItem.imageZoom ?? 100) - 100) / 100}%`,
                         objectPosition: `${selectedItem.imagePosition?.x ?? 50}% ${selectedItem.imagePosition?.y ?? 50}%`,
                       }}
                     />

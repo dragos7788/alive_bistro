@@ -18,6 +18,7 @@ export type MenuItem = {
   image?: string
   imageSrcSet?: string
   imagePosition?: { x: number; y: number }
+  imageZoom?: number
   tag?: string
   macros?: Macros
   nutritionEstimated?: boolean
