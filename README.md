@@ -322,13 +322,16 @@ wrangler r2 bucket create alive-bistro-media
 ### 2. Aplică schema și seed-ul
 
 ```sh
-npm run db:migrate   # creează tabelele categories + items
+npm run db:migrate   # aplică toate migrările pe D1 local
 npm run db:seed      # înlocuiește meniul cu datele din src/features/menu/menu-data.json
 
 # verificare:
 wrangler d1 execute alive-bistro-menu --local --command="SELECT count(*) FROM items"
 # → { "count(*)": 81 }
 ```
+
+Înainte de deployment, aplică migrările bazei de producție cu
+`npm run db:migrate:prod`; acest script folosește baza D1 remote.
 
 Meniul din PDF-urile din 21 și 23 septembrie include ingredientele și alergenii
 declarați pentru cele 26 de preparate, plus calorii, proteine, carbohidrați și
@@ -343,8 +346,11 @@ API-ul local. **Seed-ul înlocuiește meniul existent, inclusiv editările din a
 Generatorul păstrează ingredientele, alergenii și macronutrienții în D1; fotografiile
 locale și macronutrienții lipsă din răspunsul API sunt completate din sursa comună.
 
-Fotografiile din carduri și din detalii folosesc un cadru pătrat, aliniat la baza
-imaginii, fără zoom la hover, pentru a păstra vizibile farfuriile și paharele.
+Fotografiile din carduri și din detalii folosesc un cadru pătrat, fără zoom la
+hover. În administrare, poziția de încadrare poate fi ajustată separat pe
+orizontală și verticală pentru fiecare produs; previzualizarea arată decupajul
+folosit de meniu. Produsele din categoria vinurilor păstrează imaginea întreagă,
+fără decupare.
 Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
 crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 

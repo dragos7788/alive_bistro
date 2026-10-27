@@ -15,6 +15,8 @@ export type AdminItem = {
   price: string
   image_key: string | null
   image_url: string | null
+  image_position_x: number
+  image_position_y: number
   tag: string | null
   calories: number | null
   protein: string | null
@@ -30,7 +32,8 @@ export type AdminItem = {
 type FormData = {
   name: string; name_en: string; description: string; description_en: string
   price: string; tag: string; calories: string; protein: string; carbs: string
-  fat: string; image_key: string; image_url: string; is_visible: boolean
+  fat: string; image_key: string; image_url: string
+  image_position_x: number; image_position_y: number; is_visible: boolean
   is_available: boolean; stock_quantity: string; show_stock: boolean
 }
 
@@ -38,7 +41,7 @@ const EMPTY: FormData = {
   name: "", name_en: "", description: "", description_en: "",
   price: "", tag: "", calories: "", protein: "", carbs: "",
   fat: "", image_key: "", image_url: "", is_visible: true,
-  is_available: true, stock_quantity: "", show_stock: false,
+  is_available: true, stock_quantity: "", show_stock: false, image_position_x: 50, image_position_y: 50,
 }
 
 function itemToForm(item: AdminItem): FormData {
@@ -48,6 +51,7 @@ function itemToForm(item: AdminItem): FormData {
     tag: item.tag ?? "", calories: item.calories?.toString() ?? "",
     protein: item.protein ?? "", carbs: item.carbs ?? "", fat: item.fat ?? "",
     image_key: item.image_key ?? "", image_url: item.image_url ?? "",
+    image_position_x: item.image_position_x ?? 50, image_position_y: item.image_position_y ?? 50,
     is_visible: item.is_visible !== 0,
     is_available: item.is_available !== 0,
     stock_quantity: item.stock_quantity?.toString() ?? "",
@@ -102,6 +106,8 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
         fat: form.fat || null,
         image_key: form.image_key || null,
         image_url: form.image_key ? null : (form.image_url || null),
+        image_position_x: form.image_position_x,
+        image_position_y: form.image_position_y,
         is_visible: form.is_visible,
         is_available: form.is_available,
         stock_quantity: form.stock_quantity === "" ? null : Number(form.stock_quantity),
@@ -145,6 +151,12 @@ export default function ItemForm({ item, categoryId, open, onClose, onSaved }: P
             <ImageUploader
               currentUrl={currentImageUrl}
               fallbackUrl={item ? resolveMenuImage({ name: item.name }).image : undefined}
+              fit={categoryId === "wine-prosecco" ? "contain" : "cover"}
+              imagePosition={{ x: form.image_position_x, y: form.image_position_y }}
+              onImagePositionChange={(axis, value) => setForm((f) => ({
+                ...f,
+                [axis === "x" ? "image_position_x" : "image_position_y"]: value,
+              }))}
               onUploaded={(key) => setForm((f) => ({ ...f, image_key: key, image_url: "" }))}
               onClear={() => setForm((f) => ({ ...f, image_key: "", image_url: "" }))}
             />

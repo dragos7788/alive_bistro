@@ -2,14 +2,22 @@ import type { Ctx } from "../../../_lib/types.ts"
 import { ok, err } from "../../../_lib/response.ts"
 import { requireAdmin } from "../../../_lib/auth.ts"
 import { validateStock, type StockSettings } from "../../../_lib/stock"
+import { parseImagePosition } from "../../../_lib/image-position"
 
 export const onRequestPut = async ({ request, env, params }: Ctx<"id">) => {
   const deny = requireAdmin(request, env)
   if (deny) return deny
 
   const b = await request.json() as Record<string, unknown>
-  const exists = await env.DB.prepare("SELECT * FROM items WHERE id = ?").bind(params.id).first<StockSettings & { price: string }>()
+  const exists = await env.DB.prepare("SELECT * FROM items WHERE id = ?").bind(params.id).first<
+    StockSettings & { price: string; image_position_x: number; image_position_y: number }
+  >()
   if (!exists) return err("NOT_FOUND", "Item not found", 404)
+  const imagePosition = parseImagePosition(b.image_position_x, b.image_position_y, {
+    x: exists.image_position_x,
+    y: exists.image_position_y,
+  })
+  if (!imagePosition) return err("VALIDATION_ERROR", "Poziția imaginii trebuie să fie între 0 și 100.", 400)
   if ("expected_stock_quantity" in b && b.expected_stock_quantity !== exists.stock_quantity) {
     return err("STOCK_CHANGED", "Stocul s-a schimbat între timp. Închide formularul și reîncarcă lista.", 409)
   }
@@ -31,14 +39,15 @@ export const onRequestPut = async ({ request, env, params }: Ctx<"id">) => {
       name = ?, name_en = ?, description = ?, description_en = ?,
       price = ?, image_key = ?, image_url = ?, tag = ?,
       calories = ?, protein = ?, carbs = ?, fat = ?, is_visible = ?,
-      is_available = ?, stock_quantity = ?, show_stock = ?
+      is_available = ?, stock_quantity = ?, show_stock = ?,
+      image_position_x = ?, image_position_y = ?
      WHERE id = ? AND stock_quantity IS ?`
   ).bind(
     b.name, b.name_en ?? null, b.description, b.description_en ?? null,
     b.price, b.image_key ?? null, b.image_url ?? null, b.tag ?? null,
     b.calories ?? null, b.protein ?? null, b.carbs ?? null, b.fat ?? null,
     b.is_visible === false || b.is_visible === 0 ? 0 : 1,
-    stock.is_available, stock.stock_quantity, stock.show_stock,
+    stock.is_available, stock.stock_quantity, stock.show_stock, imagePosition.x, imagePosition.y,
     params.id, exists.stock_quantity,
   ).run()
   if (saved.meta?.changes === 0) return err("STOCK_CHANGED", "Stocul s-a schimbat între timp. Reîncarcă produsul.", 409)

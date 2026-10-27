@@ -346,8 +346,16 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                       decoding="async"
                       alt={item.name}
                       referrerPolicy="no-referrer"
-                      className={`w-full h-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover object-bottom"}`}
+                      className={`h-full w-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
+                      style={{
+                        objectPosition: `${item.imagePosition?.x ?? 50}% ${item.imagePosition?.y ?? 50}%`,
+                      }}
                     /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
+                    {item.discountPercent ? (
+                      <span className="absolute right-3 top-3 rounded-full bg-brand-green-700 px-3 py-1.5 text-xs font-extrabold text-brand-cream-50 shadow-lg">
+                        {t("promotion.discount", { percent: item.discountPercent })}
+                      </span>
+                    ) : null}
                     {item.tag && (
                       <span className={`absolute top-3 left-3 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm ${tagColors[item.tag] ?? "bg-brand-cream-200 text-brand-dark/60"}`}>
                         {item.tag}
@@ -360,12 +368,12 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                   </div>
 
                 <div className="flex flex-col flex-1 p-4 md:p-5">
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <h3 className="text-brand-dark font-bold group-hover:text-brand-green-700 transition-colors text-sm sm:text-base font-serif lowercase leading-tight">{item.name}</h3>
-                    <span className="text-brand-green-700 font-bold text-xs sm:text-sm whitespace-nowrap"><MenuPrice item={item} /></span>
-                  </div>
-                  {activeCategoryObj.id === "tea-matcha" && (
-                    <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                      <h3 className="min-w-0 flex-1 text-brand-dark font-semibold group-hover:text-brand-green-700 transition-colors text-lg sm:text-xl font-serif first-letter:uppercase leading-snug tracking-tight">{item.name}</h3>
+                      <MenuPrice item={item} showDiscount={false} />
+                    </div>
+                    {activeCategoryObj.id === "tea-matcha" && (
+                      <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
                       {(i18n.language.startsWith("en") ? item.description_en ?? item.description : item.description).split("\n\n", 1)[0]}
                     </p>
                   )}
@@ -456,7 +464,7 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                 </button>
 
                 {selectedItem.image ? (
-                  <div className="w-full aspect-square overflow-hidden">
+                  <div className="w-full aspect-[4/3] overflow-hidden">
                     <img
                       src={selectedItem.image}
                       srcSet={selectedItem.imageSrcSet}
@@ -464,19 +472,22 @@ export default function Menu({ cart, menuGroups }: { cart: ReturnType<typeof use
                       decoding="async"
                       alt={selectedItem.name}
                       referrerPolicy="no-referrer"
-                      className={`w-full h-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover object-bottom"}`}
+                      className={`h-full w-full ${activeCategoryObj.id === "wine-prosecco" ? "bg-white object-contain" : "object-cover"}`}
+                      style={{
+                        objectPosition: `${selectedItem.imagePosition?.x ?? 50}% ${selectedItem.imagePosition?.y ?? 50}%`,
+                      }}
                     />
                   </div>
                 ) : (
                   <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />
                 )}
 
-                <div className="p-6 sm:p-8">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <DialogTitle className="text-2xl sm:text-3xl font-extrabold text-brand-green-700 font-serif lowercase leading-tight">
+                <div className="p-5 sm:p-7">
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <DialogTitle className="min-w-0 flex-1 text-2xl sm:text-3xl font-semibold text-brand-green-700 font-serif first-letter:uppercase leading-tight tracking-tight">
                       {selectedItem.name}
                     </DialogTitle>
-                    <span className="text-brand-green-700 font-bold text-base whitespace-nowrap mt-1"><MenuPrice item={selectedItem} /></span>
+                    <MenuPrice item={selectedItem} />
                   </div>
 
                   {selectedItem.tag && (

@@ -17,6 +17,7 @@ export type MenuItem = {
   discountPercent?: number
   image?: string
   imageSrcSet?: string
+  imagePosition?: { x: number; y: number }
   tag?: string
   macros?: Macros
   nutritionEstimated?: boolean

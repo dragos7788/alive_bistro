@@ -4,11 +4,16 @@ import { X, Upload } from "lucide-react"
 interface Props {
   currentUrl?: string
   fallbackUrl?: string
+  fit: "cover" | "contain"
+  imagePosition: { x: number; y: number }
+  onImagePositionChange: (axis: "x" | "y", value: number) => void
   onUploaded: (key: string, url: string) => void
   onClear: () => void
 }
 
-export default function ImageUploader({ currentUrl, fallbackUrl, onUploaded, onClear }: Props) {
+export default function ImageUploader({
+  currentUrl, fallbackUrl, fit, imagePosition, onImagePositionChange, onUploaded, onClear,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState("")
@@ -44,8 +49,13 @@ export default function ImageUploader({ currentUrl, fallbackUrl, onUploaded, onC
   return (
     <div className="space-y-2">
       {previewUrl && (
-        <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-lg bg-brand-cream-200 md:h-80">
-          <img src={previewUrl} alt="Previzualizare produs" className="h-full w-full object-contain object-center" />
+        <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-brand-cream-200">
+          <img
+            src={previewUrl}
+            alt="Previzualizare decupajul fotografiei în meniul public"
+            className={`h-full w-full bg-white ${fit === "cover" ? "object-cover" : "object-contain"}`}
+            style={{ objectPosition: `${imagePosition.x}% ${imagePosition.y}%` }}
+          />
           {currentUrl && <button
             type="button"
             onClick={onClear}
@@ -55,6 +65,49 @@ export default function ImageUploader({ currentUrl, fallbackUrl, onUploaded, onC
             <X className="w-4 h-4" />
           </button>}
         </div>
+      )}
+      {previewUrl && fit === "cover" && (
+        <fieldset className="space-y-3 rounded-lg border border-brand-green-700/15 p-3">
+          <legend className="px-1 text-xs font-semibold text-brand-green-800">Încadrare fotografie</legend>
+          <label className="flex items-center gap-3 text-xs text-brand-dark/80">
+            <span className="w-16 shrink-0">Orizontală</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={imagePosition.x}
+              onChange={(event) => onImagePositionChange("x", Number(event.target.value))}
+              aria-label="Poziție orizontală a fotografiei"
+              className="min-w-0 flex-1 accent-brand-green-700"
+            />
+            <output className="w-9 text-right tabular-nums">{imagePosition.x}%</output>
+          </label>
+          <label className="flex items-center gap-3 text-xs text-brand-dark/80">
+            <span className="w-16 shrink-0">Verticală</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={imagePosition.y}
+              onChange={(event) => onImagePositionChange("y", Number(event.target.value))}
+              aria-label="Poziție verticală a fotografiei"
+              className="min-w-0 flex-1 accent-brand-green-700"
+            />
+            <output className="w-9 text-right tabular-nums">{imagePosition.y}%</output>
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              onImagePositionChange("x", 50)
+              onImagePositionChange("y", 50)
+            }}
+            className="min-h-10 rounded-lg border border-brand-green-700/20 px-3 text-xs font-semibold text-brand-green-800 hover:bg-brand-cream-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700"
+          >
+            Centrează
+          </button>
+        </fieldset>
       )}
       {!currentUrl && fallbackUrl && (
         <p className="text-xs text-brand-dark/70">Imagine implicită din meniu. Poți încărca o fotografie proprie pentru a o înlocui.</p>
