@@ -16,6 +16,8 @@ import { getMenu } from '@/features/menu/api'
 import { menuData } from '@/features/menu/seed'
 import type { MenuGroup } from '@/features/menu/types'
 import { useCommerceSettings } from '@/features/commerce/useCommerceSettings'
+import { LegalPage } from '@/features/legal/LegalPage'
+import { legalPageFromPath } from '@/features/legal/company'
 import { useTranslation } from "react-i18next"
 
 export default function App() {
@@ -26,6 +28,7 @@ export default function App() {
   const isAccountPage = /^\/account\/?$/.test(window.location.pathname)
   const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(window.location.pathname)
   const isMenuPage = /^\/menu\/?$/.test(window.location.pathname)
+  const legalPageId = legalPageFromPath(window.location.pathname)
   const commerce = useCommerceSettings(isMenuPage)
   const cart = useCart(commerce.salesEnabled)
   const accountState = useCustomerAccount(!isAdmin && !isFeedback)
@@ -75,7 +78,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-cream-100 text-brand-dark font-sans">
       <Navbar account={accountState.account} accountError={!!accountState.loadError} />
-      {isCalorieJournalPage ? <CalorieJournalPage
+      {legalPageId ? <LegalPage pageId={legalPageId} /> : isCalorieJournalPage ? <CalorieJournalPage
         key={accountState.account?.customer?.referralCode ?? "guest"}
         customerName={accountState.account?.customer?.name ?? null}
         isChecking={!accountState.account && !accountState.loadError}

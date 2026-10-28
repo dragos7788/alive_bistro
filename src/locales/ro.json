@@ -142,7 +142,58 @@
     "menu": "Meniu",
     "community": "Comunitate",
     "feedback": "Feedback",
+    "terms": "Termeni și condiții",
+    "cancellation": "Politica de anulare",
+    "returns": "Politica de returnare",
+    "contact": "Contact",
     "rights": "© {{year}} ALIVE Bistro. Toate drepturile rezervate."
+  },
+  "legal": {
+    "updated": "Ultima actualizare: octombrie 2026",
+    "navLabel": "Pagini legale",
+    "terms": {
+      "title": "Termeni și condiții",
+      "sections": [
+        { "heading": "1. Operator", "body": "Site-ul și serviciile sunt oferite de ALIVE Bistro, Str. Mureș nr. 116A, Timișoara. Datele complete ale societății se găsesc pe pagina Contact." },
+        { "heading": "2. Comenzi și prețuri", "body": "Prețurile afișate sunt exprimate în lei (RON) și includ TVA. Comanda este înregistrată după confirmarea de către restaurant. Produsele sunt preparate la comandă, în limita stocului disponibil." },
+        { "heading": "3. Ridicare și livrare", "body": "Comenzile se ridică din restaurant, la ora comunicată la confirmare. Livrarea la domiciliu, când este disponibilă, se face prin platforme partenere (Glovo, Wolt, Bolt Food), conform termenilor acestora." },
+        { "heading": "4. Plata online", "body": "Plățile cu cardul se procesează securizat prin BT iPay, serviciul Băncii Transilvania. ALIVE Bistro nu vede și nu stochează datele cardului dumneavoastră." },
+        { "heading": "5. Anulare, returnare și reclamații", "body": "Condițiile de anulare și de returnare sunt descrise în Politica de anulare și Politica de returnare, pe care le acceptați la plasarea comenzii." },
+        { "heading": "6. Soluționarea litigiilor", "body": "Ne puteți contacta oricând pentru reclamații. Pentru soluționarea alternativă a litigiilor puteți apela la ANPC: https://anpc.ro/ce-este-sal/ , iar pentru platforma europeană SOL: https://ec.europa.eu/consumers/odr" },
+        { "heading": "7. Legea aplicabilă", "body": "Acești termeni sunt guvernați de legea română. Ne rezervăm dreptul de a-i modifica; versiunea în vigoare este cea publicată pe site." }
+      ]
+    },
+    "cancellation": {
+      "title": "Politica de anulare",
+      "sections": [
+        { "heading": "Anularea de către client", "body": "Puteți anula comanda gratuit până când restaurantul o confirmă sau începe prepararea ei, în maximum 5 minute de la plasare. Anularea se face telefonic la 0737 263 469. După începerea preparării comanda nu mai poate fi anulată, deoarece alimentele sunt făcute la comandă." },
+        { "heading": "Anularea de către restaurant", "body": "Putem anula o comandă dacă un produs nu mai este disponibil, dacă prețul afișat a fost greșit sau dacă nu putem onora comanda. Vă anunțăm de îndată." },
+        { "heading": "Rambursarea", "body": "Dacă ați plătit online și comanda este anulată conform acestei politici, suma se returnează în contul cardului folosit la plată, în maximum 5 zile lucrătoare de la anulare. Termenul real de afișare depinde de banca emitentă." }
+      ]
+    },
+    "returns": {
+      "title": "Politica de returnare",
+      "sections": [
+        { "heading": "Dreptul de retragere", "body": "Produsele noastre sunt alimente preparate la comandă, care se pot deteriora rapid. Conform art. 16 din OUG 34/2014, pentru astfel de produse nu se aplică dreptul de retragere de 14 zile și nu se acceptă returnarea alimentelor preparate. Vă informăm despre acest lucru înainte de plasarea comenzii." },
+        { "heading": "Comandă greșită, incompletă sau necorespunzătoare", "body": "Dacă ați primit alte produse decât cele comandate, produse lipsă sau produse necorespunzătoare calitativ, anunțați-ne imediat la ridicare sau în aceeași zi, la 0737 263 469, cu o fotografie a produsului. Vă oferim, după caz, înlocuirea produsului, un voucher sau rambursarea valorii produsului afectat." },
+        { "heading": "Rambursarea", "body": "Rambursările pentru plățile online se fac în contul cardului folosit la comandă, în maximum 5 zile lucrătoare de la aprobarea reclamației." },
+        { "heading": "Alergeni", "body": "Informațiile despre alergeni sunt afișate în meniu. Dacă aveți alergii, anunțați-ne înainte de comandă." }
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "sections": [
+        { "heading": "Date de contact", "body": "Ne puteți contacta pentru comenzi, reclamații sau întrebări la datele de mai jos." }
+      ],
+      "labels": {
+        "legalName": "Denumire societate",
+        "taxId": "CUI",
+        "registrationNumber": "Nr. Reg. Com.",
+        "address": "Adresă punct de lucru",
+        "phone": "Telefon",
+        "email": "E-mail"
+      }
+    }
   },
   "home": {
     "hero": {

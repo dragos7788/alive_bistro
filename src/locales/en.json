@@ -142,7 +142,58 @@
     "menu": "Menu",
     "community": "Community",
     "feedback": "Feedback",
+    "terms": "Terms and conditions",
+    "cancellation": "Cancellation policy",
+    "returns": "Return policy",
+    "contact": "Contact",
     "rights": "© {{year}} ALIVE Bistro. All rights reserved."
+  },
+  "legal": {
+    "updated": "Last updated: October 2026",
+    "navLabel": "Legal pages",
+    "terms": {
+      "title": "Terms and conditions",
+      "sections": [
+        { "heading": "1. Operator", "body": "The site and services are provided by ALIVE Bistro, Str. Mureș nr. 116A, Timișoara. Full company details are on the Contact page." },
+        { "heading": "2. Orders and prices", "body": "Prices are in Romanian lei (RON) and include VAT. An order is registered once the restaurant confirms it. Items are prepared to order, subject to availability." },
+        { "heading": "3. Pickup and delivery", "body": "Orders are collected at the restaurant at the time given at confirmation. Home delivery, when available, is provided through partner platforms (Glovo, Wolt, Bolt Food) under their terms." },
+        { "heading": "4. Online payment", "body": "Card payments are processed securely through BT iPay, a Banca Transilvania service. ALIVE Bistro does not see or store your card data." },
+        { "heading": "5. Cancellation, returns and complaints", "body": "Cancellation and return conditions are set out in the Cancellation policy and Return policy, which you accept when placing an order." },
+        { "heading": "6. Dispute resolution", "body": "You can contact us at any time with complaints. For alternative dispute resolution you can use ANPC: https://anpc.ro/ce-este-sal/ , and for the EU ODR platform: https://ec.europa.eu/consumers/odr" },
+        { "heading": "7. Governing law", "body": "These terms are governed by Romanian law. We may amend them; the version published on the site applies." }
+      ]
+    },
+    "cancellation": {
+      "title": "Cancellation policy",
+      "sections": [
+        { "heading": "Cancellation by the customer", "body": "You can cancel for free until the restaurant confirms the order or starts preparing it, within 5 minutes of placing it. Cancel by phone at 0737 263 469. Once preparation starts the order cannot be cancelled, because food is made to order." },
+        { "heading": "Cancellation by the restaurant", "body": "We may cancel an order if an item is unavailable, a displayed price was wrong, or we cannot fulfil it. We will notify you immediately." },
+        { "heading": "Refunds", "body": "If you paid online and the order is cancelled under this policy, the amount is refunded to the card used, within 5 working days of cancellation. The time it appears depends on your issuing bank." }
+      ]
+    },
+    "returns": {
+      "title": "Return policy",
+      "sections": [
+        { "heading": "Right of withdrawal", "body": "Our products are freshly prepared food made to order that can spoil quickly. Under art. 16 of Romanian Government Emergency Ordinance 34/2014, the 14-day right of withdrawal does not apply to such products and prepared food cannot be returned. We inform you of this before you place an order." },
+        { "heading": "Wrong, incomplete or defective order", "body": "If you receive different items than ordered, missing items or items of unsatisfactory quality, tell us right away at pickup or the same day at 0737 263 469, with a photo of the item. Depending on the case we will replace the item, issue a voucher or refund the affected item." },
+        { "heading": "Refunds", "body": "Refunds for online payments are made to the card used for the order, within 5 working days of the complaint being approved." },
+        { "heading": "Allergens", "body": "Allergen information is shown in the menu. If you have allergies, tell us before ordering." }
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "sections": [
+        { "heading": "Contact details", "body": "You can reach us about orders, complaints or questions using the details below." }
+      ],
+      "labels": {
+        "legalName": "Company name",
+        "taxId": "Tax ID (CUI)",
+        "registrationNumber": "Trade register no.",
+        "address": "Business address",
+        "phone": "Phone",
+        "email": "Email"
+      }
+    }
   },
   "home": {
     "hero": {

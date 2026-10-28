@@ -1,6 +1,7 @@
 import { InstagramLogo, FacebookLogo, TiktokLogo } from "@phosphor-icons/react"
 import { useTranslation } from "react-i18next"
 import Logo from "./Logo"
+import { legalPages } from "@/features/legal/company"
 
 export default function Footer() {
   const { t } = useTranslation()
@@ -35,7 +36,12 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="mt-8 pt-6 border-t border-brand-green-700/60 text-center text-brand-cream-300/40 text-xs">
+        <nav aria-label={t("legal.navLabel")} className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-brand-cream-300/80">
+          {legalPages.map(id => (
+            <a key={id} href={`/legal/${id}`} className="hover:text-brand-cream-50 transition-colors">{t(`footer.${id}`)}</a>
+          ))}
+        </nav>
+        <div className="mt-6 pt-6 border-t border-brand-green-700/60 text-center text-brand-cream-300/40 text-xs">
           {t("footer.rights", { year: new Date().getFullYear() })}
         </div>
       </div>
