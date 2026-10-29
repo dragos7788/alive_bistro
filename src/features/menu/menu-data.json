@@ -5,6 +5,31 @@
     "iconKey": "fork-knife",
     "categories": [
       {
+        "id": "halloween-special",
+        "label": "Halloween Special Menu",
+        "iconKey": "fork-knife",
+        "items": [
+          {
+            "name": "Meniu Halloween",
+            "description": "510 g · Piept de rață cu piure de dovleac copt și sos de fructe de pădure (390 g), servit împreună cu tartă de dovleac (120 g).\n\nPiept de rață: piept de rață, piure de dovleac și sos de fructe de pădure. Tartă de dovleac: fulgi de ovăz, piure de dovleac, bază de ovăz, ouă, cafea espresso, ulei de cocos, nucă, sirop de agave BIO, scorțișoară și sare.\n\nValori nutriționale pentru meniul complet: 1.246 kcal, proteine 65,4 g, glucide 102,6 g, grăsimi 61,9 g.\n\nAlergeni: gluten, nuci, ouă, lapte, soia.",
+            "description_en": "510 g · Duck breast with roasted pumpkin purée and forest-fruit sauce (390 g), served with pumpkin tart (120 g).\n\nDuck breast: duck breast, pumpkin purée and forest-fruit sauce. Pumpkin tart: oats, pumpkin purée, oat base, eggs, espresso coffee, coconut oil, walnuts, organic agave syrup, cinnamon and salt.\n\nNutrition for the full menu: 1,246 kcal, protein 65.4 g, carbohydrates 102.6 g, fat 61.9 g.\n\nAllergens: gluten, walnuts, eggs, milk, soy.",
+            "price": "65 lei",
+            "imageFile": null,
+            "macros": { "calories": 1246, "protein": "65,4 g", "carbs": "102,6 g", "fat": "61,9 g" }
+          },
+          {
+            "name": "Tartă de dovleac",
+            "name_en": "Pumpkin Tart",
+            "description": "120 g · Fulgi de ovăz, piure de dovleac, bază de ovăz, ouă, cafea espresso, ulei de cocos, nucă, sirop de agave BIO, scorțișoară și sare.\n\nAlergeni: gluten, nuci, ouă, lapte, soia.\n\nInclusă în meniul Halloween complet. Nu se comandă separat.",
+            "description_en": "120 g · Oats, pumpkin purée, oat base, eggs, espresso coffee, coconut oil, walnuts, organic agave syrup, cinnamon and salt.\n\nAllergens: gluten, walnuts, eggs, milk, soy.\n\nIncluded in the full Halloween menu. Not sold separately.",
+            "price": "Inclusă în meniu",
+            "imageFile": null,
+            "menuComponent": true,
+            "macros": { "calories": 489, "protein": "12,9 g", "carbs": "58,6 g", "fat": "23,9 g" }
+          }
+        ]
+      },
+      {
         "id": "breakfast-brunch",
         "label": "Breakfast & Brunch",
         "iconKey": "egg",

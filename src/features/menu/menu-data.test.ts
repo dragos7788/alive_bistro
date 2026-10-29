@@ -43,7 +43,7 @@ describe("PDF menu details", () => {
   })
 
   it("Food_IngredientsAndAllergens_AreComplete", () => {
-    expect(food).toHaveLength(26)
+    expect(food).toHaveLength(28)
     for (const item of food) {
       expect(item.description).toContain("Alergeni:")
       expect(item.description.length).toBeGreaterThan(75)
@@ -51,6 +51,47 @@ describe("PDF menu details", () => {
     expect(food.find(item => item.name === "Granola Bowl")?.description).toContain("albuș de ou")
     expect(food.find(item => item.name === "Veggie Noodles")?.description).not.toContain("tofu")
     expect(food.find(item => item.name === "Salmon Bowl")?.description).toContain("edamame")
+  })
+
+  it("HalloweenMenu_IncludesBothCoursesAtTheCombinedPdfPrice", () => {
+    const category = source[0].categories.find(category => category.id === "halloween-special") as MenuCategory | undefined
+    const menu = category?.items.find(item => item.name === "Meniu Halloween")
+    const tart = category?.items.find(item => item.name === "Tartă de dovleac")
+
+    expect(category?.label).toBe("Halloween Special Menu")
+    expect(source[0].categories.slice(0, 3).map(category => category.id)).toEqual([
+      "halloween-special",
+      "breakfast-brunch",
+      "soup-of-the-day",
+    ])
+    expect(category?.items).toHaveLength(2)
+    expect(menu).toMatchObject({
+      name: "Meniu Halloween",
+      price: "65 lei",
+      macros: {
+        calories: 1246,
+        protein: "65,4 g",
+        carbs: "102,6 g",
+        fat: "61,9 g",
+      },
+    })
+    expect(menu?.menuComponent).toBeUndefined()
+    expect(menu?.description).toContain("Piept de rață")
+    expect(menu?.description).toContain("Tartă de dovleac")
+    expect(menu?.description).toContain("Alergeni:")
+    expect(tart).toMatchObject({
+      name: "Tartă de dovleac",
+      price: "Inclusă în meniu",
+      menuComponent: true,
+      macros: {
+        calories: 489,
+        protein: "12,9 g",
+        carbs: "58,6 g",
+        fat: "23,9 g",
+      },
+    })
+    expect(tart?.description).toContain("120 g")
+    expect(tart?.description).toContain("Alergeni:")
   })
 
   it("Drinks_WithoutPdfNutrition_HaveCompleteEstimatedMacros", () => {

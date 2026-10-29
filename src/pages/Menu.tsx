@@ -15,6 +15,7 @@ import { cartCatalog, summarizeCart, type CartProduct } from "../features/cart/c
 import type { useCart } from "../features/cart/useCart"
 import { CartDialog } from "../features/cart/CartDialog"
 import { AddToCart } from "../features/cart/AddToCart"
+import { HalloweenMenuBanner } from "../features/menu/HalloweenMenuBanner"
 
 
 function CategoryBar({
@@ -59,23 +60,32 @@ function CategoryBar({
         onScroll={updateArrows}
         className={`flex gap-2.5 overflow-x-auto px-6 md:px-10 scroll-pl-6 md:scroll-pl-10 scroll-pr-6 md:scroll-pr-10 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-[padding] duration-300 ease-out ${compact ? "py-1.5" : "py-3"}`}
       >
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={(e) => {
-              onSelect(cat.id)
-              e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" })
-            }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap flex-shrink-0 snap-start transition-all duration-200 font-sans ${
-              activeCategory === cat.id
-                ? "bg-brand-green-700 text-brand-cream-50 shadow-md shadow-brand-green-700/15"
-                : "border border-brand-green-700/10 text-brand-green-700/80 bg-brand-cream-50/70 hover:border-brand-green-700/30 hover:text-brand-green-700 hover:bg-brand-cream-50"
-            }`}
-          >
-            {resolveIcon(cat.iconKey, 18)}
-            {t(`menu.categories.${cat.id}`)}
-          </button>
-        ))}
+        {categories.map((cat) => {
+          const isHalloween = cat.id === "halloween-special"
+          return (
+            <button
+              key={cat.id}
+              onClick={(e) => {
+                onSelect(cat.id)
+                e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" })
+              }}
+              className={`relative flex items-center gap-2 overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold font-sans whitespace-nowrap flex-shrink-0 snap-start transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                isHalloween
+                  ? activeCategory === cat.id
+                    ? "border border-orange-500 bg-orange-200 text-orange-950 shadow-md shadow-orange-900/10"
+                    : "border border-orange-300 bg-orange-50 text-orange-950 hover:border-orange-400 hover:bg-orange-100"
+                  : activeCategory === cat.id
+                    ? "bg-brand-green-700 text-brand-cream-50 shadow-md shadow-brand-green-700/15"
+                    : "border border-brand-green-700/10 text-brand-green-700/80 bg-brand-cream-50/70 hover:border-brand-green-700/30 hover:text-brand-green-700 hover:bg-brand-cream-50"
+              } ${isHalloween ? "focus-visible:outline-orange-700" : "focus-visible:outline-brand-green-700"}`}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                {resolveIcon(cat.iconKey, 18)}
+                {t(`menu.categories.${cat.id}`)}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* Left fade + arrow: shown when there are hidden items to the left */}
@@ -126,8 +136,11 @@ export default function Menu({ cart, menuGroups, isSalesEnabled }: {
   isSalesEnabled: boolean
 }) {
   const { t, i18n } = useTranslation()
+  const hasHalloweenHash = window.location.hash === "#halloween-menu"
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
-  const [activeCategory, setActiveCategory] = useState(menuData[0].categories[0].id)
+  const [activeCategory, setActiveCategory] = useState(
+    hasHalloweenHash ? "halloween-special" : menuData[0].categories[0].id,
+  )
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [addedMessage, setAddedMessage] = useState("")
@@ -210,6 +223,106 @@ export default function Menu({ cart, menuGroups, isSalesEnabled }: {
       anchor.getBoundingClientRect().top + window.scrollY - STICKY_OFFSET - navHeight - 12
     window.scrollTo({ top: Math.max(0, target), behavior: "smooth" })
   }, [activeCategory, activeGroup])
+
+  const menuCards = (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={activeCategory}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.35 }}
+        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+      >
+        {activeCategoryObj.items.map((item, i) => (
+          <motion.div
+            key={item.name}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.07 }}
+            className="group flex w-full flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 text-left transition-all duration-300 hover:border-brand-green-700/25 hover:bg-white hover:shadow-lg"
+          >
+            <button type="button" onClick={() => setSelectedItem(item)} className="flex flex-1 cursor-pointer flex-col text-left">
+              <div className="relative aspect-square w-full overflow-hidden bg-white">
+                {item.image ? <img
+                  src={item.image}
+                  srcSet={item.imageSrcSet}
+                  sizes="(min-width: 944px) 440px, (min-width: 768px) calc((100vw - 64px) / 2), calc(100vw - 48px)"
+                  loading={i < 2 ? "eager" : "lazy"}
+                  decoding="async"
+                  alt={item.name}
+                  referrerPolicy="no-referrer"
+                  className="absolute max-w-none bg-white"
+                  style={getImageCropStyle(
+                    item.imagePosition ?? { x: 50, y: 50 },
+                    item.imageZoom ?? 100,
+                    activeCategoryObj.id === "wine-prosecco" ? "contain" : "cover",
+                  )}
+                /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
+                {item.discountPercent ? (
+                  <span className="absolute right-3 top-3 rounded-full bg-brand-green-700 px-3 py-1.5 text-xs font-extrabold text-brand-cream-50 shadow-lg">
+                    {t("promotion.discount", { percent: item.discountPercent })}
+                  </span>
+                ) : null}
+                {item.tag && (
+                  <span className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${tagColors[item.tag] ?? "bg-brand-cream-200 text-brand-dark/60"}`}>
+                    {item.tag}
+                  </span>
+                )}
+                <span className="absolute bottom-3 right-3 flex translate-y-1 items-center gap-1.5 rounded-full bg-brand-cream-50/90 px-2.5 py-1 text-[11px] font-bold text-brand-green-700 opacity-0 shadow-sm backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <Plus className="h-3.5 w-3.5" /> {t("menu.details")}
+                </span>
+              </div>
+
+              <div className="flex flex-1 flex-col p-4 md:p-5">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                  <h3 className="min-w-0 flex-1 text-brand-dark font-semibold group-hover:text-brand-green-700 transition-colors text-lg sm:text-xl font-serif first-letter:uppercase leading-snug tracking-tight">{item.name}</h3>
+                  <MenuPrice item={item} showDiscount={false} />
+                </div>
+                {item.menuComponent && (
+                  <p className="mb-3 text-xs font-semibold leading-relaxed text-brand-green-800">
+                    {t("cart.includedInMenu")}
+                  </p>
+                )}
+                {activeCategoryObj.id === "tea-matcha" && (
+                  <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
+                    {(i18n.language.startsWith("en") ? item.description_en ?? item.description : item.description).split("\n\n", 1)[0]}
+                  </p>
+                )}
+                {item.macros && (
+                  <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+                    {item.nutritionEstimated && (
+                      <span className="rounded border border-amber-900/10 bg-amber-100 px-2.5 py-1 font-semibold text-amber-900">
+                        {t("menu.estimatedBadge")}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1.5 rounded border border-brand-green-700/10 bg-brand-green-700/10 px-2.5 py-1 font-bold text-brand-green-700">
+                      <Flame className="h-3.5 w-3.5" /> {item.macros.calories} {t("menu.macros.calories")}
+                    </span>
+                    <span className="flex items-center gap-1.5 rounded border border-brand-green-700/5 bg-brand-cream-200/50 px-2.5 py-1 font-medium text-brand-dark/80" title={t("menu.macros.protein")}>
+                      <Beef className="h-3.5 w-3.5 text-red-700/80" /> {item.macros.protein} {t("menu.macros.protein")}
+                    </span>
+                    {item.macros.carbs && <span className="flex items-center gap-1.5 rounded border border-brand-green-700/5 bg-brand-cream-200/50 px-2.5 py-1 font-medium text-brand-dark/80" title={t("menu.macros.carbs")}>
+                      <Wheat className="h-3.5 w-3.5 text-amber-700/80" /> {item.macros.carbs} {t("menu.macros.carbs")}
+                    </span>}
+                    <span className="flex items-center gap-1.5 rounded border border-brand-green-700/5 bg-brand-cream-200/50 px-2.5 py-1 font-medium text-brand-dark/80" title={t("menu.macros.fat")}>
+                      <Nut className="h-3.5 w-3.5 text-amber-700" /> {item.macros.fat} {t("menu.macros.fat")}
+                    </span>
+                  </div>
+                )}
+                <p className="mt-auto flex items-center gap-1.5 pt-3 text-[11px] font-semibold text-brand-green-700/70 transition-colors group-hover:text-brand-green-700 sm:text-xs">
+                  <Info className="h-3.5 w-3.5" /> {t("menu.clickHint")}
+                </p>
+              </div>
+            </button>
+            <div className="px-4 pb-4 md:px-5 md:pb-5">
+              {isSalesEnabled && <AddToCart categoryId={activeCategoryObj.id} item={item} onAdd={handleAddToCart} items={cart.items} />}
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </AnimatePresence>
+  )
 
   return (
     <section id="menu" aria-labelledby="menu-title" className="min-h-screen pb-24 pt-32 px-6 bg-brand-cream-100 overflow-x-clip">
@@ -311,7 +424,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled }: {
         </div>
 
         {/* Anchor marking the top of the product list (scroll target on list change) */}
-        <div ref={listAnchorRef} aria-hidden className="h-0" />
+        <div id="halloween-menu" ref={listAnchorRef} aria-hidden className="h-0" />
 
         {/* Menu Items */}
         {activeCategoryObj.id === "tea-matcha" && (
@@ -324,103 +437,9 @@ export default function Menu({ cart, menuGroups, isSalesEnabled }: {
             </p>
           </div>
         )}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
-            {activeCategoryObj.items.map((item, i) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.07 }}
-                className="text-left w-full flex flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 hover:bg-white hover:shadow-lg hover:border-brand-green-700/25 transition-all duration-300 group"
-              >
-                <button type="button" onClick={() => setSelectedItem(item)} className="flex flex-1 flex-col text-left cursor-pointer">
-                  <div className="relative w-full aspect-square overflow-hidden bg-white">
-                    {item.image ? <img
-                      src={item.image}
-                      srcSet={item.imageSrcSet}
-                      sizes="(min-width: 944px) 440px, (min-width: 768px) calc((100vw - 64px) / 2), calc(100vw - 48px)"
-                      loading={i < 2 ? "eager" : "lazy"}
-                      decoding="async"
-                      alt={item.name}
-                      referrerPolicy="no-referrer"
-                      className="absolute max-w-none bg-white"
-                      style={getImageCropStyle(
-                        item.imagePosition ?? { x: 50, y: 50 },
-                        item.imageZoom ?? 100,
-                        activeCategoryObj.id === "wine-prosecco" ? "contain" : "cover",
-                      )}
-                    /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
-                    {item.discountPercent ? (
-                      <span className="absolute right-3 top-3 rounded-full bg-brand-green-700 px-3 py-1.5 text-xs font-extrabold text-brand-cream-50 shadow-lg">
-                        {t("promotion.discount", { percent: item.discountPercent })}
-                      </span>
-                    ) : null}
-                    {item.tag && (
-                      <span className={`absolute top-3 left-3 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm ${tagColors[item.tag] ?? "bg-brand-cream-200 text-brand-dark/60"}`}>
-                        {item.tag}
-                      </span>
-                    )}
-                    {/* Click-for-details hint, revealed on hover */}
-                    <span className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-cream-50/90 backdrop-blur text-brand-green-700 text-[11px] font-bold shadow-sm opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                      <Plus className="w-3.5 h-3.5" /> {t("menu.details")}
-                    </span>
-                  </div>
-
-                <div className="flex flex-col flex-1 p-4 md:p-5">
-                    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-                      <h3 className="min-w-0 flex-1 text-brand-dark font-semibold group-hover:text-brand-green-700 transition-colors text-lg sm:text-xl font-serif first-letter:uppercase leading-snug tracking-tight">{item.name}</h3>
-                      <MenuPrice item={item} showDiscount={false} />
-                    </div>
-                    {activeCategoryObj.id === "tea-matcha" && (
-                      <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
-                      {(i18n.language.startsWith("en") ? item.description_en ?? item.description : item.description).split("\n\n", 1)[0]}
-                    </p>
-                  )}
-
-                  {/* Macronutrients & Calories badges */}
-                  {item.macros && (
-                    <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
-                      {item.nutritionEstimated && (
-                        <span className="px-2.5 py-1 rounded bg-amber-100 text-amber-900 font-semibold border border-amber-900/10">
-                          {t("menu.estimatedBadge")}
-                        </span>
-                      )}
-                      <span className="px-2.5 py-1 rounded bg-brand-green-700/10 text-brand-green-700 font-bold flex items-center gap-1.5 border border-brand-green-700/10">
-                        <Flame className="w-3.5 h-3.5" /> {item.macros.calories} {t("menu.macros.calories")}
-                      </span>
-                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.protein")}>
-                        <Beef className="w-3.5 h-3.5 text-red-700/80" /> {item.macros.protein} {t("menu.macros.protein")}
-                      </span>
-                      {item.macros.carbs && <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.carbs")}>
-                        <Wheat className="w-3.5 h-3.5 text-amber-700/80" /> {item.macros.carbs} {t("menu.macros.carbs")}
-                      </span>}
-                      <span className="px-2.5 py-1 rounded bg-brand-cream-200/50 text-brand-dark/80 font-medium flex items-center gap-1.5 border border-brand-green-700/5" title={t("menu.macros.fat")}>
-                        <Nut className="w-3.5 h-3.5 text-amber-700" /> {item.macros.fat} {t("menu.macros.fat")}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Suggestion that a click opens the full description */}
-                  <p className="mt-auto pt-3 flex items-center gap-1.5 text-brand-green-700/70 group-hover:text-brand-green-700 text-[11px] sm:text-xs font-semibold font-sans transition-colors">
-                    <Info className="w-3.5 h-3.5" /> {t("menu.clickHint")}
-                  </p>
-                </div>
-                </button>
-                <div className="px-4 pb-4 md:px-5 md:pb-5">
-                  {isSalesEnabled && <AddToCart categoryId={activeCategoryObj.id} item={item} onAdd={handleAddToCart} items={cart.items} />}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        {activeCategoryObj.id === "halloween-special"
+          ? <HalloweenMenuBanner />
+          : menuCards}
 
         {activeCategoryObj.id === "coffee-bar" && (
           <motion.div

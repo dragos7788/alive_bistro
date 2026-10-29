@@ -43,6 +43,7 @@
     "add": "Add to cart",
     "choosePortion": "Choose the portion to add:",
     "alcoholNotOrderable": "Alcoholic drinks cannot be ordered online.",
+    "includedInMenu": "Included in the full Halloween menu (65 lei); not sold separately.",
     "priceUnavailable": "The price needs confirmation; this product cannot be added yet.",
     "addProduct": "Add {{name}} to cart",
     "added": "{{name}} was added to your cart.",
@@ -201,6 +202,7 @@
       "subtitle": "The perfect balance between <span1>nutritious food</span1>, <span2>specialty coffee</span2>, and <span3>community</span3>.",
       "button": "Explore the Menu",
       "performanceButton": "Build your plate",
+      "halloweenButton": "Open the Halloween special menu",
       "scrollDown": "Scroll down"
     },
     "story": {
@@ -454,6 +456,10 @@
     "estimatedBadge": "Estimated",
     "matchaTitle": "Matcha, three ways",
     "matchaDesc": "Choose classic matcha, a Matcha Latte, or the iced version.",
+    "halloweenTitle": "Halloween Special Menu",
+    "halloweenCompleteMenu": "Full menu",
+    "halloweenPosterAlt": "Halloween Special Menu poster: duck breast with pumpkin purée, pumpkin tart, and the full menu price of 65 lei.",
+    "halloweenOpenPoster": "Open the full-size poster",
     "macros": {
       "calories": "kcal",
       "protein": "Protein",
@@ -467,6 +473,7 @@
       "balanced-mains-salads": "Balanced Mains & Salads",
       "nourishing-bowls": "Nourishing Bowls",
       "sweet-no-regrets": "Sweet. No Regrets.",
+      "halloween-special": "Halloween Special",
       "drinks": "Drinks",
       "coffee-bar": "Coffee Bar",
       "alive-boosts": "Alive Boosts",

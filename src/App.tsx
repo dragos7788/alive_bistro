@@ -49,7 +49,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      if (!isMenuPage && ["#menu", "#custom-menu", "#menu-calculator"].includes(window.location.hash)) {
+      if (!isMenuPage && ["#menu", "#custom-menu", "#menu-calculator", "#halloween-menu"].includes(window.location.hash)) {
         window.location.replace("/menu" + window.location.search + window.location.hash)
         return
       }

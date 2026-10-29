@@ -28,6 +28,16 @@ vi.mock("./seed", () => ({
           nutritionEstimated: true,
         },
       ],
+    }, {
+      id: "halloween-special",
+      label: "Halloween Special Menu",
+      iconKey: "fork-knife",
+      items: [{
+        name: "Tartă de dovleac",
+        description: "120 g · Tartă de dovleac.",
+        price: "Inclusă în meniu",
+        menuComponent: true,
+      }],
     }],
   }, {
     id: "drinks",
@@ -57,7 +67,14 @@ describe("getMenu", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({
       data: [{
         ...menuData[0],
-        categories: [{ ...menuData[0].categories[0], items: [serverItem] }],
+        categories: [
+          { ...menuData[0].categories[0], items: [serverItem] },
+          { ...menuData[0].categories[1], items: [{
+            name: "Tartă de dovleac",
+            description: "120 g · Tartă editată în admin.",
+            price: "Inclusă în meniu",
+          }] },
+        ],
       }],
     })))
 
@@ -66,6 +83,7 @@ describe("getMenu", () => {
     expect(groups[0].categories[0].items[0]).toEqual({
       ...serverItem, image: localItem.image, imageSrcSet: localItem.imageSrcSet, macros: localItem.macros,
     })
+    expect(groups[0].categories[1].items[0].menuComponent).toBe(true)
   })
 
   it("ApiWithAdminNutrition_PreservesValuesIncludingMissingCarbsAndZeroCalories", async () => {

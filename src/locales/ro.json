@@ -43,6 +43,7 @@
     "add": "Adaugă în coș",
     "choosePortion": "Alege porția de adăugat:",
     "alcoholNotOrderable": "Băuturile alcoolice nu pot fi comandate online.",
+    "includedInMenu": "Inclusă în meniul complet de Halloween (65 lei); nu se comandă separat.",
     "priceUnavailable": "Prețul necesită confirmare; produsul nu poate fi adăugat momentan.",
     "addProduct": "Adaugă {{name}} în coș",
     "added": "{{name}} a fost adăugat în coș.",
@@ -201,6 +202,7 @@
       "subtitle": "Echilibrul perfect între <span1>mâncare nutritivă</span1>, <span2>cafea de specialitate</span2> și <span3>comunitate</span3>.",
       "button": "Explorează Meniul",
       "performanceButton": "Construiește-ți farfuria",
+      "halloweenButton": "Deschide meniul special de Halloween",
       "scrollDown": "Scroll down"
     },
     "story": {
@@ -457,6 +459,10 @@
     "estimatedBadge": "Estimare",
     "matchaTitle": "Matcha, în trei variante",
     "matchaDesc": "Alege matcha simplă, Matcha Latte sau varianta rece cu gheață.",
+    "halloweenTitle": "Meniu special de Halloween",
+    "halloweenCompleteMenu": "Meniu complet",
+    "halloweenPosterAlt": "Afișul Halloween Special Menu: piept de rață cu piure de dovleac, tartă de dovleac și prețul meniului complet de 65 lei.",
+    "halloweenOpenPoster": "Deschide afișul la dimensiune completă",
     "macros": {
       "calories": "kcal",
       "protein": "Proteine",
@@ -470,6 +476,7 @@
       "balanced-mains-salads": "Feluri principale & Salate",
       "nourishing-bowls": "Boluri nutritive",
       "sweet-no-regrets": "Dulce, fără regrete",
+      "halloween-special": "Meniu Halloween",
       "drinks": "Băuturi",
       "coffee-bar": "Cafea",
       "alive-boosts": "Băuturi funcționale",

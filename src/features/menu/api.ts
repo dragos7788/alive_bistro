@@ -31,6 +31,7 @@ export async function getMenu(): Promise<MenuGroup[]> {
                   ...(item.description_en || localItem?.description_en
                     ? { description_en: item.description_en ?? localItem?.description_en }
                     : {}),
+                  ...(item.menuComponent || localItem?.menuComponent ? { menuComponent: true } : {}),
                   macros: item.macros ?? localItem?.macros,
                   ...(item.nutritionEstimated || localItem?.nutritionEstimated ? { nutritionEstimated: true } : {}),
                 }

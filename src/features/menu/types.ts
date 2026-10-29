@@ -20,6 +20,7 @@ export type MenuItem = {
   imagePosition?: { x: number; y: number }
   imageZoom?: number
   tag?: string
+  menuComponent?: boolean
   macros?: Macros
   nutritionEstimated?: boolean
 }

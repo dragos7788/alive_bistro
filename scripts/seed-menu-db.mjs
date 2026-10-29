@@ -44,7 +44,7 @@ for (const group of menuData) {
     for (const item of category.items) {
       const id = `${category.id}--${slugify(item.name)}`
       lines.push(
-        `INSERT OR REPLACE INTO items (id, category_id, name, description, price, image_url, tag, calories, protein, carbs, fat, sort_order) VALUES (${q(id)}, ${q(category.id)}, ${q(item.name)}, ${q(item.description)}, ${q(item.price)}, NULL, ${q(item.tag)}, ${q(item.macros?.calories)}, ${q(item.macros?.protein)}, ${q(item.macros?.carbs)}, ${q(item.macros?.fat)}, ${itemOrder++});`,
+        `INSERT OR REPLACE INTO items (id, category_id, name, description, price, image_url, tag, calories, protein, carbs, fat, sort_order, menu_component) VALUES (${q(id)}, ${q(category.id)}, ${q(item.name)}, ${q(item.description)}, ${q(item.price)}, NULL, ${q(item.tag)}, ${q(item.macros?.calories)}, ${q(item.macros?.protein)}, ${q(item.macros?.carbs)}, ${q(item.macros?.fat)}, ${itemOrder++}, ${item.menuComponent ? 1 : 0});`,
       )
     }
   }

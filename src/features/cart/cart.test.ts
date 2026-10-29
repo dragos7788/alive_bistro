@@ -145,6 +145,7 @@ describe("cart", () => {
   it("supports every non-alcoholic published menu price and excludes alcohol", () => {
     for (const group of menu) for (const category of group.categories) for (const item of category.items) {
       if (isAlcoholCategory(category.id)) expect(cartOptions(category.id, item), item.name).toEqual([])
+      else if ("menuComponent" in item && item.menuComponent) expect(cartOptions(category.id, item), item.name).toEqual([])
       else expect(cartOptions(category.id, item).length, item.name).toBeGreaterThan(0)
     }
   })

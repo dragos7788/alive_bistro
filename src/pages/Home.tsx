@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { Coffee, Leaf, Users, Sparkles, Compass, Heart, Eye } from "lucide-react"
 import { useTranslation, Trans } from "react-i18next"
 import aliveLogo from "../assets/Group of 7 Objectslogo verde svg.svg"
+import halloweenLogo from "../assets/menu/halloween/SM - Alive Bistro.png"
 import interiorPhoto from "../assets/alive-bistro-interior.jpeg"
 import socialStudyPhoto from "../assets/social-study-workspace.png"
 import bistroPhoto from "../assets/bistro-specialty-coffee.png"
@@ -113,7 +114,7 @@ function ParallaxHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap"
         >
           <a
             href="/menu"
@@ -128,6 +129,18 @@ function ParallaxHero() {
             <Sparkles size={18} className="shrink-0" aria-hidden="true" />
             {t("home.hero.performanceButton")}
           </a>
+          <div className="flex w-full justify-center sm:basis-full">
+            <a
+              href="/menu#halloween-menu"
+              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-orange-500/60 bg-white/90 px-3 py-2 shadow-md shadow-orange-900/10 transition hover:-translate-y-0.5 hover:border-orange-600 hover:bg-orange-50 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-orange-700"
+            >
+              <img
+                src={halloweenLogo}
+                alt={t("home.hero.halloweenButton")}
+                className="w-32 sm:w-36"
+              />
+            </a>
+          </div>
         </motion.div>
       </motion.div>
 
