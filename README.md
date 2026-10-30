@@ -256,7 +256,12 @@ Configurare inainte de activare:
    pe telefon. Pe iOS/iPadOS 16.4+, Web Push necesita PWA adaugata pe Home Screen.
 
 Adminul are fila **Campanii push** (`/admin/push`), cu titlu, mesaj, destinatie
-interna si confirmare inainte de trimitere catre toate dispozitivele eligibile.
+interna si confirmare inainte de trimitere. Implicit se trimite doar clientilor
+bifati din lista eligibila (nume, email sau ID, numar de dispozitive), cu cautare.
+Nicio selectie nu trimite nimic; cautarea nu elimina selectiile ascunse.
+Optiunea explicita „Toti clientii cu acord push activ” pastreaza trimiterea
+generala. Sunt vizate toate dispozitivele eligibile ale clientilor selectati.
+Aplica migrarea `0025_push_audience.sql` inainte de publicarea acestei versiuni.
 Destinatarii sunt fixati la crearea campaniei, iar acordul este reverificat la
 fiecare trimitere. Loturile de maximum 10 sunt procesate cat timp pagina este
 deschisa. Istoricul persistent permite reluarea doar a loturilor neprocesate.
@@ -267,6 +272,15 @@ Abonamentele respinse cu 404/410 sunt eliminate automat.
 
 API: `GET/POST /api/customer/push` (sesiune client, Origin exact pentru scriere),
 `GET/POST /api/admin/push` (Cloudflare Access si Origin exact pentru scriere).
+La crearea unei campanii, `{action:"create",id,title,body,path,audience:"selected",customerIds:[...]}`
+limiteaza audienta pe server. Lista trebuie sa fie nevida; ID-urile duplicate
+sunt deduplicate, iar ID-urile inexistente sau fara acord/abonament sunt excluse,
+niciodata inlocuite cu toti clientii. Pentru trimitere generala foloseste
+`audience:"all"` fara `customerIds`; omiterea audientei pastreaza compatibilitatea
+cu vechiul API. Selectia normalizata este persistata pentru verificarea
+idempotentei; acelasi ID de campanie cu alta selectie produce 409.
+GET returneaza `recipients` doar pentru clienti eligibili, fara endpointuri
+sau chei push. Operatiunea `send` foloseste doar destinatarii deja salvati.
 Endpointurile acceptate sunt limitate la furnizorii push de browser;
 redirectionarile HTTP sunt interzise. Endpointurile si cheile dispozitivului
 nu se scriu in loguri si nu se returneaza in raportul admin.

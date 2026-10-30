@@ -6,6 +6,16 @@ import type { Ctx, Env } from "../../_lib/types"
 
 type Campaign = { id: string; title: string; body: string; path: string; created_at: number }
 
+function audienceKey(input: Record<string, unknown>): string {
+  const audience = input.audience === undefined ? "all" : input.audience
+  if (audience === "all" && input.customerIds === undefined) return "all"
+  if (audience !== "selected" || !Array.isArray(input.customerIds) || !input.customerIds.length
+    || !input.customerIds.every((id: unknown) => typeof id === "string" && id.length > 0 && id.length <= 128)) {
+    throw new CustomerAuthError("INVALID_INPUT")
+  }
+  return JSON.stringify([...new Set<string>(input.customerIds)].sort())
+}
+
 async function campaignStatus(env: Env, id: string) {
   const campaign = await env.DB.prepare("SELECT id,title,body,path,created_at FROM push_campaigns WHERE id=?")
     .bind(id).first<Campaign>()
@@ -33,7 +43,12 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
     FROM customer_push_subscriptions s WHERE
     (SELECT action FROM customer_push_consent_events WHERE customer_id=s.customer_id ORDER BY id DESC LIMIT 1)='granted'`)
     .first()
-  return ok({ configured, audience, campaigns })
+  const { results: recipients } = await env.DB.prepare(`SELECT c.id,c.name,c.email,count(*) AS devices
+    FROM customers c JOIN customer_push_subscriptions s ON s.customer_id=c.id
+    WHERE (SELECT action FROM customer_push_consent_events
+      WHERE customer_id=c.id ORDER BY id DESC LIMIT 1)='granted'
+    GROUP BY c.id ORDER BY c.name COLLATE NOCASE,c.id`).all()
+  return ok({ configured, audience, campaigns, recipients })
 }
 
 export async function onRequestPost(ctx: Ctx): Promise<Response> {
@@ -52,20 +67,24 @@ export async function onRequestPost(ctx: Ctx): Promise<Response> {
       if (typeof input.title !== "string" || !input.title.trim() || input.title.length > 80
         || typeof input.body !== "string" || !input.body.trim() || input.body.length > 240
         || !isPushPath(input.path)) throw new CustomerAuthError("INVALID_INPUT")
-      const existing = await env.DB.prepare("SELECT id,title,body,path FROM push_campaigns WHERE id=?")
-        .bind(input.id).first<Campaign>()
+      const target = audienceKey(input)
+      const existing = await env.DB.prepare("SELECT id,title,body,path,audience_key FROM push_campaigns WHERE id=?")
+        .bind(input.id).first<Campaign & { audience_key: string }>()
       if (existing) {
-        if (existing.title !== input.title.trim() || existing.body !== input.body.trim() || existing.path !== input.path) {
+        if (existing.title !== input.title.trim() || existing.body !== input.body.trim() || existing.path !== input.path
+          || existing.audience_key !== target) {
           throw new CustomerAuthError("CAMPAIGN_CONFLICT", 409)
         }
       } else {
         await env.DB.batch([
-          env.DB.prepare("INSERT INTO push_campaigns(id,title,body,path,created_at,created_by) VALUES (?,?,?,?,?,?)")
-            .bind(input.id, input.title.trim(), input.body.trim(), input.path, now, getAccessEmail(request) ?? "local-admin"),
+          env.DB.prepare("INSERT INTO push_campaigns(id,title,body,path,created_at,created_by,audience_key) VALUES (?,?,?,?,?,?,?)")
+            .bind(input.id, input.title.trim(), input.body.trim(), input.path, now, getAccessEmail(request) ?? "local-admin", target),
           env.DB.prepare(`INSERT INTO push_deliveries(campaign_id,subscription_id,updated_at)
             SELECT ?,s.id,? FROM customer_push_subscriptions s WHERE
+            (?='all' OR s.customer_id IN (SELECT value FROM json_each(CASE WHEN ?='all' THEN '[]' ELSE ? END)))
+            AND
             (SELECT action FROM customer_push_consent_events WHERE customer_id=s.customer_id ORDER BY id DESC LIMIT 1)='granted'`)
-            .bind(input.id, now),
+            .bind(input.id, now, target, target, target),
         ])
       }
     } else if (input.action === "send") {

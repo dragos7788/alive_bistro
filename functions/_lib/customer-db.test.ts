@@ -39,6 +39,7 @@ describe("Customer identity and loyalty persistence", () => {
     db.exec(readFileSync(new URL("../../migrations/0013_web_push.sql", import.meta.url), "utf8"))
     db.exec(readFileSync(new URL("../../migrations/0014_marketing_invitation.sql", import.meta.url), "utf8"))
     db.exec(readFileSync(new URL("../../migrations/0024_push_retention.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0025_push_audience.sql", import.meta.url), "utf8"))
     vi.mocked(sendPush).mockReset().mockResolvedValue(201)
     // Adapter executes real SQLite, including atomic rollback and trigger behavior.
     const bound = new WeakMap<object, () => void>()
@@ -123,6 +124,111 @@ describe("Customer identity and loyalty persistence", () => {
     action: "create", id: "11111111-1111-4111-8111-111111111111", title: "Oferta ALIVE",
     body: "Descopera meniul.", path: "/menu",
   }
+
+  it("lists only eligible recipients without exposing subscription secrets", async () => {
+    const cookie = await pushCookie()
+    await subscribePush({ request: post("push", pushSubscribeInput(), cookie), env, params: {} })
+
+    const response = await pushOverview({ request: adminPushRequest(), env, params: {} })
+    const result = await response.json()
+
+    expect(result.data.recipients).toEqual([{ id: "buyer", name: "Buyer", email: null, devices: 1 }])
+    expect(JSON.stringify(result)).not.toContain(subscription.endpoint)
+    expect(JSON.stringify(result)).not.toContain(subscription.keys.auth)
+  })
+
+  it("sends selected campaigns only to the selected customer's devices", async () => {
+    for (const customer of ["buyer", "other"]) {
+      const cookie = await pushCookie(customer)
+      for (let device = 0; device < 2; device++) {
+        await subscribePush({ request: post("push", {
+          ...pushSubscribeInput(),
+          subscription: { ...subscription, endpoint: `https://fcm.googleapis.com/wp/${customer}-${device}` },
+        }, cookie), env, params: {} })
+      }
+    }
+    const input = { ...campaignInput, audience: "selected", customerIds: ["buyer", "buyer"] }
+    await pushCampaign({ request: adminPushRequest(input), env, params: {} })
+    await pushCampaign({ request: adminPushRequest(input), env, params: {} })
+
+    const sent = await pushCampaign({
+      request: adminPushRequest({ action: "send", id: input.id }), env, params: {},
+    })
+
+    expect((await sent.json()).data).toMatchObject({ total: 2, accepted: 2 })
+    expect(sendPush).toHaveBeenCalledTimes(2)
+    for (const [, target] of vi.mocked(sendPush).mock.calls) expect(target.customer_id).toBe("buyer")
+    const conflict = await pushCampaign({
+      request: adminPushRequest({ ...input, customerIds: ["other"] }), env, params: {},
+    })
+    expect(conflict.status).toBe(409)
+  })
+
+  it.each([
+    { audience: "selected", customerIds: [] },
+    { audience: "selected" },
+    { audience: "selected", customerIds: [null] },
+    { audience: "selected", customerIds: [""] },
+    { audience: "everyone" },
+    { audience: "all", customerIds: ["buyer"] },
+  ])("rejects malformed or empty audiences: %j", async audience => {
+    const response = await pushCampaign({
+      request: adminPushRequest({ ...campaignInput, ...audience }), env, params: {},
+    })
+
+    expect(response.status).toBe(400)
+    expect(db.prepare("SELECT count(*) AS n FROM push_campaigns").get()?.n).toBe(0)
+  })
+
+  it("does not fall back to all recipients when selected users have no consent", async () => {
+    const cookie = await pushCookie()
+    await subscribePush({ request: post("push", pushSubscribeInput(), cookie), env, params: {} })
+
+    const response = await pushCampaign({
+      request: adminPushRequest({ ...campaignInput, audience: "selected", customerIds: ["other", "missing"] }),
+      env, params: {},
+    })
+
+    expect((await response.json()).data).toMatchObject({ total: 0 })
+    expect(sendPush).not.toHaveBeenCalled()
+  })
+
+  it("rechecks selected consent and does not add newly subscribed devices to a saved campaign", async () => {
+    const buyerCookie = await pushCookie()
+    await subscribePush({ request: post("push", pushSubscribeInput(), buyerCookie), env, params: {} })
+    const input = { ...campaignInput, audience: "selected", customerIds: ["buyer", "other"] }
+    await pushCampaign({ request: adminPushRequest(input), env, params: {} })
+    await subscribePush({ request: post("push", { action: "withdraw" }, buyerCookie), env, params: {} })
+    const otherCookie = await pushCookie("other")
+    await subscribePush({ request: post("push", {
+      ...pushSubscribeInput(), subscription: { ...subscription, endpoint: "https://fcm.googleapis.com/wp/new" },
+    }, otherCookie), env, params: {} })
+    await pushCampaign({
+      request: adminPushRequest({ ...input, customerIds: ["other", "buyer"] }), env, params: {},
+    })
+
+    const response = await pushCampaign({
+      request: adminPushRequest({ action: "send", id: input.id }), env, params: {},
+    })
+
+    expect((await response.json()).data).toMatchObject({ total: 1, skipped: 1, accepted: 0 })
+    expect(sendPush).not.toHaveBeenCalled()
+  })
+
+  it("includes every eligible customer when all recipients are explicitly requested", async () => {
+    for (const customer of ["buyer", "other"]) {
+      const cookie = await pushCookie(customer)
+      await subscribePush({ request: post("push", {
+        ...pushSubscribeInput(), subscription: { ...subscription, endpoint: `https://fcm.googleapis.com/wp/${customer}` },
+      }, cookie), env, params: {} })
+    }
+
+    const response = await pushCampaign({
+      request: adminPushRequest({ ...campaignInput, audience: "all" }), env, params: {},
+    })
+
+    expect((await response.json()).data).toMatchObject({ total: 2, pending: 2 })
+  })
 
   it("claims the invitation once per account across sessions without granting either consent", async () => {
     const cookie = await pushCookie()
