@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Download, X } from "lucide-react"
+import { PublicLink } from "./PublicLink"
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -92,8 +93,8 @@ export function InstallToast() {
               <Download size={16} aria-hidden="true" />
               {t(isInstalling ? "installToast.installing" : "installToast.install")}
             </button>
-            <a href="/#community" onClick={() => setIsDismissed(true)}
-              className={`${buttonClass} underline`}>{t("installToast.community")}</a>
+            <PublicLink href="/#community" onClick={() => setIsDismissed(true)}
+              className={`${buttonClass} underline`}>{t("installToast.community")}</PublicLink>
           </div>
           <p className="mt-2 text-xs leading-relaxed">{t("installToast.membershipNote")}</p>
           <div id="install-toast-instructions" hidden={!showInstructions} className="mt-3 space-y-2 text-sm">

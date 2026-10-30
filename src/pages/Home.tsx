@@ -11,6 +11,7 @@ import coffeeLattePhoto from "../assets/specialty-coffee-latte.png"
 import aliveTalksPhoto from "../assets/alive-talks.png"
 import socialSpacePhoto from "../assets/social-space.jpeg"
 import foodSpreadPhoto from "../assets/alive-food-spread.jpeg"
+import { PublicLink } from "../components/PublicLink"
 
 const brandValuesKeys = [
   {
@@ -116,21 +117,21 @@ function ParallaxHero() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap"
         >
-          <a
+          <PublicLink
             href="/menu"
             className="w-full sm:w-auto px-8 py-4 bg-brand-green-700 hover:bg-brand-green-800 active:bg-brand-green-900 text-brand-cream-50 font-bold rounded-full transition-all duration-200 shadow-md shadow-brand-green-700/15 text-center focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-brand-green-700"
           >
             {t("home.hero.button")}
-          </a>
-          <a
+          </PublicLink>
+          <PublicLink
             href="/build-your-plate"
             className="performance-link inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 font-bold rounded-full transition-colors duration-200 text-center"
           >
             <Sparkles size={18} className="shrink-0" aria-hidden="true" />
             {t("home.hero.performanceButton")}
-          </a>
+          </PublicLink>
           <div className="flex w-full justify-center sm:basis-full">
-            <a
+            <PublicLink
               href="/menu#halloween-menu"
               className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-orange-500/60 bg-white/90 px-3 py-2 shadow-md shadow-orange-900/10 transition hover:-translate-y-0.5 hover:border-orange-600 hover:bg-orange-50 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-orange-700"
             >
@@ -139,7 +140,7 @@ function ParallaxHero() {
                 alt={t("home.hero.halloweenButton")}
                 className="w-32 sm:w-36"
               />
-            </a>
+            </PublicLink>
           </div>
         </motion.div>
       </motion.div>

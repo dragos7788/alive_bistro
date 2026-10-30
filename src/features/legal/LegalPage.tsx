@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { company, legalPages, type LegalPageId } from "./company"
+import { PublicLink } from "../../components/PublicLink"
 
 interface Section { heading: string; body: string }
 
@@ -33,7 +34,7 @@ export function LegalPage({ pageId }: { pageId: LegalPageId }) {
       </div>
       <nav aria-label={t("legal.navLabel")} className="mt-10 flex flex-wrap gap-4 border-t border-brand-green-800/15 pt-6 text-sm">
         {legalPages.filter(id => id !== pageId).map(id => (
-          <a key={id} href={`/legal/${id}`} className="underline hover:text-brand-green-700">{t(`legal.${id}.title`)}</a>
+          <PublicLink key={id} href={`/legal/${id}`} className="underline hover:text-brand-green-700">{t(`legal.${id}.title`)}</PublicLink>
         ))}
       </nav>
     </main>

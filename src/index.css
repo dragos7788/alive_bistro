@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+.public-page-transition {
+  animation: public-page-enter 140ms ease-out;
+}
+
+@keyframes public-page-enter {
+  from { opacity: 0.75; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-page-transition { animation: none; }
+}
+
 @theme {
   --font-serif: "Cormorant Garamond", serif;
   --font-sans: "Plus Jakarta Sans", sans-serif;

@@ -8,6 +8,7 @@ import { resolveIcon } from "../features/menu/icons"
 import { menuData } from "../features/menu/seed"
 import { continuousMenu } from "../features/menu/continuous-menu"
 import { MenuPrice } from "../features/pricing/MenuPrice"
+import { PublicLink } from "../components/PublicLink"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
 import { getImageCropStyle } from "../features/menu/image-crop"
@@ -507,10 +508,10 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
                 </button>
               ))}
             </div>
-            <a href="/build-your-plate" className="performance-link inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors sm:text-sm">
+            <PublicLink href="/build-your-plate" className="performance-link inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors sm:text-sm">
               <Plus size={17} className="shrink-0" aria-hidden="true" />
               {t("home.hero.performanceButton")}
-            </a>
+            </PublicLink>
           </div>
 
           {/* Category chips — full-width bar with dynamic scroll arrows */}

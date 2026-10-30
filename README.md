@@ -526,6 +526,12 @@ toate categoriile raman optionale.
 Randul „Inapoi la meniu / Vezi cosul” ramane sticky deasupra barei cu pasi,
 la 14 px sub antet, fara spatiu intre cele doua bare si fara suprapunerea
 sectiunilor la navigare.
+Paginile publice folosesc React Router pentru navigare fara reincarcarea
+documentului. Antetul, cosul si starea contului raman montate; trecerea intre
+meniu si constructor nu repeta incarcarea meniului. Back/Forward restaureaza
+pozitia de derulare, iar linkurile cu ancore duc la sectiunea indicata.
+Tranzitia vizuala dureaza 140 ms si este dezactivata pentru reduced motion.
+Linkurile catre cont, autentificare si admin pastreaza navigarea completa.
 Navigatia mobila foloseste spatii compacte intre randuri si deasupra produselor,
 pastrand butoane cu o inaltime minima de 44 px pentru atingere.
 

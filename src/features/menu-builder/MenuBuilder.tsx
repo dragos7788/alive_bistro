@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { ArrowDown, Check } from "lucide-react"
+import { ArrowDown } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { builderGroups, calculateMenu, type MenuSelection } from "./calculator"
 import { BuilderStep, BuilderStepIcon } from "./BuilderStep"
@@ -30,11 +30,10 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
     <section id="custom-menu" aria-labelledby="builder-title"
       className="menu-builder scroll-mt-20 bg-brand-cream-200/50 px-6 py-6 sm:py-10">
       <div className="mx-auto max-w-6xl">
-        <div className="relative mb-10 overflow-hidden rounded-[2rem] border border-brand-green-700/10 bg-[#ffddbd] p-7 sm:p-10">
-          <div className="relative z-10">
-            <div>
-              <p className="mb-4 flex items-center gap-2 whitespace-nowrap text-xs sm:text-xl font-bold uppercase tracking-[0.1em] text-brand-green-700">
-                <svg width={40} height={40} viewBox="0 0 40 40" fill="currentColor" className="shrink-0" aria-hidden="true" focusable="false">
+        <div className="relative mb-8 overflow-hidden rounded-[1.75rem] border border-brand-green-700/10 bg-[#ffddbd] p-5 shadow-sm sm:mb-10 sm:rounded-[2rem] sm:p-9">
+          <div className="relative z-10 max-w-2xl">
+            <p className="mb-3 flex items-center gap-2 whitespace-nowrap text-base font-bold uppercase tracking-[0.1em] text-brand-green-700 sm:text-lg">
+                <svg width={32} height={32} viewBox="0 0 40 40" fill="currentColor" className="shrink-0" aria-hidden="true" focusable="false">
                   <g transform="rotate(-30 20 20)">
                     <rect x="2" y="15" width="4" height="10" rx="1.5" />
                     <rect x="7" y="10" width="7" height="20" rx="2" />
@@ -44,16 +43,23 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
                   </g>
                 </svg>
                 Build your performance
-              </p>
-              <h1 id="builder-title" ref={headingRef} tabIndex={-1} className="max-w-xl whitespace-nowrap text-lg font-bold leading-tight text-brand-green-800 sm:text-3xl md:text-4xl focus-visible:outline-2 focus-visible:outline-brand-green-700">
+            </p>
+            <h1 id="builder-title" ref={headingRef} tabIndex={-1} className="text-2xl font-bold leading-tight text-brand-green-800 sm:text-4xl focus-visible:outline-2 focus-visible:outline-brand-green-700">
                 {t("builder.calculatorTitle")}
-              </h1>
-              <p className="mt-4 max-w-xl whitespace-pre-line text-base sm:text-lg leading-relaxed text-brand-green-900">{t("builder.instructions")}</p>
-              <a href="#menu-calculator" aria-label={t("builder.start")}
-                className="mt-4 inline-flex size-11 items-center justify-center rounded-full text-brand-green-700 transition-colors hover:bg-brand-green-700/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
-                <ArrowDown size={28} aria-hidden="true" />
+            </h1>
+            <ul className="mt-5 grid gap-2 text-sm leading-relaxed text-brand-green-900 sm:mt-6 sm:gap-3 sm:text-base">
+              {t("builder.instructions").split("\n").map(instruction => (
+                <li key={instruction} className="flex items-start gap-3">
+                  <span aria-hidden="true" className="mt-[0.65em] size-1.5 shrink-0 rounded-full bg-brand-green-700/60">
+                  </span>
+                  <span>{instruction}</span>
+                </li>
+              ))}
+            </ul>
+            <a href="#menu-calculator"
+              className="mt-6 inline-flex min-h-11 items-center gap-3 rounded-full bg-brand-green-700 px-5 py-2.5 text-sm font-semibold text-brand-cream-50 shadow-sm transition-colors hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
+                {t("builder.start")} <ArrowDown size={17} aria-hidden="true" />
               </a>
-            </div>
           </div>
         </div>
 
@@ -69,7 +75,6 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
                     }`}>
                     <span className="relative">
                       <BuilderStepIcon group={group} />
-                      {isChosen && <Check size={12} className="absolute -right-2 -top-1 rounded-full bg-brand-cream-50 text-brand-green-700" aria-hidden="true" />}
                     </span>
                     <span className="whitespace-nowrap text-[10px] sm:text-sm">{index + 1}. {t(`builder.stepNames.${group}`)}</span>
                     <span className="sr-only">{isChosen ? t("builder.stepChosen") : t("builder.stepOptional")}</span>

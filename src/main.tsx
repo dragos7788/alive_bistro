@@ -4,9 +4,12 @@ import './index.css'
 import './i18n'
 import './pwa'
 import App from './App.tsx'
+import { BrowserRouter } from 'react-router'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 )

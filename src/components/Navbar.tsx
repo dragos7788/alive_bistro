@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 import Logo from "./Logo"
 import { AccountAvatar } from "@/features/account/AccountAvatar"
 import type { AccountData } from "@/features/account/api"
+import { useLocation } from "react-router"
+import { PublicLink } from "./PublicLink"
 
 const navLinks = [
   { href: "#home", labelKey: "navbar.home" },
@@ -21,7 +23,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
   const [mobileOpen, setMobileOpen] = useState(false)
   const [langDropdownOpen, setLangDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const isHomePage = window.location.pathname === "/"
+  const isHomePage = useLocation().pathname === "/"
   const visibleNavLinks = account?.customer
     ? [...navLinks.slice(0, 3), { href: "/calorie-journal", labelKey: "calorieJournal.nav" }, ...navLinks.slice(3)]
     : navLinks
@@ -64,14 +66,14 @@ export default function Navbar({ account, accountError }: { account: AccountData
       >
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
           {/* Logo */}
-          <a href={linkHref("#home")} className="hover:opacity-90 transition-opacity">
+          <PublicLink href={linkHref("#home")} className="hover:opacity-90 transition-opacity">
             <Logo variant="transparent" size="md" className="text-brand-green-700" />
-          </a>
+          </PublicLink>
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
             {visibleNavLinks.map((link) => (
-              <a
+              <PublicLink
                 key={link.href}
                 href={linkHref(link.href)}
                 className={cn(
@@ -82,7 +84,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
                 )}
               >
                 {t(link.labelKey)}
-              </a>
+              </PublicLink>
             ))}
             
             {/* Desktop Language Switcher */}
@@ -174,7 +176,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
             className="fixed inset-0 z-40 bg-brand-cream-50/98 flex flex-col items-center justify-center gap-8 md:hidden text-center"
           >
             {visibleNavLinks.map((link) => (
-              <a
+              <PublicLink
                 key={link.href}
                 href={linkHref(link.href)}
                 onClick={() => setMobileOpen(false)}
@@ -186,7 +188,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
                 )}
               >
                 {t(link.labelKey)}
-              </a>
+              </PublicLink>
             ))}
           </motion.div>
         )}

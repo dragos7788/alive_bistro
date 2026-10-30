@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useLayoutEffect, useRef } from "react"
+import { useLocation, useNavigate, useNavigationType } from "react-router"
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Home from '@/pages/Home'
@@ -23,17 +24,21 @@ import { useHealthyDeal } from "@/features/healthy-deal/useHealthyDeal"
 import { healthyDealItem } from "@/features/healthy-deal/schedule"
 
 export default function App() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const navigationType = useNavigationType()
   const [isFeedback, setIsFeedback] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(() => window.location.hash === "#account")
   const { t } = useTranslation()
-  const isAdmin = window.location.pathname.startsWith("/admin")
-  const isAccountPage = /^\/account\/?$/.test(window.location.pathname)
-  const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(window.location.pathname)
-  const isHealthyDealPreview = /^\/testhealtydeal\/?$/.test(window.location.pathname)
-  const isMenuPage = /^\/menu\/?$/.test(window.location.pathname) || isHealthyDealPreview
-  const isBuilderPage = /^\/build-your-plate\/?$/.test(window.location.pathname)
-  const legalPageId = legalPageFromPath(window.location.pathname)
-  const commerce = useCommerceSettings(isMenuPage || isBuilderPage)
+  const isAdmin = location.pathname.startsWith("/admin")
+  const isAccountPage = /^\/account\/?$/.test(location.pathname)
+  const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(location.pathname)
+  const isHealthyDealPreview = /^\/testhealtydeal\/?$/.test(location.pathname)
+  const isMenuPage = /^\/menu\/?$/.test(location.pathname) || isHealthyDealPreview
+  const isBuilderPage = /^\/build-your-plate\/?$/.test(location.pathname)
+  const legalPageId = legalPageFromPath(location.pathname)
+  const isStorefront = isMenuPage || isBuilderPage
+  const commerce = useCommerceSettings(isStorefront)
   const cart = useCart(commerce.salesEnabled)
   const accountState = useCustomerAccount(!isAdmin && !isFeedback)
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
@@ -47,11 +52,45 @@ export default function App() {
   } : group)
 
   useEffect(() => {
-    if (!isMenuPage && !isBuilderPage) return
+    if (!isStorefront) return
     let current = true
     void getMenu().then(groups => { if (current) setMenuGroups(groups) })
     return () => { current = false }
-  }, [isMenuPage, isBuilderPage])
+  }, [isStorefront])
+
+  const scrollPositions = useRef(new Map<string, number>())
+  const previousPath = useRef(location.pathname)
+  useEffect(() => {
+    const previousRestoration = window.history.scrollRestoration
+    window.history.scrollRestoration = "manual"
+    return () => { window.history.scrollRestoration = previousRestoration }
+  }, [])
+  useLayoutEffect(() => {
+    const pathChanged = previousPath.current !== location.pathname
+    previousPath.current = location.pathname
+    const restored = navigationType === "POP" ? scrollPositions.current.get(location.key) : undefined
+    if (restored !== undefined) {
+      window.scrollTo({ top: restored, behavior: "instant" })
+    } else if (location.hash && location.hash !== "#account" && location.hash !== "#feedback") {
+      document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "instant" })
+    } else if (pathChanged) {
+      window.scrollTo({ top: 0, behavior: "instant" })
+    }
+    if (pathChanged) {
+      const heading = document.querySelector<HTMLElement>("main h1, h1")
+      if (heading) {
+        heading.tabIndex = -1
+        heading.focus({ preventScroll: true })
+      }
+    }
+    const positions = scrollPositions.current
+    const savePosition = () => positions.set(location.key, window.scrollY)
+    window.addEventListener("scroll", savePosition, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", savePosition)
+      savePosition()
+    }
+  }, [location.key, location.pathname, location.hash, navigationType])
 
   useEffect(() => {
     if (!isAccountPage && isAccountOpen && accountState.account?.customer) {
@@ -62,11 +101,11 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       if (!isBuilderPage && ["#custom-menu", "#menu-calculator"].includes(window.location.hash)) {
-        window.location.replace("/build-your-plate" + window.location.search + window.location.hash)
+        void navigate("/build-your-plate" + location.search + window.location.hash, { replace: true })
         return
       }
       if (!isMenuPage && ["#menu", "#halloween-menu", "#healthy-deal-menu"].includes(window.location.hash)) {
-        window.location.replace("/menu" + window.location.search + window.location.hash)
+        void navigate("/menu" + location.search + window.location.hash, { replace: true })
         return
       }
       setIsFeedback(window.location.hash === "#feedback")
@@ -77,7 +116,7 @@ export default function App() {
 
     window.addEventListener("hashchange", handleHashChange)
     return () => window.removeEventListener("hashchange", handleHashChange)
-  }, [isMenuPage, isBuilderPage])
+  }, [isMenuPage, isBuilderPage, location.hash, location.search, navigate])
 
   if (isAdmin) {
     return <AdminApp />
@@ -94,6 +133,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-cream-100 text-brand-dark font-sans">
       <Navbar account={accountState.account} accountError={!!accountState.loadError} />
+      <div key={location.pathname} className="public-page-transition">
       {legalPageId ? <LegalPage pageId={legalPageId} /> : isCalorieJournalPage ? <CalorieJournalPage
         key={accountState.account?.customer?.referralCode ?? "guest"}
         customerName={accountState.account?.customer?.name ?? null}
@@ -111,6 +151,7 @@ export default function App() {
         </div>
         <Community />
       </>}
+      </div>
       <CustomerAccount state={accountState} isPage={isAccountPage} open={isAccountOpen} onOpen={() => {
         window.location.hash = "account"
       }} onClose={() => {

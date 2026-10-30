@@ -2,6 +2,7 @@ import { InstagramLogo, FacebookLogo, TiktokLogo } from "@phosphor-icons/react"
 import { useTranslation } from "react-i18next"
 import Logo from "./Logo"
 import { legalPages } from "@/features/legal/company"
+import { PublicLink } from "./PublicLink"
 
 export default function Footer() {
   const { t } = useTranslation()
@@ -18,9 +19,9 @@ export default function Footer() {
 
           {/* Links */}
           <div className="flex gap-6 text-sm text-brand-cream-200">
-            <a href="/menu" className="hover:text-brand-cream-50 transition-colors">{t("footer.menu")}</a>
-            <a href="/#community" className="hover:text-brand-cream-50 transition-colors">{t("footer.community")}</a>
-            <a href="/#feedback" className="hover:text-brand-cream-50 transition-colors">{t("footer.feedback")}</a>
+            <PublicLink href="/menu" className="hover:text-brand-cream-50 transition-colors">{t("footer.menu")}</PublicLink>
+            <PublicLink href="/#community" className="hover:text-brand-cream-50 transition-colors">{t("footer.community")}</PublicLink>
+            <PublicLink href="/#feedback" className="hover:text-brand-cream-50 transition-colors">{t("footer.feedback")}</PublicLink>
           </div>
 
           {/* Socials */}
@@ -38,7 +39,7 @@ export default function Footer() {
         </div>
         <nav aria-label={t("legal.navLabel")} className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-brand-cream-300/80">
           {legalPages.map(id => (
-            <a key={id} href={`/legal/${id}`} className="hover:text-brand-cream-50 transition-colors">{t(`footer.${id}`)}</a>
+            <PublicLink key={id} href={`/legal/${id}`} className="hover:text-brand-cream-50 transition-colors">{t(`footer.${id}`)}</PublicLink>
           ))}
         </nav>
         <div className="mt-6 pt-6 border-t border-brand-green-700/60 text-center text-brand-cream-300/40 text-xs">

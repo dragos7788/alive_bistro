@@ -6,6 +6,7 @@ import { CartDialog } from "../features/cart/CartDialog"
 import { cartCatalog, summarizeCart } from "../features/cart/cart"
 import type { useCart } from "../features/cart/useCart"
 import type { MenuGroup } from "../features/menu/types"
+import { PublicLink } from "../components/PublicLink"
 
 /** Displays the standalone plate builder with access to the shared shopping cart. */
 export default function PlateBuilder({ cart, menuGroups, isSalesEnabled }: {
@@ -23,9 +24,9 @@ export default function PlateBuilder({ cart, menuGroups, isSalesEnabled }: {
     <div className="pt-24">
       <div className="sticky top-[78px] z-40 h-14 border-y border-brand-green-700/15 bg-brand-cream-100">
       <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-2 px-3 sm:px-6">
-        <a href="/menu" className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full px-3 text-xs sm:text-sm font-semibold text-brand-green-700 focus-visible:outline-2 focus-visible:outline-brand-green-700">
+        <PublicLink href="/menu" className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full px-3 text-xs sm:text-sm font-semibold text-brand-green-700 focus-visible:outline-2 focus-visible:outline-brand-green-700">
           <ArrowLeft size={18} aria-hidden="true" /> {t("builder.backToMenu")}
-        </a>
+        </PublicLink>
         {isSalesEnabled && <button type="button" onClick={() => setIsCartOpen(true)}
           className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full bg-brand-green-700 px-3 sm:px-4 text-xs sm:text-sm font-semibold text-brand-cream-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
           <ShoppingBag size={18} aria-hidden="true" /> {t("cart.open")} ({cartCount})
