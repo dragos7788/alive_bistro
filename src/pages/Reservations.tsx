@@ -64,7 +64,7 @@ export default function Reservations() {
             className="lg:col-span-2 space-y-6"
           >
             <div className="p-6 rounded-2xl border border-brand-green-700/10 bg-brand-cream-200/50 space-y-5">
-              <InfoRow icon={<MapPin size={18} className="text-brand-green-700" />} label="Adresă" value="Str. Mureș nr. 116A, Timișoara (lângă Gym One 2)" />
+              <InfoRow icon={<MapPin size={18} className="text-brand-green-700" />} label="Adresă" value="Str. Mureș nr. 115A, corp D, Timișoara" />
               <InfoRow icon={<Clock size={18} className="text-brand-green-700" />} label="Luni - Vineri" value="08:00 – 21:00" />
               <InfoRow icon={<Clock size={18} className="text-brand-green-700" />} label="Sâmbătă - Duminică" value="09:00 – 22:00" />
               <InfoRow icon={<Phone size={18} className="text-brand-green-700" />} label="Telefon" value="0737 263 469" />
