@@ -186,7 +186,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
   const [navCompact, setNavCompact] = useState(false)
 
   useEffect(() => {
-    const NAV_OFFSET = 64 // sticky top offset — tucks the bar flush beneath the fixed header
+    const NAV_OFFSET = 78 // fixed header plus 14px spacing
     let raf = 0
     const onScroll = () => {
       cancelAnimationFrame(raf)
@@ -237,7 +237,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
       .find(element => element.dataset.category === id)
     if (isMobile && card) {
       holdCategoryDuringScroll()
-      const top = card.getBoundingClientRect().top + window.scrollY - 64 - (stickyNavRef.current?.offsetHeight ?? 0) - 12
+      const top = card.getBoundingClientRect().top + window.scrollY - 78 - (stickyNavRef.current?.offsetHeight ?? 0) - 12
       window.scrollTo({ top: Math.max(0, top), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })
     }
   }
@@ -249,7 +249,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
       frame = 0
       if (categoryScrollLocked.current) return
       const cards = Array.from(productStripRef.current?.querySelectorAll<HTMLElement>("[data-category]") ?? [])
-      const line = 64 + (stickyNavRef.current?.offsetHeight ?? 0) + 12
+      const line = 78 + (stickyNavRef.current?.offsetHeight ?? 0) + 12
       const current = cards.find(card => card.getBoundingClientRect().bottom > line) ?? cards.at(-1)
       if (current?.dataset.category) setActiveCategory(current.dataset.category)
     }
@@ -310,7 +310,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
     }
     const anchor = listAnchorRef.current
     if (!anchor) return
-    const STICKY_OFFSET = 64 // matches the sticky nav's top offset
+    const STICKY_OFFSET = 78 // matches the sticky nav's top offset
     const navHeight = stickyNavRef.current?.offsetHeight ?? 0
     const target =
       anchor.getBoundingClientRect().top + window.scrollY - STICKY_OFFSET - navHeight - 12
@@ -478,9 +478,9 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
         {/* Sticky menu navigation: both the Food/Drinks toggle and the category chips
             stick to the top together and progressively shrink the gap between them on scroll.
             Full-bleed via margin (no transform) so it doesn't jitter while scrolling, and a
-            fully opaque background so no content shows through. It tucks flush beneath the
-            fixed header, leaving no transparent strip. */}
-        <div ref={stickyNavRef} className="sticky top-16 z-30 w-screen ml-[calc(50%-50vw)] bg-brand-cream-100">
+            fully opaque background so no content shows through. It sits 14px beneath the
+            fixed header. */}
+        <div ref={stickyNavRef} className="sticky top-[78px] z-30 w-screen ml-[calc(50%-50vw)] bg-brand-cream-100">
           {/* Group toggle (Food / Drinks) */}
           <div
             className={`max-w-4xl mx-auto flex flex-col items-center justify-center gap-1 px-3 py-1 md:gap-3 md:px-6 md:flex-row md:flex-wrap md:pb-0 md:transition-[padding,margin] md:duration-300 md:ease-out ${

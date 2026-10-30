@@ -33,7 +33,7 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
         <div className="relative mb-10 overflow-hidden rounded-[2rem] border border-brand-green-700/10 bg-[#ffddbd] p-7 sm:p-10">
           <div className="relative z-10">
             <div>
-              <p className="mb-4 flex items-center gap-2 text-lg sm:text-xl font-bold uppercase tracking-[0.1em] text-brand-green-700">
+              <p className="mb-4 flex items-center gap-2 whitespace-nowrap text-xs sm:text-xl font-bold uppercase tracking-[0.1em] text-brand-green-700">
                 <svg width={40} height={40} viewBox="0 0 40 40" fill="currentColor" className="shrink-0" aria-hidden="true" focusable="false">
                   <g transform="rotate(-30 20 20)">
                     <rect x="2" y="15" width="4" height="10" rx="1.5" />
@@ -45,7 +45,7 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
                 </svg>
                 Build your performance
               </p>
-              <h1 id="builder-title" ref={headingRef} tabIndex={-1} className="max-w-xl text-4xl font-bold leading-tight text-brand-green-800 sm:text-5xl focus-visible:outline-2 focus-visible:outline-brand-green-700">
+              <h1 id="builder-title" ref={headingRef} tabIndex={-1} className="max-w-xl whitespace-nowrap text-lg font-bold leading-tight text-brand-green-800 sm:text-3xl md:text-4xl focus-visible:outline-2 focus-visible:outline-brand-green-700">
                 {t("builder.calculatorTitle")}
               </h1>
               <p className="mt-4 max-w-xl whitespace-pre-line text-base sm:text-lg leading-relaxed text-brand-green-900">{t("builder.instructions")}</p>
