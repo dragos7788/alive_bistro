@@ -507,12 +507,27 @@ sau zoom.
 Produsele fără fotografie afișează un simbol decorativ al categoriei pe un fundal
 crem-verde, în același cadru pătrat, atât în carduri, cât și în detalii.
 
-Pe mobil, categoriile meniului se aleg dintr-un buton care afișează categoria
-activă. Panoul deschis prezintă toate categoriile în două coloane, fără derulare
-orizontală, și se închide după alegere, la apăsarea Escape sau la apăsare în
-exterior. Pe desktop se păstrează bara de categorii cu derulare.
-Controalele mobile au spațiere constantă de 12 px între rânduri și nu se
-micșorează la derulare.
+Pe mobil, categoriile folosesc aceleasi butoane ca pe desktop, intr-o bara
+derulabila orizontal prin atingere. Produsele sunt o singura lista verticala
+pentru grupul selectat (Mancare sau Bauturi), in ordinea categoriilor si produselor.
+La sfarsitul unei categorii urmeaza prima intrare din urmatoarea categorie.
+Alegerea unei categorii deruleaza la prima sa intrare sub navigatia fixa;
+derularea verticala actualizeaza categoria activa. Panourile Halloween si Healthy
+Deal raman in lista. Pe desktop se pastreaza grila categoriei selectate.
+In timpul derularii automate, categoria aleasa ramane evidentiata; categoriile
+intermediare nu sunt selectate. Derularea manuala reia actualizarea categoriei.
+Categoriile sunt afisate ca butoane text, fara icoane, pe mobil si desktop.
+Constructorul de farfurii este disponibil separat la `/build-your-plate`, cu
+linkul „Inapoi la meniu” sus si acces la acelasi cos de cumparaturi. Linkurile
+vechi `/menu#custom-menu` si `/menu#menu-calculator` redirectioneaza spre noua pagina.
+Calculatorul are o bara sticky cu patru pasi si icoane, sub antet. Pasii permit
+saltul la sectiunea corespunzatoare si marcheaza categoriile cu o optiune aleasa;
+toate categoriile raman optionale.
+Randul „Inapoi la meniu / Vezi cosul” ramane sticky deasupra barei cu pasi,
+la 14 px sub antet, fara spatiu intre cele doua bare si fara suprapunerea
+sectiunilor la navigare.
+Navigatia mobila foloseste spatii compacte intre randuri si deasupra produselor,
+pastrand butoane cu o inaltime minima de 44 px pentru atingere.
 
 `npm run images:optimize` generează local variante WebP de 480, 800 și 1200 px
 cu Sharp, fără a modifica JPG-urile originale. Comanda rulează automat înainte de

@@ -99,11 +99,16 @@
     "toggleMenu": "Toggle menu"
   },
   "builder": {
+    "stepsLabel": "Your plate steps",
+    "stepNames": { "protein": "Protein", "carbs": "Carbs", "fibre": "Fibre", "sauce": "Sauce" },
+    "stepChosen": " — option selected",
+    "stepOptional": " — optional, no selection",
+    "backToMenu": "Back to menu",
     "title": "Your menu. Your pace.",
     "intro": "Your combination, your portions. Build your plate with protein, carbs, vegetables and sauces to suit your appetite and goals. See the cost and nutritional values as you choose.",
     "start": "Build your menu",
     "calculatorTitle": "What's on your plate?",
-    "instructions": "Choose one option from each category, then select your portion. You can skip any category. The price and nutritional totals update automatically in the summary.",
+    "instructions": "Choose an option, then select your portion.\nThe price and nutritional totals update automatically in the summary.",
     "progress": "{{selected}} / {{total}} categories selected",
     "portion": "Choose your portion",
     "from": "from",

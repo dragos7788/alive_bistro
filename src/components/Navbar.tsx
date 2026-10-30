@@ -10,7 +10,7 @@ import type { AccountData } from "@/features/account/api"
 const navLinks = [
   { href: "#home", labelKey: "navbar.home" },
   { href: "/menu", labelKey: "navbar.menu" },
-  { href: "/menu#custom-menu", labelKey: "navbar.customMenu" },
+  { href: "/build-your-plate", labelKey: "navbar.customMenu" },
   { href: "#community", labelKey: "navbar.community" },
   { href: "#account", labelKey: "account.nav" },
 ]
@@ -76,7 +76,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
                 href={linkHref(link.href)}
                 className={cn(
                   "text-sm font-semibold tracking-wider transition-colors duration-200",
-                  link.href === "/menu#custom-menu"
+                  link.href === "/build-your-plate"
                     ? "performance-link inline-flex min-h-11 items-center rounded-full px-4 py-2"
                     : "text-brand-green-700/80 hover:text-brand-green-900"
                 )}
@@ -180,7 +180,7 @@ export default function Navbar({ account, accountError }: { account: AccountData
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "text-2xl font-bold transition-colors",
-                  link.href === "/menu#custom-menu"
+                  link.href === "/build-your-plate"
                     ? "performance-link rounded-full px-6 py-3"
                     : "text-brand-green-700 hover:text-brand-green-900"
                 )}

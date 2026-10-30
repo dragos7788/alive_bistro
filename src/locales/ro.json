@@ -99,11 +99,16 @@
     "toggleMenu": "Comută meniul"
   },
   "builder": {
+    "stepsLabel": "Pașii farfuriei tale",
+    "stepNames": { "protein": "Proteine", "carbs": "Carbohidrați", "fibre": "Fibre", "sauce": "Sos" },
+    "stepChosen": " — opțiune aleasă",
+    "stepOptional": " — opțional, fără selecție",
+    "backToMenu": "Înapoi la meniu",
     "title": "Meniul tău. În ritmul tău.",
     "intro": "Alegi combinația, alegi gramajele. Construiește-ți farfuria din proteine, carbohidrați, legume și sosuri, în funcție de pofta și obiectivele tale. Vezi pe loc cât costă și ce valori nutriționale are.",
     "start": "Configurează meniul",
     "calculatorTitle": "Ce punem în farfurie?",
-    "instructions": "Alege câte o opțiune din fiecare categorie și apoi porția dorită. Poți sări peste orice categorie. Prețul și valorile se actualizează automat în rezumat.",
+    "instructions": "Alege câte o opțiune și apoi porția dorită.\nPrețul și valorile se actualizează automat în rezumat.",
     "progress": "{{selected}} / {{total}} categorii alese",
     "portion": "Alege porția",
     "from": "de la",

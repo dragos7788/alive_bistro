@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { Coffee as LucideCoffee, Flame, Beef, Wheat, Nut, X, Plus, Info, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react"
@@ -6,11 +6,11 @@ import { useTranslation, Trans } from "react-i18next"
 import type { MenuItem, MenuCategory, MenuGroup } from "../features/menu/types"
 import { resolveIcon } from "../features/menu/icons"
 import { menuData } from "../features/menu/seed"
+import { continuousMenu } from "../features/menu/continuous-menu"
 import { MenuPrice } from "../features/pricing/MenuPrice"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
 import { getImageCropStyle } from "../features/menu/image-crop"
-import { MobileCategoryPicker } from "../features/menu/MobileCategoryPicker"
 import { cartCatalog, summarizeCart, type CartProduct } from "../features/cart/cart"
 import type { useCart } from "../features/cart/useCart"
 import { CartDialog } from "../features/cart/CartDialog"
@@ -18,7 +18,12 @@ import { AddToCart } from "../features/cart/AddToCart"
 import { HalloweenMenuBanner } from "../features/menu/HalloweenMenuBanner"
 import { HealthyDealMenu } from "../features/healthy-deal/HealthyDealMenu"
 import type { useHealthyDeal } from "../features/healthy-deal/useHealthyDeal"
-
+const mobileQuery = "(max-width: 767px)"
+function subscribeMobile(onChange: () => void) {
+  const query = window.matchMedia(mobileQuery)
+  query.addEventListener("change", onChange)
+  return () => query.removeEventListener("change", onChange)
+}
 
 function CategoryBar({
   categories,
@@ -49,29 +54,38 @@ function CategoryBar({
     return () => window.removeEventListener("resize", updateArrows)
   }, [updateArrows, categories])
 
+  useEffect(() => {
+    const el = scrollRef.current
+    const button = el?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')
+    if (!el || !button) return
+    if (button.offsetLeft < el.scrollLeft || button.offsetLeft + button.offsetWidth > el.scrollLeft + el.clientWidth) {
+      el.scrollTo({ left: Math.max(0, button.offsetLeft - 24), behavior: "smooth" })
+    }
+  }, [activeCategory])
+
   const scrollByAmount = (dir: 1 | -1) => {
     scrollRef.current?.scrollBy({ left: dir * 260, behavior: "smooth" })
   }
 
   return (
-    <>
-      <MobileCategoryPicker categories={categories} activeCategory={activeCategory} onSelect={onSelect} />
-    <div className="relative hidden w-full mb-10 bg-brand-cream-200/60 border-y border-brand-green-700/10 shadow-inner shadow-brand-green-700/5 md:block">
+    <div className="relative w-full mb-1 md:mb-10 bg-brand-cream-200/60 border-y border-brand-green-700/10 shadow-inner shadow-brand-green-700/5">
       <div
         ref={scrollRef}
         onScroll={updateArrows}
-        className={`flex gap-2.5 overflow-x-auto px-6 md:px-10 scroll-pl-6 md:scroll-pl-10 scroll-pr-6 md:scroll-pr-10 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-[padding] duration-300 ease-out ${compact ? "py-1.5" : "py-3"}`}
+        className={`flex gap-1.5 md:gap-2.5 overflow-x-auto px-3 md:px-10 scroll-pl-3 md:scroll-pl-10 scroll-pr-3 md:scroll-pr-10 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-[padding] duration-300 ease-out py-1 ${compact ? "md:py-1.5" : "md:py-3"}`}
       >
         {categories.map((cat) => {
           const isHalloween = cat.id === "halloween-special"
           return (
             <button
               key={cat.id}
+              type="button"
+              aria-pressed={activeCategory === cat.id}
               onClick={(e) => {
                 onSelect(cat.id)
                 e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" })
               }}
-              className={`relative flex items-center gap-2 overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold font-sans whitespace-nowrap flex-shrink-0 snap-start transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 ${
+              className={`relative flex min-h-11 items-center gap-2 overflow-hidden rounded-full px-3 py-1 md:px-5 md:py-2.5 text-sm font-semibold font-sans whitespace-nowrap flex-shrink-0 snap-start transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 ${
                 isHalloween
                   ? activeCategory === cat.id
                     ? "border border-orange-500 bg-orange-200 text-orange-950 shadow-md shadow-orange-900/10"
@@ -82,7 +96,6 @@ function CategoryBar({
               } ${isHalloween ? "focus-visible:outline-orange-700" : "focus-visible:outline-brand-green-700"}`}
             >
               <span className="relative z-10 flex items-center gap-2">
-                {resolveIcon(cat.iconKey, 18)}
                 <span>
                   {t(`menu.categories.${cat.id}`)}
                   {cat.id === "healthy-deal" && <span className="block text-xs font-normal">{t("healthyDeal.categorySubtitle")}</span>}
@@ -103,7 +116,7 @@ function CategoryBar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-y-0 left-0 flex items-center pl-3 pr-10 bg-gradient-to-r from-brand-cream-200 via-brand-cream-200/90 to-transparent"
+            className="absolute inset-y-0 left-0 hidden items-center pl-3 pr-10 bg-gradient-to-r from-brand-cream-200 via-brand-cream-200/90 to-transparent md:flex"
           >
             <span className="w-9 h-9 rounded-full bg-brand-cream-50 border border-brand-green-700/15 shadow-sm flex items-center justify-center text-brand-green-700">
               <ChevronLeft className="w-4 h-4" />
@@ -122,7 +135,7 @@ function CategoryBar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-y-0 right-0 flex items-center justify-end pr-3 pl-10 bg-gradient-to-l from-brand-cream-200 via-brand-cream-200/90 to-transparent"
+            className="absolute inset-y-0 right-0 hidden items-center justify-end pr-3 pl-10 bg-gradient-to-l from-brand-cream-200 via-brand-cream-200/90 to-transparent md:flex"
           >
             <span className="w-9 h-9 rounded-full bg-brand-cream-50 border border-brand-green-700/15 shadow-sm flex items-center justify-center text-brand-green-700">
               <ChevronRight className="w-4 h-4" />
@@ -131,7 +144,6 @@ function CategoryBar({
         )}
       </AnimatePresence>
     </div>
-    </>
   )
 }
 
@@ -143,6 +155,8 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
   isHealthyDealPreview?: boolean
 }) {
   const { t, i18n } = useTranslation()
+  const isMobile = useSyncExternalStore(subscribeMobile, () => window.matchMedia(mobileQuery).matches, () => false)
+  const productStripRef = useRef<HTMLDivElement>(null)
   const initialHash = typeof window === "undefined" ? "" : window.location.hash
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(
@@ -167,6 +181,8 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
   const navSentinelRef = useRef<HTMLDivElement>(null)
   const stickyNavRef = useRef<HTMLDivElement>(null)
   const listAnchorRef = useRef<HTMLDivElement>(null)
+  const categoryScrollLocked = useRef(false)
+  const categoryScrollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const [navCompact, setNavCompact] = useState(false)
 
   useEffect(() => {
@@ -202,6 +218,69 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
     setActiveCategory(group.categories[0].id)
   }
 
+  const releaseCategoryScroll = useCallback(() => {
+    categoryScrollLocked.current = false
+    clearTimeout(categoryScrollTimer.current)
+  }, [])
+
+  const holdCategoryDuringScroll = useCallback(() => {
+    categoryScrollLocked.current = true
+    clearTimeout(categoryScrollTimer.current)
+    // Also releases when the target is already visible or scrollend is unavailable.
+    categoryScrollTimer.current = setTimeout(releaseCategoryScroll, 200)
+  }, [releaseCategoryScroll])
+
+  function handleCategorySelect(id: string) {
+    setActiveCategory(id)
+    const strip = productStripRef.current
+    const card = Array.from(strip?.querySelectorAll<HTMLElement>("[data-category]") ?? [])
+      .find(element => element.dataset.category === id)
+    if (isMobile && card) {
+      holdCategoryDuringScroll()
+      const top = card.getBoundingClientRect().top + window.scrollY - 64 - (stickyNavRef.current?.offsetHeight ?? 0) - 12
+      window.scrollTo({ top: Math.max(0, top), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })
+    }
+  }
+
+  useEffect(() => {
+    if (!isMobile) return
+    let frame = 0
+    function updateCategory() {
+      frame = 0
+      if (categoryScrollLocked.current) return
+      const cards = Array.from(productStripRef.current?.querySelectorAll<HTMLElement>("[data-category]") ?? [])
+      const line = 64 + (stickyNavRef.current?.offsetHeight ?? 0) + 12
+      const current = cards.find(card => card.getBoundingClientRect().bottom > line) ?? cards.at(-1)
+      if (current?.dataset.category) setActiveCategory(current.dataset.category)
+    }
+    const onScroll = () => {
+      if (categoryScrollLocked.current) {
+        holdCategoryDuringScroll()
+        return
+      }
+      if (!frame) frame = requestAnimationFrame(updateCategory)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) releaseCategoryScroll()
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("scrollend", releaseCategoryScroll)
+    window.addEventListener("wheel", releaseCategoryScroll, { passive: true })
+    window.addEventListener("touchstart", releaseCategoryScroll, { passive: true })
+    window.addEventListener("keydown", onKeyDown)
+    window.addEventListener("resize", onScroll)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("scrollend", releaseCategoryScroll)
+      window.removeEventListener("wheel", releaseCategoryScroll)
+      window.removeEventListener("touchstart", releaseCategoryScroll)
+      window.removeEventListener("keydown", onKeyDown)
+      window.removeEventListener("resize", onScroll)
+      cancelAnimationFrame(frame)
+      releaseCategoryScroll()
+    }
+  }, [isMobile, activeGroup, holdCategoryDuringScroll, releaseCategoryScroll])
+
   const handleAddToCart = (item: CartProduct) => {
     const quantity = (cart.items.find(entry => entry.key === item.key)?.quantity ?? 0) + 1
     if (item.isAvailable === false || quantity > (item.stockQuantity ?? Infinity)) {
@@ -217,7 +296,14 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
   // new list sits just below the sticky nav. Skips the very first render so the page doesn't
   // jump on mount.
   const firstListRender = useRef(true)
+  const previousGroup = useRef(activeGroup)
   useEffect(() => {
+    const groupChanged = previousGroup.current !== activeGroup
+    previousGroup.current = activeGroup
+    if (isMobile && !groupChanged) {
+      firstListRender.current = false
+      return
+    }
     if (firstListRender.current) {
       firstListRender.current = false
       return
@@ -228,27 +314,43 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
     const navHeight = stickyNavRef.current?.offsetHeight ?? 0
     const target =
       anchor.getBoundingClientRect().top + window.scrollY - STICKY_OFFSET - navHeight - 12
+    if (isMobile) holdCategoryDuringScroll()
     window.scrollTo({ top: Math.max(0, target), behavior: "smooth" })
-  }, [activeCategory, activeGroup])
+  }, [activeCategory, activeGroup, isMobile, holdCategoryDuringScroll])
 
   const menuCards = (
     <AnimatePresence mode="wait">
       <motion.div
-        key={activeCategory}
-        initial={{ opacity: 0, y: 20 }}
+        key={isMobile ? activeGroup : activeCategory}
+        initial={isMobile ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.35 }}
+        ref={productStripRef}
+        role={isMobile ? "region" : undefined}
+        aria-label={isMobile ? t("menu.title", { interpolation: { escapeValue: false } }).replace(/<[^>]+>/g, "") : undefined}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
-        {activeCategoryObj.items.map((item, i) => (
+        {continuousMenu(isMobile ? activeGroupObj.categories : [activeCategoryObj]).flatMap(({ category, items, isPanel }) => {
+          if (isMobile && isPanel) return [
+            <div key={category.id} data-category={category.id} className="w-full">
+              <h2 className="mb-3 font-serif text-xl font-semibold">{t(`menu.categories.${category.id}`)}</h2>
+              {category.id === "healthy-deal"
+                ? <HealthyDealMenu document={healthyDeal.document} now={healthyDeal.now} error={healthyDeal.error}
+                    isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} />
+                : <HalloweenMenuBanner />}
+            </div>,
+          ]
+          return items.map((item, i) => (
           <motion.div
-            key={item.name}
-            initial={{ opacity: 0, x: -20 }}
+            key={`${category.id}:${item.name}`}
+            data-category={category.id}
+            initial={isMobile ? false : { opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: i * 0.07 }}
             className="group flex w-full flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 text-left transition-all duration-300 hover:border-brand-green-700/25 hover:bg-white hover:shadow-lg"
           >
+            {isMobile && <h2 className="px-4 pt-3 text-sm font-semibold text-brand-green-700">{t(`menu.categories.${category.id}`)}</h2>}
             <button type="button" onClick={() => setSelectedItem(item)} className="flex flex-1 cursor-pointer flex-col text-left">
               <div className="relative aspect-square w-full overflow-hidden bg-white">
                 {item.image ? <img
@@ -263,9 +365,9 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
                   style={getImageCropStyle(
                     item.imagePosition ?? { x: 50, y: 50 },
                     item.imageZoom ?? 100,
-                    activeCategoryObj.id === "wine-prosecco" ? "contain" : "cover",
+                    category.id === "wine-prosecco" ? "contain" : "cover",
                   )}
-                /> : <MenuImagePlaceholder iconKey={activeCategoryObj.iconKey} />}
+                /> : <MenuImagePlaceholder iconKey={category.iconKey} />}
                 {item.discountPercent ? (
                   <span className="absolute right-3 top-3 rounded-full bg-brand-green-700 px-3 py-1.5 text-xs font-extrabold text-brand-cream-50 shadow-lg">
                     {t("promotion.discount", { percent: item.discountPercent })}
@@ -291,7 +393,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
                     {t("cart.includedInMenu")}
                   </p>
                 )}
-                {activeCategoryObj.id === "tea-matcha" && (
+                {category.id === "tea-matcha" && (
                   <p className="mb-3 text-xs leading-relaxed text-brand-dark/80">
                     {(i18n.language.startsWith("en") ? item.description_en ?? item.description : item.description).split("\n\n", 1)[0]}
                   </p>
@@ -323,10 +425,10 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
               </div>
             </button>
             <div className="px-4 pb-4 md:px-5 md:pb-5">
-              {isSalesEnabled && <AddToCart categoryId={activeCategoryObj.id} item={item} onAdd={handleAddToCart} items={cart.items} />}
+              {isSalesEnabled && <AddToCart categoryId={category.id} item={item} onAdd={handleAddToCart} items={cart.items} />}
             </div>
           </motion.div>
-        ))}
+        ))})}
       </motion.div>
     </AnimatePresence>
   )
@@ -354,7 +456,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-16"
+          className="text-center mb-6 md:mb-16"
         >
           <p className="text-brand-green-700 uppercase tracking-[0.3em] text-xs font-bold mb-3 font-sans">{t("menu.tagline")}</p>
           <h1 id="menu-title" ref={headingRef} tabIndex={-1} className="text-4xl md:text-6xl font-extrabold text-brand-green-700 tracking-tight font-serif lowercase focus-visible:outline-2 focus-visible:outline-brand-green-700">
@@ -381,12 +483,12 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
         <div ref={stickyNavRef} className="sticky top-16 z-30 w-screen ml-[calc(50%-50vw)] bg-brand-cream-100">
           {/* Group toggle (Food / Drinks) */}
           <div
-            className={`max-w-4xl mx-auto flex flex-col items-center justify-center gap-3 px-6 py-3 md:flex-row md:flex-wrap md:pb-0 md:transition-[padding,margin] md:duration-300 md:ease-out ${
+            className={`max-w-4xl mx-auto flex flex-col items-center justify-center gap-1 px-3 py-1 md:gap-3 md:px-6 md:flex-row md:flex-wrap md:pb-0 md:transition-[padding,margin] md:duration-300 md:ease-out ${
               navCompact ? "md:pt-4 md:mb-0.5" : "md:pt-[22px] md:mb-7"
             }`}
           >
             <div
-              className={`inline-flex p-1.5 rounded-full bg-brand-cream-200/60 border border-brand-green-700/10 origin-top md:transition-transform md:duration-300 md:ease-out ${
+              className={`inline-flex p-0.5 md:p-1.5 rounded-full bg-brand-cream-200/60 border border-brand-green-700/10 origin-top md:transition-transform md:duration-300 md:ease-out ${
                 navCompact ? "md:scale-[0.88]" : ""
               }`}
             >
@@ -394,7 +496,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
                 <button
                   key={group.id}
                   onClick={() => handleGroupChange(group.id)}
-                  className={`flex items-center gap-2 px-7 py-2.5 rounded-full text-sm font-bold transition-all duration-200 font-sans ${
+                  className={`flex min-h-11 items-center gap-2 px-5 py-1 md:px-7 md:py-2.5 rounded-full text-sm font-bold transition-all duration-200 font-sans ${
                     activeGroup === group.id
                       ? "bg-brand-green-700 text-brand-cream-50 shadow-md shadow-brand-green-700/20"
                       : "text-brand-green-700/70 hover:text-brand-green-700"
@@ -405,7 +507,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
                 </button>
               ))}
             </div>
-            <a href="#custom-menu" className="performance-link inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors sm:text-sm">
+            <a href="/build-your-plate" className="performance-link inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors sm:text-sm">
               <Plus size={17} className="shrink-0" aria-hidden="true" />
               {t("home.hero.performanceButton")}
             </a>
@@ -423,7 +525,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
               <CategoryBar
                 categories={activeGroupObj.categories}
                 activeCategory={activeCategory}
-                onSelect={setActiveCategory}
+                onSelect={handleCategorySelect}
                 compact={navCompact}
               />
             </motion.div>
@@ -434,7 +536,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
         <div id="halloween-menu" ref={listAnchorRef} aria-hidden className="h-0" />
 
         {/* Menu Items */}
-        {activeCategoryObj.id === "tea-matcha" && (
+        {!isMobile && activeCategoryObj.id === "tea-matcha" && (
           <div className="mb-5 rounded-2xl border border-brand-green-700/15 bg-brand-cream-200/50 px-5 py-4 text-center">
             <h3 className="font-serif text-lg font-bold text-brand-green-700">
               {t("menu.matchaTitle")}
@@ -444,7 +546,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
             </p>
           </div>
         )}
-        {activeCategoryObj.id === "healthy-deal"
+        {isMobile ? menuCards : activeCategoryObj.id === "healthy-deal"
           ? <HealthyDealMenu document={healthyDeal.document} now={healthyDeal.now} error={healthyDeal.error}
               isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} />
           : activeCategoryObj.id === "halloween-special"

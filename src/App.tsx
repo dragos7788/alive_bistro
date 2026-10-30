@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Home from '@/pages/Home'
 import Menu from '@/pages/Menu'
-import { MenuBuilder } from '@/features/menu-builder/MenuBuilder'
+import PlateBuilder from '@/pages/PlateBuilder'
 import Community from '@/pages/Community'
 import Feedback from '@/pages/Feedback'
 import AdminApp from '@/pages/admin/AdminApp'
@@ -31,8 +31,9 @@ export default function App() {
   const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(window.location.pathname)
   const isHealthyDealPreview = /^\/testhealtydeal\/?$/.test(window.location.pathname)
   const isMenuPage = /^\/menu\/?$/.test(window.location.pathname) || isHealthyDealPreview
+  const isBuilderPage = /^\/build-your-plate\/?$/.test(window.location.pathname)
   const legalPageId = legalPageFromPath(window.location.pathname)
-  const commerce = useCommerceSettings(isMenuPage)
+  const commerce = useCommerceSettings(isMenuPage || isBuilderPage)
   const cart = useCart(commerce.salesEnabled)
   const accountState = useCustomerAccount(!isAdmin && !isFeedback)
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
@@ -46,11 +47,11 @@ export default function App() {
   } : group)
 
   useEffect(() => {
-    if (!isMenuPage) return
+    if (!isMenuPage && !isBuilderPage) return
     let current = true
     void getMenu().then(groups => { if (current) setMenuGroups(groups) })
     return () => { current = false }
-  }, [isMenuPage])
+  }, [isMenuPage, isBuilderPage])
 
   useEffect(() => {
     if (!isAccountPage && isAccountOpen && accountState.account?.customer) {
@@ -60,7 +61,11 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      if (!isMenuPage && ["#menu", "#custom-menu", "#menu-calculator", "#halloween-menu", "#healthy-deal-menu"].includes(window.location.hash)) {
+      if (!isBuilderPage && ["#custom-menu", "#menu-calculator"].includes(window.location.hash)) {
+        window.location.replace("/build-your-plate" + window.location.search + window.location.hash)
+        return
+      }
+      if (!isMenuPage && ["#menu", "#halloween-menu", "#healthy-deal-menu"].includes(window.location.hash)) {
         window.location.replace("/menu" + window.location.search + window.location.hash)
         return
       }
@@ -72,7 +77,7 @@ export default function App() {
 
     window.addEventListener("hashchange", handleHashChange)
     return () => window.removeEventListener("hashchange", handleHashChange)
-  }, [isMenuPage])
+  }, [isMenuPage, isBuilderPage])
 
   if (isAdmin) {
     return <AdminApp />
@@ -93,12 +98,13 @@ export default function App() {
         key={accountState.account?.customer?.referralCode ?? "guest"}
         customerName={accountState.account?.customer?.name ?? null}
         isChecking={!accountState.account && !accountState.loadError}
-      /> : isMenuPage ? <main>
+      /> : isBuilderPage ? <main>
+        {commerce.error && <p role="alert" className="mx-auto max-w-4xl px-6 pt-24 text-sm text-red-800">{t(commerce.error)}</p>}
+        <PlateBuilder cart={cart} menuGroups={liveMenuGroups} isSalesEnabled={commerce.salesEnabled} />
+      </main> : isMenuPage ? <main>
         {commerce.error && <p role="alert" className="mx-auto max-w-4xl px-6 pt-24 text-sm text-red-800">{t(commerce.error)}</p>}
         <Menu cart={cart} menuGroups={liveMenuGroups} isSalesEnabled={commerce.salesEnabled} healthyDeal={healthyDeal}
           isHealthyDealPreview={isHealthyDealPreview} />
-        <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error} isSalesEnabled={commerce.salesEnabled}
-          discountPercent={menuGroups.find(group => group.id === "food")?.performanceDiscountPercent ?? 0} />
       </main> : !isAccountPage && <>
         <div id="home">
           <Home />

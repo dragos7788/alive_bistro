@@ -123,7 +123,7 @@ function ParallaxHero() {
             {t("home.hero.button")}
           </a>
           <a
-            href="/menu#custom-menu"
+            href="/build-your-plate"
             className="performance-link inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 font-bold rounded-full transition-colors duration-200 text-center"
           >
             <Sparkles size={18} className="shrink-0" aria-hidden="true" />
