@@ -19,6 +19,8 @@ import { useCommerceSettings } from '@/features/commerce/useCommerceSettings'
 import { LegalPage } from '@/features/legal/LegalPage'
 import { legalPageFromPath } from '@/features/legal/company'
 import { useTranslation } from "react-i18next"
+import { useHealthyDeal } from "@/features/healthy-deal/useHealthyDeal"
+import { healthyDealItem } from "@/features/healthy-deal/schedule"
 
 export default function App() {
   const [isFeedback, setIsFeedback] = useState(false)
@@ -27,12 +29,21 @@ export default function App() {
   const isAdmin = window.location.pathname.startsWith("/admin")
   const isAccountPage = /^\/account\/?$/.test(window.location.pathname)
   const isCalorieJournalPage = /^\/calorie-journal\/?$/.test(window.location.pathname)
-  const isMenuPage = /^\/menu\/?$/.test(window.location.pathname)
+  const isHealthyDealPreview = /^\/testhealtydeal\/?$/.test(window.location.pathname)
+  const isMenuPage = /^\/menu\/?$/.test(window.location.pathname) || isHealthyDealPreview
   const legalPageId = legalPageFromPath(window.location.pathname)
   const commerce = useCommerceSettings(isMenuPage)
   const cart = useCart(commerce.salesEnabled)
   const accountState = useCustomerAccount(!isAdmin && !isFeedback)
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>(menuData)
+  const healthyDeal = useHealthyDeal(isHealthyDealPreview)
+  const dealItem = healthyDeal.document
+    ? healthyDealItem(healthyDeal.document.settings, healthyDeal.document.revision, healthyDeal.now) : null
+  const liveMenuGroups = menuGroups.map(group => group.id === "food" ? {
+    ...group, categories: [...(isHealthyDealPreview ? [{
+      id: "healthy-deal", label: "Healthy Deal", iconKey: "fork-knife", items: dealItem ? [dealItem] : [],
+    }] : []), ...group.categories.filter(category => category.id !== "healthy-deal")],
+  } : group)
 
   useEffect(() => {
     if (!isMenuPage) return
@@ -49,7 +60,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      if (!isMenuPage && ["#menu", "#custom-menu", "#menu-calculator", "#halloween-menu"].includes(window.location.hash)) {
+      if (!isMenuPage && ["#menu", "#custom-menu", "#menu-calculator", "#halloween-menu", "#healthy-deal-menu"].includes(window.location.hash)) {
         window.location.replace("/menu" + window.location.search + window.location.hash)
         return
       }
@@ -84,7 +95,8 @@ export default function App() {
         isChecking={!accountState.account && !accountState.loadError}
       /> : isMenuPage ? <main>
         {commerce.error && <p role="alert" className="mx-auto max-w-4xl px-6 pt-24 text-sm text-red-800">{t(commerce.error)}</p>}
-        <Menu cart={cart} menuGroups={menuGroups} isSalesEnabled={commerce.salesEnabled} />
+        <Menu cart={cart} menuGroups={liveMenuGroups} isSalesEnabled={commerce.salesEnabled} healthyDeal={healthyDeal}
+          isHealthyDealPreview={isHealthyDealPreview} />
         <MenuBuilder onAddToCart={cart.addProduct} cartError={cart.error} isSalesEnabled={commerce.salesEnabled}
           discountPercent={menuGroups.find(group => group.id === "food")?.performanceDiscountPercent ?? 0} />
       </main> : !isAccountPage && <>

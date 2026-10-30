@@ -14,6 +14,67 @@ catre sectiunea corespunzatoare de pe `/menu`, pastrand parametrii URL.
 Navigarea intre pagini foloseste linkuri native si fallback-ul SPA Cloudflare Pages.
 Cosul ramane persistent la navigare si reincarcare.
 
+## Healthy Deal: oferta zilei
+
+Categoria **Healthy Deal** este vizibila exclusiv pe pagina de previzualizare
+`/testhealtydeal`, unde este selectata implicit. Nu apare pe `/menu`, nici prin
+fragmentul `#healthy-deal-menu`, iar programul nu este solicitat de meniul obisnuit.
+Editorul `/admin/healthy-deal` ramane disponibil. Linkul de test nu necesita
+autentificare si nu este o masura de confidentialitate; API-ul ofertei ramane public.
+Afisarea este HTML adaptat pentru mobil, inspirat de
+afisul Healthy Deal, nu un PDF static. Grafica din `src/assets/menu/deal-of-the-day`
+este reutilizata pentru identitate, stampila de pret si decor.
+Stampila si bara saptamanii folosesc PNG-urile originale cu blend pe fundal,
+fara dreptunghiuri albe. Pentru programul standard luni-vineri, 12:00-16:00,
+este afisat PNG-ul original al orarului; modificarile din admin sunt afisate
+dinamic in acelasi stil. Lista saptamanii include numai zilele cu oferta activa,
+inclusiv weekendul doar daca exista meniu programat.
+
+Administrare: `/admin/healthy-deal` sau tabul **Healthy Deal**. Acest editor
+administreaza separat categoria rezervata, nu lista obisnuita de produse:
+
+- Pretul initial este **39 lei** pentru supa + fel principal; intervalul initial
+  este **12:00–16:00**, inclusiv inceputul si exclusiv sfarsitul.
+- Programul are intrari recurente luni–duminica; initial sunt active luni–vineri,
+  cu preparatele din afisul pentru 2–6 noiembrie. Weekendul nu are oferte implicite.
+- O exceptie pe data inlocuieste ziua saptamanii; o exceptie dezactivata inchide
+  explicit ziua. Stergerea exceptiei reactiveaza programul recurent dupa salvare.
+- Fiecare zi permite editarea supei si felului principal: denumire, ingrediente,
+  alergeni, gramaj, fotografie si energie/proteine/glucide/grasimi **per portie**.
+  Totalurile sunt afisate numai daca ambele preparate au valorile completate.
+  Afisul nu furnizeaza valori nutritionale, gramaje sau alergeni zilnici: aceste
+  date raman explicit necompletate, nu estimate. Fotografiile din afis sunt
+  marcate explicit drept ilustrative, inclusiv fotografia cu somon folosita
+  initial pentru prezentare; inlocuieste-le cu fotografiile preparatelor reale.
+- Fotografiile noi folosesc R2 si endpointul existent de upload (JPEG/PNG/WebP,
+  maximum 2 MB). Schimbarea fotografiei se publica numai la salvarea programului.
+- Butonul **Salveaza toate modificarile** persista programul in D1. Conflictele
+  intre administratori sunt refuzate cu 409, fara suprascriere; exista avertizare
+  la parasirea editorului cu modificari nesalvate.
+
+Selectia zilei si intervalului foloseste exclusiv **Europe/Bucharest**, inclusiv
+schimbarea orei de vara. Pagina foloseste ceasul serverului, verifica minutul curent
+si reincarca programul la 30 secunde si la revenirea in tab. La eroare de API,
+afiseaza mesaj si opreste adaugarea ofertei, fara a presupune programul initial.
+Identitatea din cos include data si revizia programului; un meniu din alta zi sau
+dintr-o revizie anterioara nu poate fi comandat. Serverul recalculeaza pretul si
+disponibilitatea, iar oprirea globala a comercializarii ramane prioritara.
+Pretul Healthy Deal este pret fix de oferta, fara reduceri suplimentare pe categorie.
+Aceasta functionalitate nu activeaza plati/comenzi publice: ramane restrictia
+existenta pentru comenzi exclusiv in modul local TEST.
+
+Inainte de rulare aplica `0023_healthy_deal.sql`: `npm run db:migrate` local;
+in productie aplica `npm run db:migrate:prod` dupa backup, inainte de deploy.
+Migrarea creeaza programul versionat si categoria, fara sa modifice produsele
+existente. NULL in configuratia initiala inseamna explicit sablonul din afis.
+
+API: `GET /api/healthy-deal` publica `{data:{revision,settings,serverTime}}`
+fara cache, cu continutul intrarilor dezactivate eliminat.
+`GET /api/admin/healthy-deal` si `PUT /api/admin/healthy-deal` necesita autentificare
+admin. PUT cere Origin identic si `{revision,settings}`; validarea refuza date
+calendaristice inexistente, ore invalide, preturi nevalide si imagini arbitrare.
+Testare: `npx vitest run src/features/healthy-deal functions/_lib/healthy-deal.test.ts`.
+
 ## Oprirea globala a comercializarii
 
 In partea de sus a panoului admin, **Comercializare produse** permite oprirea sau

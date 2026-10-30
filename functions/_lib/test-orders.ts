@@ -5,6 +5,8 @@ import { normalizeContact, validateContact, type ContactDetails } from "../../sr
 import { preparationStatuses, type TestOrder, type PreparationStatus, type OrderLine } from "../../src/features/orders/types"
 import { readPromotions } from "./food-promotion"
 import { discountedMenuPrice } from "../../src/features/pricing/discount"
+import { readHealthyDeal } from "./healthy-deal"
+import { healthyDealItem, healthyDealCategoryId } from "../../src/features/healthy-deal/schedule"
 
 /** Enables test ordering only on loopback URLs and with explicit server configuration. */
 export function testOrdersEnabled(request: Request, env: Pick<Env, "LOCAL_TEST_ORDERS">): boolean {
@@ -60,7 +62,7 @@ export async function orderRequestHash(input: OrderInput): Promise<string> {
 }
 
 /** Uses server catalog data, never client names or prices, to snapshot order lines. */
-export async function resolveOrder(input: OrderInput, env: Env) {
+export async function resolveOrder(input: OrderInput, env: Env, now = new Date()) {
   const promotions = await readPromotions(env)
   const discounts = new Map(promotions.categories.map(category => [category.id, category.discountPercent]))
   const { results } = await env.DB.prepare(
@@ -70,6 +72,7 @@ export async function resolveOrder(input: OrderInput, env: Env) {
   const catalog = new Map<string, CartProduct>()
   const stockItems = new Map<string, string>()
   for (const item of results) {
+    if (item.category_id === healthyDealCategoryId) continue
     for (const option of cartOptions(item.category_id, {
       ...item, isAvailable: item.is_available !== 0,
       ...discountedMenuPrice(item.price, discounts.get(item.category_id) ?? 0),
@@ -78,6 +81,11 @@ export async function resolveOrder(input: OrderInput, env: Env) {
       catalog.set(option.key, option)
       stockItems.set(option.key, item.id)
     }
+  }
+  if (input.items.some(item => item.key.startsWith(`["${healthyDealCategoryId}",`))) {
+    const document = await readHealthyDeal(env)
+    const deal = healthyDealItem(document.settings, document.revision, now)
+    if (deal) for (const option of cartOptions(healthyDealCategoryId, deal)) catalog.set(option.key, option)
   }
   const summary = summarizeCart(input.items, catalog, promotions.performanceDiscountPercent)
   if (summary.totalBani === null || summary.totalBani <= 0) throw new UnavailableOrderError("Unele produse sau porții nu mai sunt disponibile.")

@@ -6,6 +6,7 @@ export type Macros = {
 }
 
 export type MenuItem = {
+  cartKey?: string
   isAvailable?: boolean
   stockQuantity?: number
   name: string

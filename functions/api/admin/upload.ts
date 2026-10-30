@@ -4,8 +4,9 @@ import { requireAdmin } from "../../_lib/auth.ts"
 import { validateUpload } from "../../_lib/validate.ts"
 
 export const onRequestPost = async ({ request, env }: Ctx) => {
-  const deny = requireAdmin(request)
+  const deny = requireAdmin(request, env)
   if (deny) return deny
+  if (request.headers.get("Origin") !== new URL(request.url).origin) return err("INVALID_ORIGIN", "Origine nepermisă.", 403)
 
   const contentType = request.headers.get("Content-Type")
   const body = await request.arrayBuffer()

@@ -77,7 +77,7 @@ export function cartCatalog(groups: MenuGroup[]): Map<string, CartProduct> {
 /** Resolves individual products or explicitly labeled bottle/glass portions from the menu. */
 export function cartOptions(categoryId: string, item: MenuItem): CartProduct[] {
   if (isAlcoholCategory(categoryId) || item.menuComponent) return []
-  const key = cartProductKey(categoryId, item.name)
+  const key = item.cartKey ?? cartProductKey(categoryId, item.name)
   const stock = { isAvailable: item.isAvailable !== false && item.stockQuantity !== 0, stockQuantity: item.stockQuantity }
   const priceBani = parsePriceBani(item.price)
   if (priceBani !== null) return [{

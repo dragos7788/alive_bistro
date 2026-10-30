@@ -15,7 +15,8 @@ describe("global storefront purchase controls", () => {
     const cart = { items: [], error: "", addProduct: vi.fn(() => true), setQuantity: vi.fn(() => true) }
     const html = renderToStaticMarkup(
       <I18nextProvider i18n={i18n}>
-        <Menu cart={cart} menuGroups={menuData} isSalesEnabled={isSalesEnabled} />
+        <Menu cart={cart} menuGroups={menuData} isSalesEnabled={isSalesEnabled}
+          healthyDeal={{ document: null, error: false, now: new Date("2026-11-02T11:00:00Z") }} />
         <MenuBuilder onAddToCart={cart.addProduct} cartError="" isSalesEnabled={isSalesEnabled} />
       </I18nextProvider>,
     )

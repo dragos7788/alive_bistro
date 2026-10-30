@@ -9,11 +9,12 @@ import { PromotionSettings } from "./PromotionSettings"
 import { CustomerLoyalty } from "./CustomerLoyalty"
 import { PushCampaigns } from "./PushCampaigns"
 import { CommerceSettings } from "./CommerceSettings"
+import { HealthyDealSettings } from "./HealthyDealSettings"
 
-type View = "items" | "categories" | "orders" | "promotion" | "loyalty" | "push"
+type View = "items" | "categories" | "orders" | "promotion" | "loyalty" | "push" | "healthy-deal"
 
 export default function AdminApp() {
-  const [view, setView]             = useState<View>(() => window.location.pathname === "/admin/promotion"
+  const [view, setCurrentView]      = useState<View>(() => window.location.pathname === "/admin/healthy-deal" ? "healthy-deal" : window.location.pathname === "/admin/promotion"
     ? "promotion" : window.location.pathname === "/admin/orders" ? "orders"
       : window.location.pathname === "/admin/loyalty" ? "loyalty"
         : window.location.pathname === "/admin/push" ? "push" : "items")
@@ -25,13 +26,21 @@ export default function AdminApp() {
   const [addingItem, setAddingItem] = useState(false)
   const [loading, setLoading]       = useState(false)
   const [error, setError]           = useState("")
+  const [healthyDealDirty, setHealthyDealDirty] = useState(false)
+
+  const setView = (next: View) => {
+    if (next === view) return
+    if (view === "healthy-deal" && healthyDealDirty && !confirm("Renunți la modificările Healthy Deal nesalvate?")) return
+    setHealthyDealDirty(false)
+    setCurrentView(next)
+  }
 
   const fetchCategories = useCallback(async () => {
     try {
       const res  = await fetch("/api/admin/categories")
       if (res.status === 401) { setError("Acces neautorizat – verifică Cloudflare Access"); return }
       const json = await res.json() as { data?: AdminCategory[]; error?: { message: string } }
-      const cats = json.data ?? []
+      const cats = (json.data ?? []).filter(category => category.id !== "healthy-deal")
       setCategories(cats)
       setActiveCatId((prev) => prev ?? (cats.find((c) => c.group_id === activeGroup)?.id ?? null))
     } catch { setError("Nu s-au putut încărca categoriile") }
@@ -113,6 +122,7 @@ export default function AdminApp() {
         <button onClick={() => setView("promotion")} className={tab(view === "promotion")}>Reduceri</button>
         <button onClick={() => setView("loyalty")} className={tab(view === "loyalty")}>Clienți și fidelitate</button>
         <button onClick={() => setView("push")} className={tab(view === "push")}>Campanii push</button>
+        <button onClick={() => setView("healthy-deal")} className={tab(view === "healthy-deal")}>Healthy Deal</button>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
@@ -139,7 +149,7 @@ export default function AdminApp() {
           ))}
         </div>}
 
-        {view === "push" ? <PushCampaigns /> : view === "loyalty" ? <CustomerLoyalty /> : view === "promotion" ? <PromotionSettings /> : view === "orders" ? <TestOrders /> : view === "categories" ? (
+        {view === "healthy-deal" ? <HealthyDealSettings onDirtyChange={setHealthyDealDirty} /> : view === "push" ? <PushCampaigns /> : view === "loyalty" ? <CustomerLoyalty /> : view === "promotion" ? <PromotionSettings /> : view === "orders" ? <TestOrders /> : view === "categories" ? (
           <CategoryManager
             categories={categories}
             groupId={activeGroup}

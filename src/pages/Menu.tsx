@@ -16,6 +16,8 @@ import type { useCart } from "../features/cart/useCart"
 import { CartDialog } from "../features/cart/CartDialog"
 import { AddToCart } from "../features/cart/AddToCart"
 import { HalloweenMenuBanner } from "../features/menu/HalloweenMenuBanner"
+import { HealthyDealMenu } from "../features/healthy-deal/HealthyDealMenu"
+import type { useHealthyDeal } from "../features/healthy-deal/useHealthyDeal"
 
 
 function CategoryBar({
@@ -130,16 +132,18 @@ function CategoryBar({
   )
 }
 
-export default function Menu({ cart, menuGroups, isSalesEnabled }: {
+export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, isHealthyDealPreview = false }: {
   cart: ReturnType<typeof useCart>
   menuGroups: MenuGroup[]
   isSalesEnabled: boolean
+  healthyDeal: ReturnType<typeof useHealthyDeal>
+  isHealthyDealPreview?: boolean
 }) {
   const { t, i18n } = useTranslation()
-  const hasHalloweenHash = window.location.hash === "#halloween-menu"
+  const initialHash = typeof window === "undefined" ? "" : window.location.hash
   const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
   const [activeCategory, setActiveCategory] = useState(
-    hasHalloweenHash ? "halloween-special" : menuData[0].categories[0].id,
+    isHealthyDealPreview ? "healthy-deal" : initialHash === "#halloween-menu" ? "halloween-special" : menuData[0].categories[0].id,
   )
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
@@ -437,7 +441,10 @@ export default function Menu({ cart, menuGroups, isSalesEnabled }: {
             </p>
           </div>
         )}
-        {activeCategoryObj.id === "halloween-special"
+        {activeCategoryObj.id === "healthy-deal"
+          ? <HealthyDealMenu document={healthyDeal.document} now={healthyDeal.now} error={healthyDeal.error}
+              isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} />
+          : activeCategoryObj.id === "halloween-special"
           ? <HalloweenMenuBanner />
           : menuCards}
 

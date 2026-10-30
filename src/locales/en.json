@@ -1,4 +1,23 @@
 {
+  "healthyDeal": {
+    "subtitle": "The daily menu, healthy and balanced",
+    "today": "Today",
+    "hours": "On days with a scheduled offer",
+    "week": "This week's main dishes",
+    "soup": "Cream of vegetable soup",
+    "main": "Healthy, balanced main dish",
+    "allergens": "Allergens",
+    "detailsPending": "Details have not been entered; please ask the team before ordering.",
+    "nutritionPending": "Nutritional values have not been entered yet.",
+    "total": "Complete menu total",
+    "outsideHours": "Add today's offer to your cart between {{start}} and {{end}}, Romanian time.",
+    "noOffer": "No Healthy Deal offer is scheduled today.",
+    "closed": "No offer",
+    "loading": "Loading today's offer…",
+    "loadError": "Healthy Deal could not be verified. Adding it to your cart is temporarily disabled; we will retry automatically.",
+    "timezone": "The schedule uses Romanian time. Today's offer updates automatically; date-specific overrides take priority.",
+    "illustration": "Illustrative photo from the poster."
+  },
   "commerce": {
     "loadError": "Sales status could not be verified. The cart is temporarily unavailable; we will retry automatically.",
     "disabled": "Product sales are currently paused."
@@ -473,6 +492,7 @@
       "balanced-mains-salads": "Balanced Mains & Salads",
       "nourishing-bowls": "Nourishing Bowls",
       "sweet-no-regrets": "Sweet. No Regrets.",
+      "healthy-deal": "Healthy Deal",
       "halloween-special": "Halloween Special",
       "drinks": "Drinks",
       "coffee-bar": "Coffee Bar",

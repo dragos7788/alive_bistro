@@ -1,4 +1,23 @@
 {
+  "healthyDeal": {
+    "subtitle": "Meniul zilei, în varianta sănătoasă și echilibrată",
+    "today": "Astăzi",
+    "hours": "Disponibil în zilele cu ofertă",
+    "week": "Felurile principale ale săptămânii",
+    "soup": "Supă-cremă de legume",
+    "main": "Fel principal sănătos și echilibrat",
+    "allergens": "Alergeni",
+    "detailsPending": "Informații necompletate; solicită detalii echipei înainte de comandă.",
+    "nutritionPending": "Valorile nutriționale nu au fost completate încă.",
+    "total": "Total meniu complet",
+    "outsideHours": "Oferta se poate adăuga în coș între {{start}} și {{end}}, ora României.",
+    "noOffer": "Astăzi nu este programată o ofertă Healthy Deal.",
+    "closed": "Fără ofertă",
+    "loading": "Se încarcă oferta zilei…",
+    "loadError": "Oferta Healthy Deal nu a putut fi verificată. Adăugarea în coș este oprită temporar; reîncercăm automat.",
+    "timezone": "Programul folosește ora României. Oferta de azi se actualizează automat; excepțiile calendaristice au prioritate.",
+    "illustration": "Fotografie ilustrativă din afiș."
+  },
   "commerce": {
     "loadError": "Starea comercializării nu a putut fi verificată. Coșul este indisponibil temporar; reîncercăm automat.",
     "disabled": "Comercializarea produselor este oprită momentan."
@@ -476,6 +495,7 @@
       "balanced-mains-salads": "Feluri principale & Salate",
       "nourishing-bowls": "Boluri nutritive",
       "sweet-no-regrets": "Dulce, fără regrete",
+      "healthy-deal": "Healthy Deal",
       "halloween-special": "Meniu Halloween",
       "drinks": "Băuturi",
       "coffee-bar": "Cafea",
