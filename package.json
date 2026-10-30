@@ -16,6 +16,7 @@
     "images:apply": "node scripts/apply-menu-images.mjs",
     "images:optimize": "node scripts/optimize-menu-images.mjs",
     "push:keys": "node scripts/generate-vapid-keys.mjs",
+    "push:retention:deploy": "wrangler deploy --config wrangler.push-retention.jsonc",
     "dev:cf": "npm run build && wrangler pages dev dist",
     "dev:orders": "npm run build && wrangler pages dev dist --ip 127.0.0.1 --compatibility-date=2026-08-06 --binding LOCAL_TEST_ORDERS=true",
     "db:migrate": "wrangler d1 migrations apply alive-bistro-menu --local",

@@ -133,6 +133,9 @@ export function PushPreferences({ presentation = "preferences" }: { presentation
         <p className="mt-2 text-sm leading-relaxed text-brand-green-800">{t("push.notice")}</p>
         <p className="mt-2 text-xs leading-relaxed">{t("push.installHint")}</p>
       </>}
+      <a href="/legal/privacy" className={`mt-2 inline-block text-sm underline ${focusClass}`}>
+        {t("push.privacyLink")}
+      </a>
       {!supported && <p className="mt-3 text-sm">{t("push.unsupported")}</p>}
       {state && !state.publicKey && <p role="status" className="mt-3 text-sm">{t("push.notConfigured")}</p>}
       {state && (state.consent || presentation === "preferences") && <p className="mt-3 text-sm">{t(state.consent ? "push.active" : "push.inactive", { count: state.devices })}</p>}

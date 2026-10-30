@@ -15,6 +15,7 @@ import { onRequestGet as adminLoyalty } from "../api/admin/loyalty"
 import { onRequestGet as pushSettings, onRequestPost as subscribePush } from "../api/customer/push"
 import { onRequestGet as pushOverview, onRequestPost as pushCampaign } from "../api/admin/push"
 import { sendPush } from "./push"
+import { purgeExpiredPushRecords } from "./push-retention"
 
 vi.mock("./push", async importOriginal => ({
   ...await importOriginal<typeof import("./push")>(), sendPush: vi.fn(),
@@ -37,6 +38,7 @@ describe("Customer identity and loyalty persistence", () => {
     db.exec(readFileSync(new URL("../../migrations/0012_customer_marketing_consent.sql", import.meta.url), "utf8"))
     db.exec(readFileSync(new URL("../../migrations/0013_web_push.sql", import.meta.url), "utf8"))
     db.exec(readFileSync(new URL("../../migrations/0014_marketing_invitation.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0024_push_retention.sql", import.meta.url), "utf8"))
     vi.mocked(sendPush).mockReset().mockResolvedValue(201)
     // Adapter executes real SQLite, including atomic rollback and trigger behavior.
     const bound = new WeakMap<object, () => void>()
@@ -240,12 +242,36 @@ describe("Customer identity and loyalty persistence", () => {
     const settings = await pushSettings({
       request: new Request("http://localhost:8792/api/customer/push", { headers: { Cookie: cookie } }), env, params: {},
     })
+
     expect((await settings.json()).data).toMatchObject({ consent: true, devices: 2 })
     const result = await subscribePush({ request: post("push", { action: "withdraw" }, cookie), env, params: {} })
     expect((await result.json()).data).toEqual({ consent: false })
     expect(db.prepare("SELECT count(*) AS n FROM customer_push_subscriptions").get()?.n).toBe(0)
     expect(db.prepare("SELECT action FROM customer_push_consent_events ORDER BY id DESC LIMIT 1").get()?.action).toBe("withdrawn")
     expect(() => db.exec("UPDATE customer_push_consent_events SET action='granted'")).toThrow("PUSH_CONSENT_IMMUTABLE")
+  })
+
+  it("purges withdrawn consent and completed campaign records after twelve months", async () => {
+    const now = Math.floor(Date.UTC(2026, 9, 30) / 1000)
+    const old = Math.floor(Date.UTC(2025, 9, 30) / 1000)
+    const recent = old + 1
+    db.prepare(`INSERT INTO customer_push_consent_events(customer_id,action,notice_version,created_at)
+      VALUES ('buyer','granted','push-marketing-v1',1),('buyer','withdrawn','push-marketing-v1',?),
+      ('other','granted','push-marketing-v1',2),('other','withdrawn','push-marketing-v1',?),
+      ('coach','granted','push-marketing-v1',3),('coach','withdrawn','push-marketing-v1',?),
+      ('coach','granted','push-marketing-v1',?)`).run(old, recent, old, recent)
+    db.prepare("INSERT INTO push_campaigns(id,title,body,path,created_at,created_by) VALUES ('old','Old','Body','/',?,'admin'),('new','New','Body','/',?,'admin')")
+      .run(old, recent)
+    db.prepare("INSERT INTO push_deliveries(campaign_id,subscription_id,status,updated_at) VALUES ('old','device-old','accepted',?),('new','device-new','accepted',?)")
+      .run(old, recent)
+
+    await purgeExpiredPushRecords(env.DB, now)
+
+    expect(db.prepare("SELECT count(*) AS n FROM customer_push_consent_events WHERE customer_id='buyer'").get()?.n).toBe(0)
+    expect(db.prepare("SELECT count(*) AS n FROM customer_push_consent_events WHERE customer_id='other'").get()?.n).toBe(2)
+    expect(db.prepare("SELECT action FROM customer_push_consent_events WHERE customer_id='coach'").all().map(row => row.action)).toEqual(["granted"])
+    expect(db.prepare("SELECT id FROM push_campaigns").all().map(row => row.id)).toEqual(["new"])
+    expect(() => db.exec("DELETE FROM customer_push_consent_events")).not.toThrow()
   })
 
   it("does not transfer a shared device to another customer", async () => {

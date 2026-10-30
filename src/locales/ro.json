@@ -166,6 +166,7 @@
     "terms": "Termeni și condiții",
     "cancellation": "Politica de anulare",
     "returns": "Politica de returnare",
+    "privacy": "Confidențialitate",
     "contact": "Contact",
     "rights": "© {{year}} ALIVE Bistro. Toate drepturile rezervate."
   },
@@ -175,7 +176,7 @@
     "terms": {
       "title": "Termeni și condiții",
       "sections": [
-        { "heading": "1. Operator", "body": "Site-ul și serviciile sunt oferite de ALIVE Bistro, Str. Mureș nr. 116A, Timișoara. Datele complete ale societății se găsesc pe pagina Contact." },
+        { "heading": "1. Operator", "body": "Site-ul și serviciile sunt oferite de Live Well S.R.L., care operează sub denumirea ALIVE Bistro, cu sediul în Str. Mureș nr. 115A, corp D, Timișoara. Datele de contact sunt pe pagina Contact." },
         { "heading": "2. Comenzi și prețuri", "body": "Prețurile afișate sunt exprimate în lei (RON) și includ TVA. Comanda este înregistrată după confirmarea de către restaurant. Produsele sunt preparate la comandă, în limita stocului disponibil." },
         { "heading": "3. Ridicare și livrare", "body": "Comenzile se ridică din restaurant, la ora comunicată la confirmare. Livrarea la domiciliu, când este disponibilă, se face prin platforme partenere (Glovo, Wolt, Bolt Food), conform termenilor acestora." },
         { "heading": "4. Plata online", "body": "Plățile cu cardul se procesează securizat prin BT iPay, serviciul Băncii Transilvania. ALIVE Bistro nu vede și nu stochează datele cardului dumneavoastră." },
@@ -201,6 +202,20 @@
         { "heading": "Alergeni", "body": "Informațiile despre alergeni sunt afișate în meniu. Dacă aveți alergii, anunțați-ne înainte de comandă." }
       ]
     },
+    "privacy": {
+      "title": "Informare privind confidențialitatea contului și notificările push",
+      "sections": [
+        { "heading": "Domeniu", "body": "Această informare descrie prelucrarea datelor tehnice necesare pentru notificările push de marketing. Alte funcționalități ale site-ului pot implica prelucrări suplimentare, care trebuie descrise separat." },
+        { "heading": "Operator și contact", "body": "Operatorul este Live Well S.R.L. (ALIVE Bistro), CUI RO53384964, adresă de contact: Str. Mureș nr. 115A, corp D, Timișoara. Pentru întrebări sau cereri privind datele personale, scrie la adela.asanache@gmail.com sau contactează-ne la 0737 263 469." },
+        { "heading": "Scopuri și temeiuri", "body": "Folosim datele contului pentru autentificare și administrarea contului, conform executării serviciilor solicitate. Pentru noutăți și oferte comerciale prin notificări push folosim consimțământul tău (art. 6 alin. (1) lit. a GDPR), acordat separat și voluntar. Instalarea aplicației, crearea contului sau permisiunea tehnică a browserului nu reprezintă, singure, consimțământ pentru marketing. Refuzul nu afectează contul, punctele sau voucherul." },
+        { "heading": "Date prelucrate pentru push", "body": "Dacă activezi push, stocăm identificatorul contului asociat, adresa tehnică de livrare (endpoint), cheile criptografice ale abonamentului, momentul înregistrării și evidența acordului/retragerii cu versiunea informării. Păstrăm și date tehnice despre campanii și starea livrărilor. Nu include date sensibile sau detalii personale în notificările promoționale; acestea pot apărea pe ecranul blocat și după deconectarea din cont." },
+        { "heading": "Destinatari și transferuri", "body": "Pentru găzduire și stocarea bazei de date folosim servicii Cloudflare. Livrarea Web Push este efectuată de serviciul platformei/browserului dispozitivului, care poate fi Google/Firebase, Apple, Mozilla sau Microsoft. Furnizorii procesează date tehnice necesare livrării conform propriilor condiții. În funcție de furnizor și configurare, datele pot fi prelucrate în afara Spațiului Economic European. Pentru detalii despre garanțiile aplicabile transferurilor în configurația folosită, contactează operatorul; acestea trebuie confirmate înainte de campanii." },
+        { "heading": "Păstrare", "body": "Abonamentul tehnic este păstrat cât timp acordul este activ și este șters de pe server la retragerea acordului sau când furnizorul push îl declară expirat. Evidența acordurilor și a retragerilor este eliminată la prima curățare zilnică după împlinirea perioadei de 12 luni de la retragere. Evidențele de livrare și campaniile sunt eliminate la prima curățare zilnică după 12 luni de la crearea campaniei; o livrare aflată chiar atunci în procesare este lăsată să se încheie. Înregistrările de consimțământ active rămân până la retragere." },
+        { "heading": "Alegere și retragere", "body": "Acordul push este opțional și separat de marketingul prin email. Îl poți retrage oricând din preferințele push ale contului; retragerea oprește trimiterea viitoare către toate dispozitivele asociate contului și șterge abonamentele de pe server. Mesajele deja acceptate de serviciul push pot totuși să ajungă. Blocarea notificărilor în setările dispozitivului oprește afișarea, dar pentru retragerea acordului în evidența noastră folosește și opțiunea din cont." },
+        { "heading": "Drepturile tale", "body": "În condițiile și limitele GDPR, poți solicita accesul la date, rectificarea, ștergerea sau restricționarea prelucrării, portabilitatea datelor și poți formula o opoziție atunci când este aplicabil. Îți poți retrage consimțământul în orice moment; retragerea nu afectează legalitatea prelucrării anterioare. Pentru exercitarea drepturilor, contactează-ne la adresa de email de mai sus. Ai și dreptul să depui o plângere la ANSPDCP: https://www.dataprotection.ro/." },
+        { "heading": "Obligația de a furniza date", "body": "Furnizarea datelor tehnice push este voluntară. Dacă nu le furnizezi sau retragi acordul, nu vei primi notificări promoționale push; celelalte funcționalități ale contului rămân disponibile." }
+      ]
+    },
     "contact": {
       "title": "Contact",
       "sections": [
@@ -210,7 +225,7 @@
         "legalName": "Denumire societate",
         "taxId": "CUI",
         "registrationNumber": "Nr. Reg. Com.",
-        "address": "Adresă punct de lucru",
+        "address": "Adresă de contact",
         "phone": "Telefon",
         "email": "E-mail"
       }
@@ -277,6 +292,7 @@
   },
   "push": {
     "title": "Oferte prin notificări push",
+    "privacyLink": "Citește informarea de confidențialitate",
     "notice": "Opțional: accept să primesc noutăți și oferte comerciale ALIVE Bistro prin notificări push. Instalarea și contul nu depind de acord. Îl pot retrage oricând aici, pentru toate dispozitivele. Abonamentul tehnic al dispozitivului este stocat pentru trimitere. Notificările pot apărea pe ecranul blocat și după deconectare.",
     "installHint": "Pe iPhone/iPad, adaugă aplicația pe ecranul principal (iOS/iPadOS 16.4 sau mai nou). Permisiunea browserului este cerută doar după alegerea ta.",
     "unsupported": "Notificările push nu sunt disponibile în acest browser sau mod. Încearcă aplicația instalată ori un browser compatibil.",

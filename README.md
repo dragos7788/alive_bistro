@@ -159,14 +159,15 @@ Login sau Apple Pay cu Sign in with Apple: sunt servicii separate.
 
 ### Activarea autentificarii
 
-1. Aplica migrarile pana la `0014_marketing_invitation.sql` cu
+1. Aplica migrarile pana la `0024_push_retention.sql` cu
    `npm run db:migrate` pentru baza locala. Migrarea 0010 adauga voucherele si
    acorda voucherul de bun venit clientilor existenti; clientii noi il primesc
    la crearea contului. Migrarea 0011 adauga istoricul utilizarii voucherelor.
    Migrarea 0012 adauga jurnalul de acorduri pentru marketing prin email.
    Migrarea 0013 adauga acordurile push, abonamentele si istoricul campaniilor.
    Migrarea 0014 retine afisarea unica a invitatiei de marketing pe cont.
-   In productie, fa backup D1 si aplica migrarea explicit pe mediul vizat
+   Migrarea 0024 permite eliminarea automata a evenimentelor push dupa perioada
+   de pastrare. In productie, fa backup D1 si aplica migrarea explicit pe mediul vizat
    (`npx wrangler d1 migrations apply alive-bistro-menu --remote`) inainte de deploy.
 2. In [Google Cloud Console](https://console.cloud.google.com/auth/clients),
    creeaza OAuth client de tip Web application si configureaza consent screen.
@@ -233,7 +234,7 @@ Abonamentele unui dispozitiv nu se transfera intre clienti.
 
 Configurare inainte de activare:
 
-1. Aplica migrarile 0012, 0013 si `0014_marketing_invitation.sql` local, apoi separat in productie
+1. Aplica migrarile 0012, 0013, 0014 si `0024_push_retention.sql` local, apoi separat in productie
    dupa backup D1. Nu publica functiile inainte de migrari.
 2. Ruleaza `npm run push:keys` intr-un terminal privat o singura data. Pastreaza
    perechea stabila; schimbarea ei necesita reabonarea dispozitivelor.
@@ -241,10 +242,17 @@ Configurare inainte de activare:
    (secret binding) si `VAPID_SUBJECT=mailto:ADRESA_REALĂ_DE_CONTACT`.
    Nu pune cheia privata in variabile `VITE_` si nu comite iesirea comenzii.
    Pentru dezvoltare, adauga aceste valori manual in `.dev.vars`, fara commit.
-4. Publica informarea completa: operator, contact, scop marketing push, temei
-   consimtamant, date tehnice si furnizori push Apple/Google/Mozilla/Microsoft,
-   retentie, drepturi si retragere. Valideaza juridic inainte de campanii.
-5. Testeaza cu un cont propriu pe HTTPS, inclusiv refuz, retragere si receptie
+4. Configureaza si publica workerul de retentie, dupa migrarea 0024:
+   `npm run push:retention:deploy`. Workerul ruleaza zilnic la 02:17 UTC si
+   sterge evidenta acordurilor la 12 luni dupa retragere, precum si campaniile
+   finalizate si livrarile lor dupa 12 luni de la creare. Campaniile cu livrari
+   in curs sunt pastrate pana la finalizare.
+5. Pagina `/legal/privacy` contine informarea pentru cont si push in romana si
+   engleza si este legata langa alegerea de consimtamant. Aceasta nu acopera
+   automat prelucrarile altor formulare/servicii; verifica inventarul datelor,
+   furnizorii, contractele si transferurile internationale si valideaza textul
+   cu responsabilul juridic/DPO inaintea campaniilor.
+6. Testeaza cu un cont propriu pe HTTPS, inclusiv refuz, retragere si receptie
    pe telefon. Pe iOS/iPadOS 16.4+, Web Push necesita PWA adaugata pe Home Screen.
 
 Adminul are fila **Campanii push** (`/admin/push`), cu titlu, mesaj, destinatie
@@ -262,9 +270,12 @@ API: `GET/POST /api/customer/push` (sesiune client, Origin exact pentru scriere)
 Endpointurile acceptate sunt limitate la furnizorii push de browser;
 redirectionarile HTTP sunt interzise. Endpointurile si cheile dispozitivului
 nu se scriu in loguri si nu se returneaza in raportul admin.
-Registrul de acorduri este append-only. Stabileste operational perioada de
-pastrare si procesul de stergere/anonymizare pentru aceste date; aplicatia nu
-implementeaza automat retentia, exportul GDPR sau stergerea contului.
+Registrul de acorduri este imuabil pe durata de pastrare, apoi workerul elimina
+evenimentele aferente conturilor cu retragere mai veche de 12 luni. Workerul
+trebuie publicat separat si legat la aceeasi baza D1; pana atunci, curatarea nu
+se executa automat. Aplicatia nu implementeaza automat exportul GDPR sau
+stergerea completa a contului. Campaniile aflate in curs nu sunt eliminate de
+worker pana cand livrarile lor devin terminale.
 Notificarile comerciale pot aparea pe ecranul blocat si continua dupa logout
 pana la retragerea acordului; nu include date personale in mesajele campaniilor.
 

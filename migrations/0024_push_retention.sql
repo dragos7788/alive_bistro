@@ -1,0 +1,1 @@
+DROP TRIGGER customer_push_consent_no_delete;

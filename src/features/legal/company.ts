@@ -1,15 +1,15 @@
 // Completați cu datele reale ale societății înainte de publicare; BT le verifică pe pagina Contact.
 export const company = {
   tradeName: "ALIVE Bistro",
-  legalName: "[de completat: denumirea societății, ex. SC ... SRL]",
-  taxId: "[de completat: CUI]",
-  registrationNumber: "[de completat: J35/.../...]",
-  address: "Str. Mureș nr. 116A, Timișoara",
+  legalName: "Live Well S.R.L.",
+  taxId: "RO53384964",
+  registrationNumber: null,
+  address: "Str. Mureș nr. 115A, corp D, Timișoara",
   phone: "0737 263 469",
-  email: "[de completat: adresa de e-mail]",
+  email: "adela.asanache@gmail.com",
 } as const
 
-export const legalPages = ["terms", "cancellation", "returns", "contact"] as const
+export const legalPages = ["terms", "cancellation", "returns", "privacy", "contact"] as const
 export type LegalPageId = typeof legalPages[number]
 
 export function legalPageFromPath(pathname: string): LegalPageId | null {

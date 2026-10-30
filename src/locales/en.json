@@ -166,6 +166,7 @@
     "terms": "Terms and conditions",
     "cancellation": "Cancellation policy",
     "returns": "Return policy",
+    "privacy": "Privacy",
     "contact": "Contact",
     "rights": "© {{year}} ALIVE Bistro. All rights reserved."
   },
@@ -175,7 +176,7 @@
     "terms": {
       "title": "Terms and conditions",
       "sections": [
-        { "heading": "1. Operator", "body": "The site and services are provided by ALIVE Bistro, Str. Mureș nr. 116A, Timișoara. Full company details are on the Contact page." },
+        { "heading": "1. Operator", "body": "The site and services are provided by Live Well S.R.L., trading as ALIVE Bistro, with its registered office at Str. Mureș nr. 115A, corp D, Timișoara, Romania. Contact details are on the Contact page." },
         { "heading": "2. Orders and prices", "body": "Prices are in Romanian lei (RON) and include VAT. An order is registered once the restaurant confirms it. Items are prepared to order, subject to availability." },
         { "heading": "3. Pickup and delivery", "body": "Orders are collected at the restaurant at the time given at confirmation. Home delivery, when available, is provided through partner platforms (Glovo, Wolt, Bolt Food) under their terms." },
         { "heading": "4. Online payment", "body": "Card payments are processed securely through BT iPay, a Banca Transilvania service. ALIVE Bistro does not see or store your card data." },
@@ -201,6 +202,20 @@
         { "heading": "Allergens", "body": "Allergen information is shown in the menu. If you have allergies, tell us before ordering." }
       ]
     },
+    "privacy": {
+      "title": "Privacy notice for accounts and push notifications",
+      "sections": [
+        { "heading": "Scope", "body": "This notice describes the technical data processing required for marketing push notifications. Other website features may involve additional processing that must be described separately." },
+        { "heading": "Controller and contact", "body": "The controller is Live Well S.R.L. (ALIVE Bistro), Romanian tax ID RO53384964, contact address: Str. Mureș nr. 115A, corp D, Timișoara, Romania. For questions or requests about personal data, email adela.asanache@gmail.com or call 0737 263 469." },
+        { "heading": "Purposes and legal bases", "body": "We use account data to authenticate you and provide account services you request. We use your consent (GDPR Article 6(1)(a)) to send ALIVE news and promotional offers by push notification. This consent is separate and voluntary. Installing the app, creating an account, or granting browser permission alone does not constitute marketing consent. Refusal does not affect your account, points, or voucher." },
+        { "heading": "Push data", "body": "When you enable push, we store the account identifier, the technical delivery address (endpoint), subscription cryptographic keys, registration time, and a record of consent or withdrawal with the notice version. We also retain technical campaign and delivery-status records. Do not include sensitive or personal details in promotional notifications; they may appear on your lock screen and after you sign out." },
+        { "heading": "Recipients and transfers", "body": "We use Cloudflare services for hosting and database storage. Web Push delivery is handled by the device/browser platform's push service, which may be Google/Firebase, Apple, Mozilla, or Microsoft. Providers process technical data needed for delivery under their own terms. Depending on the provider and configuration, data may be processed outside the European Economic Area. Contact the controller for details of safeguards applicable to the configuration in use; these must be confirmed before campaigns." },
+        { "heading": "Retention", "body": "The technical subscription is retained while consent is active and is deleted from our server when you withdraw consent or the push provider reports it as expired. Consent and withdrawal records are deleted during the first daily cleanup after the 12-month period from withdrawal. Delivery and campaign records are deleted during the first daily cleanup after 12 months from campaign creation; a delivery actively being processed at that time is allowed to finish. Active consent records remain until withdrawal." },
+        { "heading": "Choice and withdrawal", "body": "Push consent is optional and separate from email marketing. You can withdraw it at any time in your account's push preferences; withdrawal stops future sends to all devices associated with your account and deletes subscriptions from our server. Messages already accepted by a push service may still arrive. Blocking notifications in device settings stops display, but to withdraw consent in our records, also use the account setting." },
+        { "heading": "Your rights", "body": "Subject to GDPR conditions and limits, you may request access, rectification, erasure or restriction of processing, data portability, and object where applicable. You may withdraw consent at any time; this does not affect the lawfulness of processing before withdrawal. To exercise your rights, contact us at the email above. You may also lodge a complaint with the Romanian data protection authority (ANSPDCP): https://www.dataprotection.ro/." },
+        { "heading": "Whether data is required", "body": "Providing push subscription data is voluntary. If you do not provide it or withdraw consent, you will not receive promotional push notifications; other account features remain available." }
+      ]
+    },
     "contact": {
       "title": "Contact",
       "sections": [
@@ -210,7 +225,7 @@
         "legalName": "Company name",
         "taxId": "Tax ID (CUI)",
         "registrationNumber": "Trade register no.",
-        "address": "Business address",
+        "address": "Contact address",
         "phone": "Phone",
         "email": "Email"
       }
@@ -274,6 +289,7 @@
   },
   "push": {
     "title": "Offers via push notifications",
+    "privacyLink": "Read the privacy notice",
     "notice": "Optional: I agree to receive ALIVE Bistro news and promotional offers via push notifications. Installation and account access do not depend on consent. I can withdraw here at any time for all devices. The device's technical subscription is stored for delivery. Notifications may appear on the lock screen and after sign-out.",
     "installHint": "On iPhone/iPad, add the app to your Home Screen (iOS/iPadOS 16.4 or later). Browser permission is requested only after your choice.",
     "unsupported": "Push is unavailable in this browser or mode. Try the installed app or a compatible browser.",

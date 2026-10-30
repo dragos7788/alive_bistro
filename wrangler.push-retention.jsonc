@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "alive-bistro-push-retention",
+  "main": "workers/push-retention.ts",
+  "compatibility_date": "2026-08-06",
+  "triggers": {
+    "crons": ["17 2 * * *"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "alive-bistro-menu",
+      "database_id": "1272c004-748d-498e-bd71-5313b29e0941",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

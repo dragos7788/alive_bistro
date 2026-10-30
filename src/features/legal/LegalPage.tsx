@@ -22,10 +22,12 @@ export function LegalPage({ pageId }: { pageId: LegalPageId }) {
           <dl className="grid gap-2 rounded-lg bg-brand-cream-50 p-4 text-sm sm:grid-cols-[10rem_1fr]">
             <dt className="font-semibold">{t("legal.contact.labels.legalName")}</dt><dd>{company.legalName}</dd>
             <dt className="font-semibold">{t("legal.contact.labels.taxId")}</dt><dd>{company.taxId}</dd>
-            <dt className="font-semibold">{t("legal.contact.labels.registrationNumber")}</dt><dd>{company.registrationNumber}</dd>
+            {company.registrationNumber && <>
+              <dt className="font-semibold">{t("legal.contact.labels.registrationNumber")}</dt><dd>{company.registrationNumber}</dd>
+            </>}
             <dt className="font-semibold">{t("legal.contact.labels.address")}</dt><dd>{company.address}</dd>
             <dt className="font-semibold">{t("legal.contact.labels.phone")}</dt><dd><a className="underline" href={`tel:${company.phone.replace(/\s/g, "")}`}>{company.phone}</a></dd>
-            <dt className="font-semibold">{t("legal.contact.labels.email")}</dt><dd>{company.email}</dd>
+            <dt className="font-semibold">{t("legal.contact.labels.email")}</dt><dd><a className="underline" href={`mailto:${company.email}`}>{company.email}</a></dd>
           </dl>
         )}
       </div>

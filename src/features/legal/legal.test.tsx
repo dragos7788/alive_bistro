@@ -38,6 +38,18 @@ describe("LegalPage", () => {
 
     expect(html).toContain("CUI")
     expect(html).toContain("0737263469")
+    expect(html).toContain("Live Well S.R.L.")
+    expect(html).not.toContain("de completat")
+    expect(html).not.toContain("Nr. Reg. Com.")
+  })
+
+  it("LegalPage_privacy_showsControllerAndPushRetention", () => {
+    const html = renderToStaticMarkup(<I18nextProvider i18n={i18n}><LegalPage pageId="privacy" /></I18nextProvider>)
+
+    expect(html).toContain("RO53384964")
+    expect(html).toContain("adela.asanache@gmail.com")
+    expect(html).toContain("12 luni")
+    expect(html).toContain("notificări push")
   })
 
   it("locales_roAndEn_haveSameSectionCounts", () => {
