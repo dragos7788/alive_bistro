@@ -40,6 +40,10 @@ describe("Customer identity and loyalty persistence", () => {
     db.exec(readFileSync(new URL("../../migrations/0014_marketing_invitation.sql", import.meta.url), "utf8"))
     db.exec(readFileSync(new URL("../../migrations/0024_push_retention.sql", import.meta.url), "utf8"))
     db.exec(readFileSync(new URL("../../migrations/0025_push_audience.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0002_test_orders.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0006_calorie_journal.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0026_customer_deletion.sql", import.meta.url), "utf8"))
+    db.exec(readFileSync(new URL("../../migrations/0027_marketing_invitation_channels.sql", import.meta.url), "utf8"))
     vi.mocked(sendPush).mockReset().mockResolvedValue(201)
     // Adapter executes real SQLite, including atomic rollback and trigger behavior.
     const bound = new WeakMap<object, () => void>()
@@ -76,9 +80,9 @@ describe("Customer identity and loyalty persistence", () => {
       },
       MEDIA: { put: vi.fn(), get: vi.fn(), delete: vi.fn() },
     }
-    db.exec(`INSERT INTO customers VALUES ('coach','Coach',NULL,'AAAAAAAAAAAAAAAA',NULL,1);
-      INSERT INTO customers VALUES ('buyer','Buyer',NULL,'BBBBBBBBBBBBBBBB','coach',2);
-      INSERT INTO customers VALUES ('other','Other',NULL,'CCCCCCCCCCCCCCCC',NULL,3)`)
+    db.exec(`INSERT INTO customers(id,name,email,referral_code,referred_by,created_at) VALUES ('coach','Coach',NULL,'AAAAAAAAAAAAAAAA',NULL,1);
+      INSERT INTO customers(id,name,email,referral_code,referred_by,created_at) VALUES ('buyer','Buyer',NULL,'BBBBBBBBBBBBBBBB','coach',2);
+      INSERT INTO customers(id,name,email,referral_code,referred_by,created_at) VALUES ('other','Other',NULL,'CCCCCCCCCCCCCCCC',NULL,3)`)
   })
   afterEach(() => db.close())
 
@@ -303,6 +307,27 @@ describe("Customer identity and loyalty persistence", () => {
     expect((await result.json()).data.show).toBe(false)
   })
 
+  it("offers push after VAPID becomes available without repeating the email invitation", async () => {
+    db.prepare("UPDATE customers SET email='buyer@example.com' WHERE id='buyer'").run()
+    const cookie = await pushCookie()
+    const key = env.VAPID_PRIVATE_KEY
+    env.VAPID_PRIVATE_KEY = undefined
+    const first = await claimMarketingInvitation({
+      request: post("marketing-invitation", { action: "claim" }, cookie), env, params: {},
+    })
+    expect((await first.json()).data).toEqual({ show: true, email: true, push: false })
+
+    env.VAPID_PRIVATE_KEY = key
+    const next = await claimMarketingInvitation({
+      request: post("marketing-invitation", { action: "claim" }, cookie), env, params: {},
+    })
+    expect((await next.json()).data).toEqual({ show: true, email: false, push: true })
+    const repeat = await claimMarketingInvitation({
+      request: post("marketing-invitation", { action: "claim" }, cookie), env, params: {},
+    })
+    expect((await repeat.json()).data.show).toBe(false)
+  })
+
   it("protects invitation claims with session, origin and input validation", async () => {
     const cookie = await pushCookie()
     await expect(claimMarketingInvitation({
@@ -317,6 +342,20 @@ describe("Customer identity and loyalty persistence", () => {
       })).rejects.toThrow("INVALID_INPUT")
     }
     expect(db.prepare("SELECT count(*) AS n FROM customer_marketing_invitations").get()?.n).toBe(0)
+  })
+
+  it("migrates a legacy invitation without suppressing a newly available push channel", async () => {
+    db.exec("DROP TABLE customer_marketing_invitations")
+    db.exec(readFileSync(new URL("../../migrations/0014_marketing_invitation.sql", import.meta.url), "utf8"))
+    db.exec("INSERT INTO customer_marketing_invitations VALUES ('buyer',1)")
+    db.exec(readFileSync(new URL("../../migrations/0027_marketing_invitation_channels.sql", import.meta.url), "utf8"))
+    const cookie = await pushCookie()
+
+    const response = await claimMarketingInvitation({
+      request: post("marketing-invitation", { action: "claim" }, cookie), env, params: {},
+    })
+
+    expect((await response.json()).data).toEqual({ show: true, email: false, push: true })
   })
 
   it("requires explicit push consent, valid origin, session and allowlisted endpoints", async () => {
@@ -474,7 +513,7 @@ describe("Customer identity and loyalty persistence", () => {
     await expect(recordSettledPayment(env, { ...payment, amountBani: 5000 })).rejects.toThrow("CONFLICT")
   })
   it("does not award second-level referral points", async () => {
-    db.exec("INSERT INTO customers VALUES ('third','Third',NULL,'DDDDDDDDDDDDDDDD','buyer',4)")
+    db.exec("INSERT INTO customers(id,name,email,referral_code,referred_by,created_at) VALUES ('third','Third',NULL,'DDDDDDDDDDDDDDDD','buyer',4)")
     await recordSettledPayment(env, { ...payment, customerId: "third" })
     expect(points("third")).toBe(49)
     expect(points("buyer")).toBe(49)
@@ -697,7 +736,7 @@ describe("Customer identity and loyalty persistence", () => {
   it("rejects TEST orders and protects referral assignment and ledger history", async () => {
     await expect(recordSettledPayment(env, { ...payment, orderId: "TEST-123" })).rejects.toThrow()
     expect(() => db.exec("UPDATE customers SET referred_by='other' WHERE id='buyer'")).toThrow("REFERRER_IMMUTABLE")
-    expect(() => db.exec("INSERT INTO customers VALUES ('self','Self',NULL,'DDDDDDDDDDDDDDDD','self',4)")).toThrow()
+    expect(() => db.exec("INSERT INTO customers(id,name,email,referral_code,referred_by,created_at) VALUES ('self','Self',NULL,'DDDDDDDDDDDDDDDD','self',4)")).toThrow()
     await recordSettledPayment(env, payment)
     expect(() => db.exec("UPDATE loyalty_ledger SET points_delta=100")).toThrow("LEDGER_IMMUTABLE")
     expect(() => db.exec("DELETE FROM loyalty_ledger")).toThrow("LEDGER_IMMUTABLE")

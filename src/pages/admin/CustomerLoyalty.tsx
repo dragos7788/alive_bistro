@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react"
+import { CustomerDeletion } from "./CustomerDeletion"
 
 type CustomerSummary = {
   id: string
@@ -85,6 +86,8 @@ export function CustomerLoyalty() {
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState("")
+  const [deletionMessage, setDeletionMessage] = useState("")
+  const deletedIds = useRef(new Set<string>())
   const headingRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
@@ -105,7 +108,7 @@ export function CustomerLoyalty() {
           throw new Error(message ?? "Lista clienților nu a putut fi încărcată.")
         }
         if (!controller.signal.aborted) {
-          setCustomers(data.customers)
+          setCustomers(data.customers.filter(customer => !deletedIds.current.has(customer.id)))
           setNext(data.next)
           setSelectedId("")
           setDetail(null)
@@ -167,7 +170,7 @@ export function CustomerLoyalty() {
       const json: unknown = await response.json()
       const data = json && typeof json === "object" && "data" in json ? json.data : null
       if (!response.ok || !isCustomerPage(data)) throw new Error("Nu s-au putut încărca mai mulți clienți.")
-      setCustomers(previous => [...previous, ...data.customers])
+      setCustomers(previous => [...previous, ...data.customers.filter(customer => !deletedIds.current.has(customer.id))])
       setNext(data.next)
     } catch (reason) {
       console.error("Unable to load another admin loyalty customer page", reason)
@@ -200,6 +203,17 @@ export function CustomerLoyalty() {
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setSearch(searchInput.trim())
+  }
+
+  function handleCustomerDeleted(id: string, name: string) {
+    deletedIds.current.add(id)
+    setCustomers(previous => previous.filter(customer => customer.id !== id))
+    setSelectedId("")
+    setDetail(null)
+    setHistoryCursor(null)
+    setError("")
+    setDeletionMessage(`Contul ${name} a fost șters definitiv. Datele personale din comenzile asociate au fost anonimizate.`)
+    headingRef.current?.focus()
   }
 
   const focusClass = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700"
@@ -235,6 +249,7 @@ export function CustomerLoyalty() {
         </select>
       </form>
       {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+      <p role="status" className="text-sm">{deletionMessage}</p>
       {isLoading && <p role="status">Se încarcă clienții…</p>}
       {!isLoading && customers.length === 0 && <p>Nu există clienți care să corespundă căutării.</p>}
       {customers.length > 0 && (
@@ -281,6 +296,7 @@ export function CustomerLoyalty() {
       {selectedId && !detail && !error && <p role="status">Se încarcă istoricul clientului…</p>}
       {detail && (
         <div className="space-y-5 rounded-2xl border border-brand-green-700/15 bg-brand-cream-50 p-4 sm:p-6">
+          <CustomerDeletion key={detail.customer.id} customer={detail.customer} onDeleted={handleCustomerDeleted} />
           <div className="grid gap-3 sm:grid-cols-2">
             <p><span className="font-semibold">E-mail:</span> {detail.customer.email ?? "Indisponibil"}</p>
             <p><span className="font-semibold">Client din:</span> {formatDate(detail.customer.createdAt)}</p>

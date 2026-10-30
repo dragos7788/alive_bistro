@@ -200,8 +200,10 @@ HTTPS, fara tokenuri in localStorage. Codurile/tokenurile providerilor nu se
 returneaza clientului si nu se pastreaza dupa autentificare.
 Middleware-ul de cont nu inlocuieste Cloudflare Access pentru admin.
 
-La autentificare, abonarea la noutati si oferte prin email este optionala si
-nebifata implicit. Callback-ul inregistreaza doar o alegere explicita si
+Autentificarea nu cere o alegere de marketing si nu reutilizeaza un acord din
+localStorage. Dupa autentificare, emailul si push sunt optiuni separate, nebifate,
+cu un singur buton „Salveaza preferintele”. API-ul OAuth pastreaza compatibilitatea
+cu clientii anteriori: callback-ul inregistreaza doar o alegere explicita si
 respinge activarea daca nu exista o adresa de email disponibila. Clientul poate
 modifica sau retrage acordul din cont; evenimentele includ sursa, versiunea
 informarii si data, iar adminul le poate consulta in istoricul clientului.
@@ -217,11 +219,17 @@ email si push pentru canalele fara o alegere anterioara. O retragere existenta
 nu declanseaza o noua solicitare. Emailul este oferit doar conturilor cu adresa
 disponibila, iar push doar dupa configurarea VAPID. Daca niciun canal nu este
 disponibil, invitatia nu este consumata. `POST /api/customer/marketing-invitation`
-cu `{action:"claim"}` rezerva atomic afisarea o singura data pe cont, inclusiv
+cu `{action:"claim"}` rezerva atomic afisarea o singura data pe canal si cont, inclusiv
 intre dispozitive, fara sa acorde consimtamant. Inchiderea, Escape si „Nu acum”
 nu activeaza niciun canal si nu afecteaza contul sau voucherul. Reincarcarea
-dupa rezervare nu mai afiseaza invitatia; preferintele raman disponibile in cont.
-Permisiunea browserului se cere doar din butonul explicit pentru push.
+dupa rezervare nu mai afiseaza acel canal; preferintele raman disponibile in cont.
+Migrarea `0027_marketing_invitation_channels.sql` permite oferirea push dupa
+configurarea VAPID chiar daca invitatia email a fost deja afisata. Nu reseteaza
+acordurile sau retragerile existente. Aplica migrarile inainte de deploy.
+Permisiunea browserului se cere din actiunea de salvare doar daca push este bifat,
+direct in gestul utilizatorului. Optiunile nebifate nu acorda si nu retrag
+acorduri existente. Daca push reuseste, dar emailul esueaza, abonarea push ramane
+activa si formularul afiseaza eroarea, permitand reincercarea emailului.
 
 ### Campanii Web Push (optional)
 
@@ -287,11 +295,41 @@ nu se scriu in loguri si nu se returneaza in raportul admin.
 Registrul de acorduri este imuabil pe durata de pastrare, apoi workerul elimina
 evenimentele aferente conturilor cu retragere mai veche de 12 luni. Workerul
 trebuie publicat separat si legat la aceeasi baza D1; pana atunci, curatarea nu
-se executa automat. Aplicatia nu implementeaza automat exportul GDPR sau
-stergerea completa a contului. Campaniile aflate in curs nu sunt eliminate de
+se executa automat. Exportul GDPR nu este implementat automat. Stergerea din
+admin este descrisa mai jos si nu inlocuieste o politica juridica de retentie.
+Campaniile aflate in curs nu sunt eliminate de
 worker pana cand livrarile lor devin terminale.
 Notificarile comerciale pot aparea pe ecranul blocat si continua dupa logout
 pana la retragerea acordului; nu include date personale in mesajele campaniilor.
+
+### Stergerea clientilor din admin
+
+Fila Clienti permite stergerea din detaliile contului, dupa confirmarea explicita
+prin introducerea adresei exacte de email (sau ID-ului pentru un cont fara email).
+API: `DELETE /api/admin/customers/:id`, cu
+`{confirmation:"adresa exacta sau ID"}`, protejat prin Cloudflare Access si Origin
+exact. Raspunsul de succes contine `{data:{deletedCustomerId}}`.
+Aplica `0026_customer_deletion.sql` inainte de deploy.
+
+Operatiunea este atomica: elimina accesul la cont, identitatile, sesiunile,
+abonamentele, acordurile si invitatiile, jurnalul si referintele de recomandare
+si din audientele campaniilor. Fara istoric financiar, contul si voucherele sunt
+sterse fizic. Cu istoric financiar, ramane un proprietar contabil blocat, cu
+numele, emailul si celelalte date de profil eliminate; platile, registrul de
+puncte, voucherele si rascumpararile financiare raman imuabile. Contul eliminat
+nu mai apare in admin, nu permite autentificare, abonare sau folosirea voucherelor.
+Refundurile si retry-urile platilor deja inregistrate raman posibile; o plata
+noua pentru proprietarul eliminat este respinsa.
+
+Aceasta pastrare contabila este pseudonimizare, nu anonimizare juridica garantata:
+ID-urile si referintele financiare raman, fara termen automat de expirare.
+Comenzile TEST asociate prin email
+normalizat isi pastreaza datele comerciale, dar contactele si metadatele personale
+sunt anonimizate. Nu se asociaza comenzi doar dupa nume; comenzile guest fara
+email identificabil necesita verificare separata. Copiile de siguranta si datele
+din servicii externe nu sunt sterse de aceasta operatie.
+Comenzile neterminate si livrarile push aflate in trimitere blocheaza operatiunea
+cu o eroare explicita. Nu exista un buton de ocolire a acestor verificari.
 
 ### Jurnal de calorii
 

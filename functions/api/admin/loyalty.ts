@@ -39,7 +39,8 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
         WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1)='granted',0) AS emailMarketingConsent,
       (SELECT created_at FROM customer_marketing_consent_events
         WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1) AS emailMarketingConsentUpdatedAt
-      FROM customers c WHERE c.id=?`).bind(customerId).first<Record<string, unknown>>()
+      FROM customers c WHERE c.id=? AND c.deleted_at IS NULL`)
+      .bind(customerId).first<Record<string, unknown>>()
     if (!customerRow) return err("NOT_FOUND", "Clientul nu a fost găsit.", 404)
     const customer = { ...customerRow, emailMarketingConsent: customerRow.emailMarketingConsent === 1 }
 
@@ -105,7 +106,8 @@ export async function onRequestGet({ request, env }: Ctx): Promise<Response> {
     (SELECT created_at FROM customer_marketing_consent_events
       WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1) AS emailMarketingConsentUpdatedAt
     FROM customers c
-    WHERE (?='' OR instr(lower(c.name),lower(?))>0 OR instr(lower(COALESCE(c.email,'')),lower(?))>0)
+    WHERE c.deleted_at IS NULL
+      AND (?='' OR instr(lower(c.name),lower(?))>0 OR instr(lower(COALESCE(c.email,'')),lower(?))>0)
       AND (?='all'
         OR (?='granted' AND COALESCE((SELECT action FROM customer_marketing_consent_events
           WHERE customer_id=c.id AND channel='email' ORDER BY id DESC LIMIT 1),'')='granted')

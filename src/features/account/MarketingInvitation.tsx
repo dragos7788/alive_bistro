@@ -3,8 +3,7 @@ import { Dialog, DialogDescription, DialogPanel, DialogTitle } from "@headlessui
 import { Leaf, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { accountRequest } from "./api"
-import { MarketingPreferences } from "./MarketingPreferences"
-import { PushPreferences } from "./PushPreferences"
+import { MarketingChoices } from "./MarketingChoices"
 
 type Invitation = { show: boolean; email: boolean; push: boolean }
 
@@ -15,7 +14,7 @@ function isInvitation(value: unknown): value is Invitation {
     && "push" in value && typeof value.push === "boolean"
 }
 
-/** Offers separate, optional channels once per account, with a server-persisted claim. */
+/** Offers optional channels with a single save action and server-persisted claims. */
 export function MarketingInvitation({ email, onUpdated, onClose }: {
   email: string | null
   onUpdated: (consent: boolean) => void
@@ -77,9 +76,8 @@ export function MarketingInvitation({ email, onUpdated, onClose }: {
                 <DialogTitle className="font-serif text-3xl font-semibold leading-tight">{t("marketingInvitation.title")}</DialogTitle>
                 <DialogDescription className="text-sm leading-relaxed text-brand-green-800">{t("marketingInvitation.description")}</DialogDescription>
               </div>
-              {invitation?.email && <MarketingPreferences email={email} initialConsent={false}
-                presentation="invitation" onSaved={onUpdated} />}
-              {invitation?.push && <PushPreferences presentation="invitation" />}
+              {invitation && <MarketingChoices email={email} offerEmail={invitation.email}
+                offerPush={invitation.push} onUpdated={onUpdated} onSaved={handleClose} />}
               <p className="text-xs leading-relaxed text-brand-green-800">{t("marketingInvitation.optional")}</p>
             </div>
             <button type="button" onClick={handleClose}

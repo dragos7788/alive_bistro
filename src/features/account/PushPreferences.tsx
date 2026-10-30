@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { accountRequest } from "./api"
+import { enableDevicePush, supportsPush } from "./push-subscription"
 
 type PushState = { publicKey: string | null; consent: boolean; devices: number }
 
@@ -9,11 +10,6 @@ function isPushState(value: unknown): value is PushState {
     && (value.publicKey === null || typeof value.publicKey === "string")
     && "consent" in value && typeof value.consent === "boolean"
     && "devices" in value && typeof value.devices === "number" && Number.isSafeInteger(value.devices)
-}
-
-function publicKeyBytes(key: string): Uint8Array<ArrayBuffer> {
-  const raw = atob(key.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - key.length % 4) % 4))
-  return Uint8Array.from(raw, char => char.charCodeAt(0))
 }
 
 /** Requests separate marketing consent and browser permission only after an explicit user action. */
@@ -25,8 +21,7 @@ export function PushPreferences({ presentation = "preferences" }: { presentation
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
   const [reload, setReload] = useState(0)
-  const supported = typeof window !== "undefined" && window.isSecureContext
-    && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window
+  const supported = supportsPush()
   const [isDeviceSubscribed, setIsDeviceSubscribed] = useState(false)
   const focusClass = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700"
 
@@ -58,39 +53,16 @@ export function PushPreferences({ presentation = "preferences" }: { presentation
     setIsBusy(true)
     setError("")
     setMessage("")
-    let created: PushSubscription | null = null
     try {
-      // Keep the permission request directly inside the click gesture, including on iOS.
-      const permission = await Notification.requestPermission()
-      if (permission !== "granted") {
-        setMessage("push.permissionDenied")
-        return
-      }
-      await navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" })
-      const registration = await navigator.serviceWorker.ready
-      let subscription = await registration.pushManager.getSubscription()
-      if (!subscription) {
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true, applicationServerKey: publicKeyBytes(state.publicKey),
-        })
-        created = subscription
-      }
-      const result = await accountRequest("push", {
-        action: "subscribe", consent: true, noticeVersion: "push-marketing-v1", subscription: subscription.toJSON(),
-      })
-      if (!result || typeof result !== "object" || !("consent" in result) || result.consent !== true) throw new Error("account.error")
+      await enableDevicePush(state.publicKey)
       setState(current => current && { ...current, consent: true })
       setIsDeviceSubscribed(true)
       setMessage("push.enabled")
       setReload(value => value + 1)
     } catch (reason) {
       console.error("ALIVE push subscription failed", reason instanceof Error ? reason.name : "UnknownError")
-      setError(reason instanceof Error && reason.message === "push.deviceInUse" ? reason.message : "account.error")
-      if (created) {
-        try { await created.unsubscribe() } catch (cleanupError) {
-          console.error("ALIVE push subscription cleanup failed", cleanupError instanceof Error ? cleanupError.name : "UnknownError")
-        }
-      }
+      setError(reason instanceof Error && ["push.deviceInUse", "push.permissionDenied"].includes(reason.message)
+        ? reason.message : "account.error")
     } finally { setIsBusy(false) }
   }
 

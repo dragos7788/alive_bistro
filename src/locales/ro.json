@@ -286,7 +286,11 @@
     "emailAccept": "Da, vreau noutăți și oferte prin email",
     "pushDescription": "Noutăți și oferte comerciale ALIVE pe acest dispozitiv. Mesajele pot apărea pe ecranul blocat, inclusiv după deconectare.",
     "pushDetails": "Despre notificări și compatibilitate",
-    "optional": "Alegeri separate și opționale, cu retragere oricând din cont. Contul, punctele și voucherul nu depind de acord. Invitația apare o singură dată.",
+    "optional": "Alegeri separate și opționale, cu retragere oricând din cont. Contul, punctele și voucherul nu depind de acord. Fiecare canal este oferit o singură dată, când devine disponibil.",
+    "afterLogin": "După autentificare poți alege opțional oferte prin email și notificări push. Accesul la cont nu depinde de aceste acorduri.",
+    "save": "Salvează preferințele",
+    "saving": "Se procesează…",
+    "saveError": "Preferințele nu au putut fi salvate complet. Un canal deja confirmat rămâne activ; poți reîncerca sau modifica preferințele din cont.",
     "notNow": "Nu acum",
     "error": "Invitația pentru oferte nu s-a putut încărca. Contul rămâne disponibil, iar preferințele pot fi schimbate din cont."
   },

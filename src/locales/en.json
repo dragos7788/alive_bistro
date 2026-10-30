@@ -283,7 +283,11 @@
     "emailAccept": "Yes, send me news and offers by email",
     "pushDescription": "ALIVE news and promotional offers on this device. Messages may appear on the lock screen, including after sign-out.",
     "pushDetails": "About notifications and compatibility",
-    "optional": "Separate, optional choices. Withdraw in your account at any time. Your account, points and voucher do not depend on consent. This invitation appears only once.",
+    "optional": "Separate, optional choices. Withdraw in your account at any time. Your account, points and voucher do not depend on consent. Each channel is offered once, when it becomes available.",
+    "afterLogin": "After sign-in you can optionally choose email offers and push notifications. Account access does not depend on these choices.",
+    "save": "Save preferences",
+    "saving": "Processing…",
+    "saveError": "Preferences could not be saved completely. A channel already confirmed remains active; retry or change preferences in your account.",
     "notNow": "Not now",
     "error": "The offers invitation could not load. Your account remains available and you can change preferences there."
   },
