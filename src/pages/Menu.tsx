@@ -83,7 +83,10 @@ function CategoryBar({
             >
               <span className="relative z-10 flex items-center gap-2">
                 {resolveIcon(cat.iconKey, 18)}
-                {t(`menu.categories.${cat.id}`)}
+                <span>
+                  {t(`menu.categories.${cat.id}`)}
+                  {cat.id === "healthy-deal" && <span className="block text-xs font-normal">{t("healthyDeal.categorySubtitle")}</span>}
+                </span>
               </span>
             </button>
           )

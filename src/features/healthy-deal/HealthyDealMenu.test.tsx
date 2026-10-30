@@ -18,6 +18,27 @@ function render(date: string, sales = true, error = false, settings: HealthyDeal
   </I18nextProvider>)
 }
 describe("Healthy Deal public presentation", () => {
+  it.each([true, false])("shows ingredients, nutrition and then allergens for both dishes (nutrition supplied: %s)", (hasNutrition) => {
+    const settings = structuredClone(defaultHealthyDealSettings)
+    for (const dish of [settings.weekly["1"].soup, settings.weekly["1"].main]) {
+      dish.description = "Ingrediente: morcovi, ceapă"
+      dish.allergens = "Țelină"
+      dish.macros = hasNutrition ? { calories: 200, protein: 10, carbs: 20, fat: 5 } : null
+    }
+
+    const html = render("2026-11-02T11:00:00Z", true, false, settings)
+    const articles = html.match(/<article\b[^>]*>[\s\S]*?<\/article>/g) ?? []
+
+    expect(articles).toHaveLength(2)
+    for (const article of articles) {
+      const ingredients = article.indexOf("Ingrediente: morcovi, ceapă")
+      const nutrition = article.indexOf(hasNutrition ? "<dl" : i18n.t("healthyDeal.nutritionPending"))
+      const allergens = article.indexOf(i18n.t("healthyDeal.allergens"))
+      expect(ingredients).toBeGreaterThan(-1)
+      expect(nutrition).toBeGreaterThan(ingredients)
+      expect(allergens).toBeGreaterThan(nutrition)
+    }
+  })
   it("uses the supplied PNG artwork for the price stamp, opening hours and weekly banner", () => {
     const html = render("2026-11-02T11:00:00Z")
     for (const asset of [dealAssets.stamp, dealAssets.hours, dealAssets.brush]) {

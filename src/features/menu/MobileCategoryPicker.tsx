@@ -27,6 +27,7 @@ export function MobileCategoryPicker({ categories, activeCategory, onSelect }: M
         <span className="min-w-0 flex-1">
           <span className="block text-[10px] font-bold uppercase tracking-wider">{t("menu.chooseCategory")}</span>
           <span className="block text-sm font-bold">{t(`menu.categories.${selected.id}`)}</span>
+          {selected.id === "healthy-deal" && <span className="block text-xs">{t("healthyDeal.categorySubtitle")}</span>}
         </span>
         <ChevronDown size={18} className="shrink-0 transition-transform group-data-open:rotate-180" aria-hidden="true" />
       </PopoverButton>
@@ -55,7 +56,10 @@ export function MobileCategoryPicker({ categories, activeCategory, onSelect }: M
                   }`}
                 >
                   <span className="shrink-0" aria-hidden="true">{resolveIcon(category.iconKey, 16)}</span>
-                  <span className="min-w-0 flex-1">{t(`menu.categories.${category.id}`)}</span>
+                  <span className="min-w-0 flex-1">
+                    {t(`menu.categories.${category.id}`)}
+                    {category.id === "healthy-deal" && <span className="block text-xs font-normal">{t("healthyDeal.categorySubtitle")}</span>}
+                  </span>
                   {activeCategory === category.id && <Check size={14} className="shrink-0" aria-hidden="true" />}
                 </button>
               )

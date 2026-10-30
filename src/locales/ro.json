@@ -1,5 +1,6 @@
 {
   "healthyDeal": {
+    "categorySubtitle": "(Meniul zilei)",
     "subtitle": "Meniul zilei, în varianta sănătoasă și echilibrată",
     "today": "Astăzi",
     "hours": "Disponibil în zilele cu ofertă",
@@ -312,6 +313,10 @@
     "comingSoonNote": "Punctele din cumpărături se vor acorda după activarea comenzilor și plăților online.",
     "marketingTitle": "Preferințe de marketing",
     "marketingEmailConsent": "Vreau să primesc pe email noutăți și oferte comerciale de la ALIVE Bistro.",
+    "marketingDecline": "Nu doresc să primesc reduceri și oferte de la comunitatea ALIVE.",
+    "marketingAccepted": "Ai ales să primești noutăți și oferte ALIVE.",
+    "marketingDeclined": "Ai ales să nu primești reduceri și oferte ALIVE.",
+    "marketingPreferenceStorageError": "Nu am putut memora alegerea în acest browser; este posibil să te întrebăm din nou.",
     "marketingDetails": "Acordul este opțional. Îl poți retrage oricând din cont. Pentru marketing, folosim adresa de email doar dacă alegi această opțiune.",
     "marketingEmailUnavailable": "Nu este disponibilă o adresă de email pentru acest cont. Pentru abonare, autentifică-te cu un furnizor care furnizează email.",
     "marketingSave": "Salvează preferința",

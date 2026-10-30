@@ -1,5 +1,6 @@
 {
   "healthyDeal": {
+    "categorySubtitle": "(Daily menu)",
     "subtitle": "The daily menu, healthy and balanced",
     "today": "Today",
     "hours": "On days with a scheduled offer",
@@ -309,6 +310,10 @@
     "comingSoonNote": "Purchase points will be awarded once online ordering and payments are enabled.",
     "marketingTitle": "Marketing preferences",
     "marketingEmailConsent": "I want to receive news and promotional offers from ALIVE Bistro by email.",
+    "marketingDecline": "I do not want to receive discounts and offers from the ALIVE community.",
+    "marketingAccepted": "You chose to receive news and offers from ALIVE.",
+    "marketingDeclined": "You chose not to receive discounts and offers from ALIVE.",
+    "marketingPreferenceStorageError": "We could not save your choice in this browser; we may ask you again.",
     "marketingDetails": "This choice is optional and you can withdraw it in your account at any time. We use your email address for marketing only if you opt in.",
     "marketingEmailUnavailable": "No email address is available for this account. Sign in with a provider that supplies an email address to subscribe.",
     "marketingSave": "Save preference",

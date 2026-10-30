@@ -15,7 +15,7 @@ export function MemberCard({ customer, providers, pending, onLogout, onLink, onV
   onLogout: () => void
   onLink: (provider: Provider) => void
   onVoucherGenerated: () => void
-  onMarketingUpdated: () => void
+  onMarketingUpdated: (consent: boolean) => void
 }) {
   const { t, i18n } = useTranslation()
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle")

@@ -1,12 +1,19 @@
 import { useState } from "react"
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
-import { ArrowRight, Leaf, X } from "lucide-react"
+import { ArrowRight, Frown, Leaf, Smile, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { accountRequest, type Provider } from "./api"
 import type { useCustomerAccount } from "./useCustomerAccount"
 import { MemberCard } from "./MemberCard"
 import { AccountPage } from "./AccountPage"
 import { MarketingInvitation } from "./MarketingInvitation"
+
+const marketingConsentStorageKey = "alive_bistro_email_marketing_consent_v1"
+type MarketingPreferenceState = {
+  choice: "accepted" | "declined" | null
+  wasPreviouslyAccepted: boolean
+  storageError: boolean
+}
 
 /** Keeps sign-in in a dialog and member details on the standalone account page. */
 export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
@@ -25,15 +32,50 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
   })
   const [pending, setPending] = useState(false)
   const [preferenceRevision, setPreferenceRevision] = useState(0)
-  const [emailMarketingConsent, setEmailMarketingConsent] = useState(false)
+  const [marketingPreference, setMarketingPreference] = useState<MarketingPreferenceState>(() => {
+    try {
+      const wasPreviouslyAccepted = localStorage.getItem(marketingConsentStorageKey) === "accepted"
+      return {
+        choice: wasPreviouslyAccepted ? "accepted" as const : null,
+        wasPreviouslyAccepted,
+        storageError: false,
+      }
+    } catch (reason) {
+      console.error("ALIVE marketing preference could not be read from this browser", reason)
+      return { choice: null, wasPreviouslyAccepted: false, storageError: true }
+    }
+  })
+  const marketingChoice = marketingPreference.choice
   const [referral, setReferral] = useState(() => new URLSearchParams(window.location.search).get("ref") ?? "")
+
+  function handleMarketingChoiceChange(choice: "accepted" | "declined" | null) {
+    try {
+      localStorage.setItem(marketingConsentStorageKey, choice === "accepted" ? "accepted" : "declined")
+      setMarketingPreference({ choice, wasPreviouslyAccepted: marketingPreference.wasPreviouslyAccepted, storageError: false })
+    } catch (reason) {
+      console.error("ALIVE marketing preference could not be saved in this browser", reason)
+      setMarketingPreference({ choice, wasPreviouslyAccepted: marketingPreference.wasPreviouslyAccepted, storageError: true })
+    }
+  }
+
+  function handleMarketingUpdated(consent: boolean) {
+    try {
+      localStorage.setItem(marketingConsentStorageKey, consent ? "accepted" : "declined")
+      setMarketingPreference({ choice: consent ? "accepted" : null, wasPreviouslyAccepted: consent, storageError: false })
+    } catch (reason) {
+      console.error("ALIVE marketing preference could not be synchronized with this browser", reason)
+      setMarketingPreference({ choice: consent ? "accepted" : null, wasPreviouslyAccepted: consent, storageError: true })
+    }
+    refresh()
+  }
+
   async function handleSignIn(provider: Provider, link: boolean) {
     setPending(true)
     setError("")
     try {
       const data = await accountRequest("start", {
         provider, referral: link ? "" : referral, link,
-        marketingEmailConsent: !link && emailMarketingConsent,
+        marketingEmailConsent: !link && marketingChoice === "accepted",
       })
       if (!data || typeof data !== "object" || !("url" in data) || typeof data.url !== "string") throw new Error("account.error")
       const url = new URL(data.url)
@@ -63,7 +105,7 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
   if (customer) {
     return (
       <>
-      <MarketingInvitation key={customer.referralCode} email={customer.email} onUpdated={refresh}
+      <MarketingInvitation key={customer.referralCode} email={customer.email} onUpdated={handleMarketingUpdated}
         onClose={() => { setPreferenceRevision(value => value + 1); refresh() }} />
       {isPage && <AccountPage name={customer.name}>
         {(error || loadError) && <p role="alert" className="mb-4 text-red-800">{t(error || loadError)}</p>}
@@ -71,7 +113,7 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
           className="mb-4 min-h-11 underline focus-visible:outline-2 focus-visible:outline-brand-green-700">{t("account.refresh")}</button>}
         <MemberCard key={`${customer.referralCode}-${preferenceRevision}`} customer={customer} providers={account.providers} pending={pending}
           onLogout={() => void handleLogout()} onLink={provider => void handleSignIn(provider, true)}
-          onVoucherGenerated={state.refresh} onMarketingUpdated={state.refresh} />
+          onVoucherGenerated={state.refresh} onMarketingUpdated={handleMarketingUpdated} />
       </AccountPage>}
       </>
     )
@@ -110,8 +152,16 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
             {!account.providers.length && <p role="status">{t("account.notConfigured")}</p>}
             <div className="space-y-3 pt-2">
               {(account.providers.length ? account.providers : ["google"] as const).map(provider => (
-                <button type="button" key={provider} disabled={pending || !account.providers.includes(provider)}
-                  className="flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl border border-brand-green-700/20 bg-white px-5 py-4 text-sm font-semibold text-brand-dark shadow-sm transition-colors hover:bg-brand-green-700/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                <button type="button" key={provider}
+                  disabled={pending || !account.providers.includes(provider)
+                    || (!marketingPreference.wasPreviouslyAccepted && marketingChoice === null)}
+                  className={`flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl border px-5 py-4 text-sm font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    marketingChoice === "accepted"
+                      ? "border-brand-green-700 bg-brand-green-700 text-white hover:bg-brand-green-800"
+                      : marketingChoice === "declined"
+                        ? "border-red-700 bg-white text-red-800 hover:bg-red-50"
+                        : "border-brand-green-700/20 bg-white text-brand-dark hover:bg-brand-green-700/5"
+                  }`}
                   onClick={() => void handleSignIn(provider, false)}>
                   <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center text-lg font-bold">{provider === "google" ? "G" : "f"}</span>
                   {t("account.login", { provider: provider === "google" ? "Google" : "Facebook" })}
@@ -119,12 +169,29 @@ export function CustomerAccount({ state, isPage, open, onOpen, onClose }: {
                 </button>
               ))}
             </div>
-            <label className="flex items-start gap-3 border-t border-brand-green-700/10 pt-4 text-sm leading-relaxed">
-              <input type="checkbox" checked={emailMarketingConsent} disabled={pending}
-                onChange={event => setEmailMarketingConsent(event.target.checked)}
-                className="mt-1 h-4 w-4 shrink-0 accent-brand-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700" />
-              <span>{t("account.marketingEmailConsent")}</span>
-            </label>
+            {marketingChoice && <p role="status" aria-live="polite" className={`flex items-center justify-center gap-2 text-center text-sm ${
+              marketingChoice === "accepted" ? "text-brand-green-800" : "text-red-800"
+            }`}>
+              {marketingChoice === "accepted"
+                ? <Smile size={19} aria-hidden="true" />
+                : <Frown size={19} aria-hidden="true" />}
+              {t(marketingChoice === "accepted" ? "account.marketingAccepted" : "account.marketingDeclined")}
+            </p>}
+            {!marketingPreference.wasPreviouslyAccepted && <div className="space-y-3 border-t border-brand-green-700/10 pt-4 text-sm leading-relaxed">
+              <label className="flex items-start gap-3">
+                <input type="checkbox" checked={marketingChoice === "accepted"} disabled={pending}
+                  onChange={event => handleMarketingChoiceChange(event.target.checked ? "accepted" : null)}
+                  className="mt-1 h-4 w-4 shrink-0 accent-brand-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700" />
+                <span className="text-brand-green-800">{t("account.marketingEmailConsent")}</span>
+              </label>
+              <label className="flex items-start gap-3">
+                <input type="checkbox" checked={marketingChoice === "declined"} disabled={pending}
+                  onChange={event => handleMarketingChoiceChange(event.target.checked ? "declined" : null)}
+                  className="mt-1 h-4 w-4 shrink-0 accent-brand-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700" />
+                <span className="text-brand-dark/55">{t("account.marketingDecline")}</span>
+              </label>
+            </div>}
+            {marketingPreference.storageError && <p role="status" className="text-sm text-red-800">{t("account.marketingPreferenceStorageError")}</p>}
             <p className="text-xs leading-relaxed text-brand-green-800">{t("account.marketingDetails")}</p>
             <details open={referral ? true : undefined} className="border-t border-brand-green-700/10 pt-4 text-sm">
               <summary className="min-h-11 cursor-pointer py-3 text-brand-green-800 focus-visible:outline-2 focus-visible:outline-brand-green-700">{t("account.haveReferral")}</summary>

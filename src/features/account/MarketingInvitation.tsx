@@ -18,7 +18,7 @@ function isInvitation(value: unknown): value is Invitation {
 /** Offers separate, optional channels once per account, with a server-persisted claim. */
 export function MarketingInvitation({ email, onUpdated, onClose }: {
   email: string | null
-  onUpdated: () => void
+  onUpdated: (consent: boolean) => void
   onClose: () => void
 }) {
   const { t } = useTranslation()

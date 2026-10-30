@@ -6,7 +6,7 @@ import { accountRequest, isMarketingPreference } from "./api"
 export function MarketingPreferences({ email, initialConsent, onSaved, presentation = "preferences" }: {
   email: string | null
   initialConsent: boolean
-  onSaved: () => void
+  onSaved: (consent: boolean) => void
   presentation?: "preferences" | "invitation"
 }) {
   const { t } = useTranslation()
@@ -35,7 +35,7 @@ export function MarketingPreferences({ email, initialConsent, onSaved, presentat
       setConsent(result.emailMarketingConsent)
       setSavedConsent(result.emailMarketingConsent)
       setStatus("saved")
-      onSaved()
+      onSaved(result.emailMarketingConsent)
     } catch (error) {
       console.error("ALIVE email marketing preference update failed", error)
       setErrorMessage(error instanceof Error ? error.message : "account.error")

@@ -1,7 +1,14 @@
 import { useTranslation } from "react-i18next"
 import type { DealDish } from "./schedule"
 import { dealImage } from "./assets"
-import { UtensilsCrossed } from "lucide-react"
+import { Beef, Flame, Nut, UtensilsCrossed, Wheat } from "lucide-react"
+
+const macroBadges = [
+  { key: "calories", Icon: Flame, iconClass: "" },
+  { key: "protein", Icon: Beef, iconClass: "text-red-700/80" },
+  { key: "carbs", Icon: Wheat, iconClass: "text-amber-700/80" },
+  { key: "fat", Icon: Nut, iconClass: "text-amber-700" },
+] as const
 
 /** Shows authored dish details without substituting estimated nutrition. */
 export function HealthyDealDish({ dish, title }: { dish: DealDish; title: string }) {
@@ -17,15 +24,22 @@ export function HealthyDealDish({ dish, title }: { dish: DealDish; title: string
       <h3 className="font-serif text-xl font-bold text-green-950">{dish.name}</h3>
       {dish.grams !== null && <p className="text-sm">{number.format(dish.grams)} g</p>}
       {dish.description && <p className="whitespace-pre-line text-sm leading-relaxed">{dish.description}</p>}
-      <p className="text-xs leading-relaxed"><strong>{t("healthyDeal.allergens")}: </strong>{dish.allergens || t("healthyDeal.detailsPending")}</p>
-      {dish.macros ? <dl className="grid grid-cols-2 gap-2 text-xs">
-        {(["calories", "protein", "carbs", "fat"] as const).map(key => (
-          <div key={key} className="rounded-xl bg-green-950/5 px-2 py-2">
-            <dt>{t(`menu.macros.${key}`)}</dt>
-            <dd className="mt-1 font-bold">{number.format(dish.macros![key])} {key === "calories" ? "kcal" : "g"}</dd>
+      {dish.macros ? <dl className="flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+        {macroBadges.map(({ key, Icon, iconClass }) => (
+          <div key={key} className={`flex items-center gap-1.5 rounded border px-2.5 py-1 ${
+            key === "calories"
+              ? "border-brand-green-700/10 bg-brand-green-700/10 font-bold text-brand-green-700"
+              : "border-brand-green-700/5 bg-brand-cream-200/50 font-medium text-brand-dark/80"
+          }`}>
+            <dt className="sr-only">{t(`menu.macros.${key}`)}</dt>
+            <dd className="flex items-center gap-1.5">
+              <Icon className={`h-3.5 w-3.5 ${iconClass}`} aria-hidden="true" />
+              {number.format(dish.macros![key])} {t(`menu.macros.${key}`)}
+            </dd>
           </div>
         ))}
       </dl> : <p className="text-xs text-green-950/75">{t("healthyDeal.nutritionPending")}</p>}
+      <p className="text-xs leading-relaxed"><strong>{t("healthyDeal.allergens")}: </strong>{dish.allergens || t("healthyDeal.detailsPending")}</p>
     </article>
   )
 }
