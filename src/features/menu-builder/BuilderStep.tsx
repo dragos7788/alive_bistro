@@ -26,7 +26,7 @@ export function BuilderStep({ group, step, choice, onChange }: BuilderStepProps)
   }).format(value)
 
   return (
-    <fieldset id={`builder-step-${group}`} className="scroll-mt-[246px] min-w-0 rounded-3xl border border-brand-green-700/15 bg-brand-cream-50 p-5 sm:p-7">
+    <fieldset id={`builder-step-${group}`} className="scroll-mt-[306px] min-w-0 rounded-3xl border border-brand-green-700/15 bg-brand-cream-50 p-5 sm:p-7">
       <legend className="px-2 text-lg font-bold text-brand-green-700">
         <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full bg-brand-green-700 text-sm text-white">{step}</span>
         {t(`builder.groups.${group}.title`)}

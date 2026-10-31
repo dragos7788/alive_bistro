@@ -64,7 +64,7 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
         </div>
 
         <div id="menu-calculator" className="scroll-mt-24">
-          <nav aria-label={t("builder.stepsLabel")} className="sticky top-[134px] z-30 -mx-6 border-b border-brand-green-700/15 bg-brand-cream-100 px-3 py-[14px] sm:px-6 shadow-sm">
+          <nav aria-label={t("builder.stepsLabel")} className="sticky top-[194px] z-30 -mx-6 border-b border-brand-green-700/15 bg-brand-cream-100 px-3 py-[14px] sm:px-6 shadow-sm">
             <ol className="mx-auto grid max-w-6xl grid-cols-4 gap-1">
               {builderGroups.map((group, index) => {
                 const isChosen = !!selection[group]

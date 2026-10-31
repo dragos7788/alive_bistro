@@ -4,11 +4,10 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { Coffee as LucideCoffee, Flame, Beef, Wheat, Nut, X, Plus, Info, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react"
 import { useTranslation, Trans } from "react-i18next"
 import type { MenuItem, MenuCategory, MenuGroup } from "../features/menu/types"
-import { resolveIcon } from "../features/menu/icons"
 import { menuData } from "../features/menu/seed"
 import { continuousMenu } from "../features/menu/continuous-menu"
 import { MenuPrice } from "../features/pricing/MenuPrice"
-import { PublicLink } from "../components/PublicLink"
+import { MenuNavigation } from "../features/menu/MenuNavigation"
 import { tagColors } from "../features/menu/tags"
 import { MenuImagePlaceholder } from "../features/menu/MenuImagePlaceholder"
 import { getImageCropStyle } from "../features/menu/image-crop"
@@ -159,9 +158,11 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
   const isMobile = useSyncExternalStore(subscribeMobile, () => window.matchMedia(mobileQuery).matches, () => false)
   const productStripRef = useRef<HTMLDivElement>(null)
   const initialHash = typeof window === "undefined" ? "" : window.location.hash
-  const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>("food")
+  const [activeGroup, setActiveGroup] = useState<MenuGroup["id"]>(() =>
+    !isHealthyDealPreview && typeof window !== "undefined" && new URLSearchParams(window.location.search).get("group") === "drinks" ? "drinks" : "food")
   const [activeCategory, setActiveCategory] = useState(
-    isHealthyDealPreview ? "healthy-deal" : initialHash === "#halloween-menu" ? "halloween-special" : menuData[0].categories[0].id,
+    isHealthyDealPreview ? "healthy-deal" : initialHash === "#halloween-menu" ? "halloween-special"
+      : (menuGroups.find(group => group.id === activeGroup) ?? menuData[0]).categories[0].id,
   )
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
@@ -335,10 +336,9 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
         {continuousMenu(isMobile ? activeGroupObj.categories : [activeCategoryObj]).flatMap(({ category, items, isPanel }) => {
           if (isMobile && isPanel) return [
             <div key={category.id} data-category={category.id} className="w-full">
-              <h2 className="mb-3 font-serif text-xl font-semibold">{t(`menu.categories.${category.id}`)}</h2>
               {category.id === "healthy-deal"
                 ? <HealthyDealMenu document={healthyDeal.document} now={healthyDeal.now} error={healthyDeal.error}
-                    isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} />
+                    isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} allowPreview={isHealthyDealPreview} />
                 : <HalloweenMenuBanner />}
             </div>,
           ]
@@ -351,7 +351,6 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
             transition={{ duration: 0.3, delay: i * 0.07 }}
             className="group flex w-full flex-col overflow-hidden rounded-2xl border border-brand-green-700/10 bg-brand-cream-50 text-left transition-all duration-300 hover:border-brand-green-700/25 hover:bg-white hover:shadow-lg"
           >
-            {isMobile && <h2 className="px-4 pt-3 text-sm font-semibold text-brand-green-700">{t(`menu.categories.${category.id}`)}</h2>}
             <button type="button" onClick={() => setSelectedItem(item)} className="flex flex-1 cursor-pointer flex-col text-left">
               <div className="relative aspect-square w-full overflow-hidden bg-white">
                 {item.image ? <img
@@ -482,36 +481,13 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
             fully opaque background so no content shows through. It sits 14px beneath the
             fixed header. */}
         <div ref={stickyNavRef} className="sticky top-[78px] z-30 w-screen ml-[calc(50%-50vw)] bg-brand-cream-100">
-          {/* Group toggle (Food / Drinks) */}
+          {/* Food, drinks and the standalone plate builder share one navigation widget. */}
           <div
             className={`max-w-4xl mx-auto flex flex-col items-center justify-center gap-1 px-3 py-1 md:gap-3 md:px-6 md:flex-row md:flex-wrap md:pb-0 md:transition-[padding,margin] md:duration-300 md:ease-out ${
               navCompact ? "md:pt-4 md:mb-0.5" : "md:pt-[22px] md:mb-7"
             }`}
           >
-            <div
-              className={`inline-flex p-0.5 md:p-1.5 rounded-full bg-brand-cream-200/60 border border-brand-green-700/10 origin-top md:transition-transform md:duration-300 md:ease-out ${
-                navCompact ? "md:scale-[0.88]" : ""
-              }`}
-            >
-              {menuGroups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => handleGroupChange(group.id)}
-                  className={`flex min-h-11 items-center gap-2 px-5 py-1 md:px-7 md:py-2.5 rounded-full text-sm font-bold transition-all duration-200 font-sans ${
-                    activeGroup === group.id
-                      ? "bg-brand-green-700 text-brand-cream-50 shadow-md shadow-brand-green-700/20"
-                      : "text-brand-green-700/70 hover:text-brand-green-700"
-                  }`}
-                >
-                  {resolveIcon(group.iconKey, 20)}
-                  {t(`menu.categories.${group.id}`)}
-                </button>
-              ))}
-            </div>
-            <PublicLink href="/build-your-plate" className="performance-link inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors sm:text-sm">
-              <Plus size={17} className="shrink-0" aria-hidden="true" />
-              {t("home.hero.performanceButton")}
-            </PublicLink>
+            <MenuNavigation groups={menuGroups} active={activeGroup} onGroupChange={handleGroupChange} compact={navCompact} />
           </div>
 
           {/* Category chips — full-width bar with dynamic scroll arrows */}
@@ -549,7 +525,7 @@ export default function Menu({ cart, menuGroups, isSalesEnabled, healthyDeal, is
         )}
         {isMobile ? menuCards : activeCategoryObj.id === "healthy-deal"
           ? <HealthyDealMenu document={healthyDeal.document} now={healthyDeal.now} error={healthyDeal.error}
-              isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} />
+              isSalesEnabled={isSalesEnabled} items={cart.items} onAdd={handleAddToCart} allowPreview={isHealthyDealPreview} />
           : activeCategoryObj.id === "halloween-special"
           ? <HalloweenMenuBanner />
           : menuCards}

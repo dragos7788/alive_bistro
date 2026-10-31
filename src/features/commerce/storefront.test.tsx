@@ -23,6 +23,7 @@ describe("global storefront purchase controls", () => {
     expect(html).toContain('id="menu-title"')
     expect(html).not.toContain('id="builder-title"')
     expect(html).toContain('href="/build-your-plate"')
+    expect(html).not.toContain('aria-current="page"')
     expect(html.includes(i18n.t("cart.open"))).toBe(isSalesEnabled)
   })
 
@@ -37,6 +38,9 @@ describe("global storefront purchase controls", () => {
 
     expect(html).toContain('href="/menu"')
     expect(html).toContain(i18n.t("builder.backToMenu"))
+    expect(html).toContain('href="/menu?group=food"')
+    expect(html).toContain('href="/menu?group=drinks"')
+    expect(html).toContain('href="/build-your-plate" aria-current="page"')
     expect(html).toContain('<h1 id="builder-title"')
     expect(html).toContain('id="menu-calculator"')
     expect(html).toContain(`aria-label="${i18n.t("builder.stepsLabel")}"`)

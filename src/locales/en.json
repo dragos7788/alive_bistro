@@ -1,5 +1,10 @@
 {
   "healthyDeal": {
+    "dishDetails": "Ingredients, nutrition and allergens",
+    "previewNotice": "Preview: choose a date or select a day from the list. Ordering is disabled here.",
+    "previewDate": "Preview date",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
     "categorySubtitle": "(Daily menu)",
     "subtitle": "The daily menu, healthy and balanced",
     "today": "Today",

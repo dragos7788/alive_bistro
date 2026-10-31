@@ -1,5 +1,10 @@
 {
   "healthyDeal": {
+    "dishDetails": "Ingrediente, valori nutriționale și alergeni",
+    "previewNotice": "Previzualizare: alege data sau apasă o zi din listă. Comenzile sunt dezactivate aici.",
+    "previewDate": "Data previzualizată",
+    "previousWeek": "Săptămâna anterioară",
+    "nextWeek": "Săptămâna următoare",
     "categorySubtitle": "(Meniul zilei)",
     "subtitle": "Meniul zilei, în varianta sănătoasă și echilibrată",
     "today": "Astăzi",

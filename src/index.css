@@ -80,8 +80,13 @@
   color: #9a3412;
 }
 
-.performance-link:hover {
+.performance-link:hover,
+.performance-link[aria-current="page"] {
   background-color: #ffedd5;
+}
+
+.performance-link.menu-builder-option:not([aria-current="page"]) {
+  border-color: transparent;
 }
 
 .performance-link:focus-visible {

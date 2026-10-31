@@ -29,6 +29,18 @@ fara dreptunghiuri albe. Pentru programul standard luni-vineri, 12:00-16:00,
 este afisat PNG-ul original al orarului; modificarile din admin sunt afisate
 dinamic in acelasi stil. Lista saptamanii include numai zilele cu oferta activa,
 inclusiv weekendul doar daca exista meniu programat.
+Prezentarea compacta pastreaza cele doua farfurii PNG ca imagini sugestive.
+Ingredientele, valorile nutritionale si alergenii ambelor preparate sunt
+disponibile in sectiunea extensibila a fiecarei zile din lista saptamanii.
+Descrierile completate sunt afisate ca atare, inclusiv nutritia pentru meniul
+complet; nu sunt urmate de un mesaj de nutritie lipsa per preparat.
+Daca supa nu are detalii separate, nu este generat un card gol pentru ea
+atunci cand descrierea felului principal este completata.
+Pe pagina de test este selectata implicit prima exceptie activa de la data
+curenta inainte, daca exista; meniul obisnuit pastreaza data reala.
+Serverul Vite transmite numai citirea `/api/healthy-deal` catre API-ul public
+de productie, astfel incat testul local foloseste datele editabile din D1,
+nu o copie simulata.
 
 Administrare: `/admin/healthy-deal` sau tabul **Healthy Deal**. Acest editor
 administreaza separat categoria rezervata, nu lista obisnuita de produse:
@@ -517,6 +529,15 @@ Deal raman in lista. Pe desktop se pastreaza grila categoriei selectate.
 In timpul derularii automate, categoria aleasa ramane evidentiata; categoriile
 intermediare nu sunt selectate. Derularea manuala reia actualizarea categoriei.
 Categoriile sunt afisate ca butoane text, fara icoane, pe mobil si desktop.
+Pagina `/testhealtydeal` permite selectarea zilelor din lista saptamanii curente
+pentru afisarea preparatelor si detaliilor. Panoul tehnic de previzualizare,
+calendarul si controalele de schimbare a saptamanii nu sunt afisate clientilor.
+Comenzile Healthy Deal sunt dezactivate in aceasta previzualizare; data reala
+si regulile de vanzare raman neschimbate in afara paginii de test.
+Mancare, Bauturi si „Construieste-ti farfuria” sunt integrate in acelasi widget;
+a treia optiune pastreaza culorile portocalii si deschide pagina constructorului.
+Widgetul ramane disponibil in constructor, cu a treia optiune selectata si
+fundalul portocaliu de hover. Mancare si Bauturi revin direct la grupul respectiv.
 Constructorul de farfurii este disponibil separat la `/build-your-plate`, cu
 linkul „Inapoi la meniu” sus si acces la acelasi cos de cumparaturi. Linkurile
 vechi `/menu#custom-menu` si `/menu#menu-calculator` redirectioneaza spre noua pagina.

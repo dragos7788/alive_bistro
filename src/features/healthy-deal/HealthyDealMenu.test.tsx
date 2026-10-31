@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { createInstance } from "i18next"
 import { I18nextProvider } from "react-i18next"
 import { renderToStaticMarkup } from "react-dom/server"
@@ -7,6 +8,8 @@ import { defaultHealthyDealSettings, type HealthyDealSettings } from "./schedule
 import { dealAssets } from "./assets"
 import ro from "../../locales/ro.json"
 import en from "../../locales/en.json"
+import { readFileSync } from "node:fs"
+import { DatabaseSync } from "node:sqlite"
 
 const i18n = createInstance()
 await i18n.init({ lng: "ro", resources: { ro: { translation: ro }, en: { translation: en } }, interpolation: { escapeValue: false } })
@@ -18,6 +21,20 @@ function render(date: string, sales = true, error = false, settings: HealthyDeal
   </I18nextProvider>)
 }
 describe("Healthy Deal public presentation", () => {
+  it.each([true, false])("hides preview tools while preserving day selection and ordering rules with preview=%s", allowPreview => {
+    const html = renderToStaticMarkup(<I18nextProvider i18n={i18n}>
+      <HealthyDealMenu document={{ revision: 5, settings: defaultHealthyDealSettings }}
+        now={new Date("2026-11-02T11:00:00Z")} error={false} isSalesEnabled
+        items={[]} onAdd={vi.fn()} allowPreview={allowPreview} />
+    </I18nextProvider>)
+
+    expect(html).not.toContain('type="date"')
+    for (const key of ["previewNotice", "previewDate", "previousWeek", "nextWeek"]) {
+      expect(html).not.toContain(i18n.t(`healthyDeal.${key}`))
+    }
+    expect(html.includes('aria-pressed="true"')).toBe(allowPreview)
+    expect(html.includes(i18n.t("cart.add"))).toBe(!allowPreview)
+  })
   it.each([true, false])("shows ingredients, nutrition and then allergens for both dishes (nutrition supplied: %s)", (hasNutrition) => {
     const settings = structuredClone(defaultHealthyDealSettings)
     for (const dish of [settings.weekly["1"].soup, settings.weekly["1"].main]) {
@@ -29,15 +46,61 @@ describe("Healthy Deal public presentation", () => {
     const html = render("2026-11-02T11:00:00Z", true, false, settings)
     const articles = html.match(/<article\b[^>]*>[\s\S]*?<\/article>/g) ?? []
 
-    expect(articles).toHaveLength(2)
-    for (const article of articles) {
+    expect(articles).toHaveLength(10)
+    expect(html.match(/<details\b/g)).toHaveLength(5)
+    for (const article of articles.slice(0, 2)) {
       const ingredients = article.indexOf("Ingrediente: morcovi, ceapă")
-      const nutrition = article.indexOf(hasNutrition ? "<dl" : i18n.t("healthyDeal.nutritionPending"))
+      const nutrition = article.indexOf("<dl")
       const allergens = article.indexOf(i18n.t("healthyDeal.allergens"))
       expect(ingredients).toBeGreaterThan(-1)
-      expect(nutrition).toBeGreaterThan(ingredients)
-      expect(allergens).toBeGreaterThan(nutrition)
+      if (hasNutrition) {
+        expect(nutrition).toBeGreaterThan(ingredients)
+        expect(allergens).toBeGreaterThan(nutrition)
+      } else {
+        expect(article).not.toContain(i18n.t("healthyDeal.nutritionPending"))
+        expect(allergens).toBeGreaterThan(ingredients)
+      }
     }
+  })
+  it("previews the imported November week from database data with complete menu nutrition and allergens", () => {
+    const db = new DatabaseSync(":memory:")
+    let settings: HealthyDealSettings
+    try {
+      db.exec("CREATE TABLE healthy_deal_settings (id INTEGER, config_json TEXT, revision INTEGER)")
+      db.prepare("INSERT INTO healthy_deal_settings VALUES (1, ?, 4)").run(JSON.stringify(defaultHealthyDealSettings))
+      db.exec(readFileSync(new URL("../../../scripts/healthy-deal-2026-11-02.sql", import.meta.url), "utf8"))
+      const row = db.prepare("SELECT config_json FROM healthy_deal_settings").get()
+      settings = JSON.parse(String(row?.config_json)) as HealthyDealSettings
+    } finally {
+      db.close()
+    }
+
+    const html = renderToStaticMarkup(<I18nextProvider i18n={i18n}>
+      <HealthyDealMenu document={{ revision: 5, settings }}
+        now={new Date("2026-10-31T10:00:00Z")} error={false} isSalesEnabled
+        items={[]} onAdd={vi.fn()} allowPreview />
+    </I18nextProvider>)
+
+    for (const [index, calories] of [682, 628, 673, 697, 751].entries()) {
+      const entry = settings.overrides[`2026-11-0${index + 2}`]
+      expect(html).toContain(entry.main.name)
+      expect(html).toContain(`${calories} kcal`)
+      expect(html).toContain(entry.main.allergens)
+    }
+    expect(html).toContain("2 noiembrie 2026")
+    expect(html).toContain("Valori nutriționale per meniu complet (supă + fel principal)")
+    expect(html).not.toContain(i18n.t("healthyDeal.nutritionPending"))
+    expect(html).not.toContain(i18n.t("healthyDeal.detailsPending"))
+    expect(html.match(/<article\b/g)).toHaveLength(5)
+  })
+  it("keeps both illustrative PNG plates above the weekly dish details", () => {
+    const html = render("2026-11-02T11:00:00Z")
+
+    for (const asset of [dealAssets.soup, dealAssets.main]) {
+      expect(html).toContain(`src="${asset}"`)
+      expect(html.indexOf(`src="${asset}"`)).toBeLessThan(html.indexOf("<details"))
+    }
+    expect(html).not.toMatch(/<details[^>]*\bopen(?:=|\s|>)/)
   })
   it("uses the supplied PNG artwork for the price stamp, opening hours and weekly banner", () => {
     const html = render("2026-11-02T11:00:00Z")
