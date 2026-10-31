@@ -27,7 +27,7 @@ describe("global storefront purchase controls", () => {
     expect(html.includes(i18n.t("cart.open"))).toBe(isSalesEnabled)
   })
 
-  it.each([true, false])("shows a standalone builder and menu return link with sales enabled=%s", isSalesEnabled => {
+  it.each([true, false])("shows a standalone builder with shared navigation without a redundant return link with sales enabled=%s", isSalesEnabled => {
     const cart = { items: [], error: "", addProduct: vi.fn(() => true), setQuantity: vi.fn(() => true) }
 
     const html = renderToStaticMarkup(
@@ -36,8 +36,9 @@ describe("global storefront purchase controls", () => {
       </I18nextProvider>,
     )
 
-    expect(html).toContain('href="/menu"')
-    expect(html).toContain(i18n.t("builder.backToMenu"))
+    expect(html).not.toContain('href="/menu"')
+    expect(html).not.toContain(i18n.t("builder.backToMenu"))
+    expect(html).not.toContain(i18n.t("builder.start"))
     expect(html).toContain('href="/menu?group=food"')
     expect(html).toContain('href="/menu?group=drinks"')
     expect(html).toContain('href="/build-your-plate" aria-current="page"')

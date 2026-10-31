@@ -539,14 +539,18 @@ a treia optiune pastreaza culorile portocalii si deschide pagina constructorului
 Widgetul ramane disponibil in constructor, cu a treia optiune selectata si
 fundalul portocaliu de hover. Mancare si Bauturi revin direct la grupul respectiv.
 Constructorul de farfurii este disponibil separat la `/build-your-plate`, cu
-linkul „Inapoi la meniu” sus si acces la acelasi cos de cumparaturi. Linkurile
+navigare spre Mancare si Bauturi prin widgetul comun si acces la acelasi cos de cumparaturi. Linkurile
 vechi `/menu#custom-menu` si `/menu#menu-calculator` redirectioneaza spre noua pagina.
 Calculatorul are o bara sticky cu patru pasi si icoane, sub antet. Pasii permit
 saltul la sectiunea corespunzatoare si marcheaza categoriile cu o optiune aleasa;
 toate categoriile raman optionale.
-Randul „Inapoi la meniu / Vezi cosul” ramane sticky deasupra barei cu pasi,
+Introducerea nu include un buton separat de configurare; pasii sunt accesibili
+direct sub instructiuni.
+Widgetul comun si randul „Vezi cosul” raman sticky deasupra barei cu pasi,
 la 14 px sub antet, fara spatiu intre cele doua bare si fara suprapunerea
-sectiunilor la navigare.
+sectiunilor la navigare,
+iar randul cosului este eliminat complet cand vanzarile sunt dezactivate.
+Pozitia pasilor si offsetul de derulare se adapteaza inaltimii ramase.
 Paginile publice folosesc React Router pentru navigare fara reincarcarea
 documentului. Antetul, cosul si starea contului raman montate; trecerea intre
 meniu si constructor nu repeta incarcarea meniului. Back/Forward restaureaza

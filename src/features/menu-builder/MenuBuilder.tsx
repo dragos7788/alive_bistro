@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react"
-import { ArrowDown } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { builderGroups, calculateMenu, type MenuSelection } from "./calculator"
 import { BuilderStep, BuilderStepIcon } from "./BuilderStep"
@@ -56,15 +55,11 @@ export function MenuBuilder({ onAddToCart, cartError, isSalesEnabled, discountPe
                 </li>
               ))}
             </ul>
-            <a href="#menu-calculator"
-              className="mt-6 inline-flex min-h-11 items-center gap-3 rounded-full bg-brand-green-700 px-5 py-2.5 text-sm font-semibold text-brand-cream-50 shadow-sm transition-colors hover:bg-brand-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green-700">
-                {t("builder.start")} <ArrowDown size={17} aria-hidden="true" />
-              </a>
           </div>
         </div>
 
         <div id="menu-calculator" className="scroll-mt-24">
-          <nav aria-label={t("builder.stepsLabel")} className="sticky top-[194px] z-30 -mx-6 border-b border-brand-green-700/15 bg-brand-cream-100 px-3 py-[14px] sm:px-6 shadow-sm">
+          <nav aria-label={t("builder.stepsLabel")} className="sticky top-[calc(78px+var(--builder-toolbar-height,116px))] z-30 -mx-6 border-b border-brand-green-700/15 bg-brand-cream-100 px-3 py-[14px] sm:px-6 shadow-sm">
             <ol className="mx-auto grid max-w-6xl grid-cols-4 gap-1">
               {builderGroups.map((group, index) => {
                 const isChosen = !!selection[group]
